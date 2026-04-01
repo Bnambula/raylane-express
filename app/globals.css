@@ -1,0 +1,213 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   RAYLANE EXPRESS — Global Styles
+   These are the colours, fonts and animations used everywhere.
+   ============================================================ */
+
+:root {
+  --ocean:       #0B2545;
+  --ocean-mid:   #1A3A6B;
+  --ocean-light: #2656A0;
+  --gold:        #E8A020;
+  --gold-soft:   #F5C04A;
+  --gold-pale:   #FDF3DC;
+  --white:       #FFFFFF;
+  --warm:        #F8F6F1;
+  --earth:       #EAE5D8;
+  --muted:       #8A8070;
+  --danger:      #C0392B;
+  --success:     #1A7A4A;
+  --warn:        #D97706;
+  --text:        #1A1208;
+  --text2:       #5A5040;
+}
+
+/* Base */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+  background: var(--warm);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+/* ---- TYPOGRAPHY ---- */
+h1, h2, h3 { font-family: Georgia, serif; color: var(--ocean); }
+
+/* ---- TICKER ANIMATION ---- */
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.ticker-animate { animation: ticker 24s linear infinite; }
+
+/* ---- BLINK (urgency dot) ---- */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.15; }
+}
+.dot-blink { animation: blink 0.9s infinite; }
+
+/* ---- PULSE (urgent book button) ---- */
+@keyframes pulse-btn {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(192, 57, 43, 0.4); }
+  50%       { box-shadow: 0 0 0 8px rgba(192, 57, 43, 0); }
+}
+.pulse-urgent { animation: pulse-btn 0.9s infinite; }
+
+/* ---- OCCUPANCY BAR PULSE (95%+ full) ---- */
+@keyframes bar-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
+.bar-critical { animation: bar-pulse 1s infinite; }
+
+/* ---- PAGE FADE IN ---- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeIn 0.3s ease; }
+
+/* ---- BUTTONS ---- */
+.btn-primary {
+  background: var(--gold);
+  color: var(--ocean);
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+.btn-primary:hover { background: var(--gold-soft); transform: translateY(-1px); }
+
+.btn-ocean {
+  background: var(--ocean);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 13px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+.btn-ocean:hover { background: var(--ocean-mid); }
+
+.btn-outline {
+  background: transparent;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 13px;
+  border: 1.5px solid rgba(255,255,255,0.28);
+  cursor: pointer;
+  transition: 0.2s;
+  white-space: nowrap;
+}
+.btn-outline:hover { border-color: var(--gold-soft); color: var(--gold-soft); }
+
+/* ---- SEATS ---- */
+.seat {
+  width: clamp(30px, 8vw, 36px);
+  height: clamp(30px, 8vw, 36px);
+  border-radius: 5px;
+  border: 1.5px solid;
+  cursor: pointer;
+  transition: transform 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+  flex-shrink: 0;
+  user-select: none;
+}
+.seat-available  { background: #E0F2FE; border-color: #BAE6FD; color: #0369A1; }
+.seat-available:hover { background: #BAE6FD; transform: scale(1.1); }
+.seat-taken      { background: var(--earth); border-color: #D1C9B8; color: var(--muted); cursor: not-allowed; }
+.seat-selected   { background: var(--gold); border-color: var(--gold-soft); color: var(--ocean); }
+.seat-window     { border-style: dashed; }
+
+/* ---- CARDS ---- */
+.card {
+  background: white;
+  border-radius: 12px;
+  border: 1.5px solid var(--earth);
+  overflow: hidden;
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+.card:hover {
+  border-color: var(--ocean-light);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(11,37,69,0.1);
+}
+
+/* ---- BADGES ---- */
+.badge {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+  display: inline-block;
+  white-space: nowrap;
+}
+.badge-green  { background: #DCFCE7; color: #15803D; }
+.badge-orange { background: #FEF3C7; color: #B45309; }
+.badge-red    { background: #FEE2E2; color: #B91C1C; }
+.badge-blue   { background: #E0F2FE; color: #0369A1; }
+.badge-gold   { background: var(--gold-pale); color: #92400E; }
+
+/* ---- FORMS ---- */
+.form-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--earth);
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  background: var(--warm);
+  color: var(--text);
+  transition: border-color 0.2s, background 0.2s;
+}
+.form-input:focus { border-color: var(--ocean-light); background: white; }
+
+.form-label {
+  display: block;
+  font-size: 11px;
+  color: var(--text2);
+  font-weight: 600;
+  margin-bottom: 5px;
+  letter-spacing: 0.4px;
+}
+
+/* ---- ADMIN TABLE ---- */
+.admin-table { width: 100%; border-collapse: collapse; }
+.admin-table thead { background: var(--ocean); color: white; }
+.admin-table th { padding: 10px 12px; font-size: 11px; font-weight: 700; text-align: left; white-space: nowrap; }
+.admin-table td { padding: 10px 12px; font-size: 12px; border-bottom: 1px solid var(--earth); }
+.admin-table tr:last-child td { border-bottom: none; }
+.admin-table tr:hover td { background: var(--warm); }
+
+/* ---- RESPONSIVE HELPERS ---- */
+@media (max-width: 640px) {
+  .hide-mobile { display: none !important; }
+}
+@media (min-width: 641px) {
+  .show-mobile-only { display: none !important; }
+}
