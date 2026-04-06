@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raylane Express — Operator Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --n800:#0B1D45;--n700:#132359;--n600:#1E3A8A;--n400:#4A6199;--n200:#9AABC8;--n100:#C8D0E4;--n50:#EEF1FB;
+  --g500:#F5A623;--g400:#FBBF24;--g100:#FDE68A;
+  --bg:#F4F6FB;--surface:#fff;--border:#E8EAEF;
+  --text:#111827;--text2:#4B5563;--muted:#9CA3AF;
+  --green:#16A34A;--green-bg:#DCFCE7;--green-b:#BBF7D0;
+  --amber:#D97706;--amber-bg:#FEF3C7;--amber-b:#FDE68A;
+  --red:#B91C1C;--red-bg:#FEE2E2;--red-b:#FECACA;
+  --blue:#1D4ED8;--blue-bg:#DBEAFE;--blue-b:#BFDBFE;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--bg);overflow:hidden;height:100vh;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,h5{font-family:'Sora',sans-serif}
+a{text-decoration:none;color:inherit}
+
+.shell{display:flex;height:100vh;overflow:hidden}
+
+/* SIDEBAR */
+.sidebar{width:220px;background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;transition:width .25s cubic-bezier(.4,0,.2,1);overflow:hidden}
+.sidebar.collapsed{width:60px}
+.sb-header{height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sb-logo{display:flex;align-items:center;gap:8px;overflow:hidden;white-space:nowrap}
+.sb-logo-icon{width:32px;height:32px;background:var(--g500);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-logo-icon svg{width:17px;height:17px}
+.sb-logo-text{font-family:'Sora',sans-serif;font-size:.875rem;font-weight:800;color:var(--n800);white-space:nowrap}
+.sb-logo-text em{color:var(--g500);font-style:normal}
+.sb-toggle{width:28px;height:28px;background:var(--bg);border:1px solid var(--border);border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);transition:all .2s;flex-shrink:0;outline:none}
+.sb-toggle:hover{background:var(--n50);color:var(--n800)}
+.sb-toggle svg{width:14px;height:14px}
+.sb-operator{margin:10px 10px 4px;background:var(--n50);border-radius:10px;padding:9px 10px;overflow:hidden}
+.sb-op-name{font-family:'Sora',sans-serif;font-size:.8125rem;font-weight:700;color:var(--n800);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-op-role{font-size:.6875rem;color:var(--muted);margin-top:1px}
+.sb-nav{flex:1;overflow-y:auto;padding:6px 8px;scrollbar-width:none}
+.sb-nav::-webkit-scrollbar{display:none}
+.nav-group-lbl{font-size:.5625rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:8px 10px 3px;white-space:nowrap;overflow:hidden}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;color:var(--text2);font-size:.875rem;font-weight:500;cursor:pointer;transition:all .18s;white-space:nowrap;overflow:hidden;border:none;background:none;width:100%;text-align:left}
+.nav-item:hover{background:var(--n50);color:var(--n800)}
+.nav-item.active{background:rgba(245,166,35,.15);color:var(--g500)}
+.nav-icon{width:16px;height:16px;flex-shrink:0}
+.nav-lbl{flex:1;overflow:hidden;white-space:nowrap}
+.nav-badge{margin-left:auto;background:var(--red-bg);color:var(--red);font-size:.5625rem;font-weight:700;padding:2px 6px;border-radius:8px;flex-shrink:0}
+.nav-badge.gold{background:rgba(245,166,35,.2);color:var(--g500)}
+.pro-badge{margin-left:auto;font-size:.5rem;font-weight:800;letter-spacing:.05em;background:rgba(245,166,35,.2);color:var(--g500);padding:2px 6px;border-radius:4px}
+.nav-div{height:1px;background:var(--border);margin:7px 8px}
+.sb-footer{padding:10px 8px;border-top:1px solid var(--border);flex-shrink:0}
+.sb-user{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;cursor:pointer;transition:background .18s;overflow:hidden}
+.sb-user:hover{background:var(--n50)}
+.sb-avatar{width:28px;height:28px;background:var(--n800);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-size:.625rem;font-weight:700;color:var(--g400);flex-shrink:0}
+.sb-uname{font-size:.8125rem;font-weight:600;color:var(--n800);white-space:nowrap;overflow:hidden}
+.sb-urole{font-size:.625rem;color:var(--muted)}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.topbar{height:62px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 22px;flex-shrink:0}
+.tb-left{display:flex;align-items:center;gap:10px}
+.page-title{font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;color:var(--n800)}
+.tb-right{display:flex;align-items:center;gap:9px}
+.tb-btn{width:34px;height:34px;background:var(--bg);border:1px solid var(--border);border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);position:relative;transition:all .2s;outline:none}
+.tb-btn:hover{background:var(--n50);color:var(--n800)}
+.tb-btn svg{width:16px;height:16px}
+.tb-dot{position:absolute;top:6px;right:6px;width:6px;height:6px;background:var(--g500);border-radius:50%;border:1.5px solid #fff}
+.uc{display:flex;align-items:center;gap:7px;padding:4px 10px 4px 4px;background:var(--bg);border:1px solid var(--border);border-radius:50px;cursor:pointer}
+.uc-av{width:26px;height:26px;background:var(--n800);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.625rem;font-weight:700;font-family:'Sora',sans-serif;color:var(--g400)}
+.uc-name{font-size:.8125rem;font-weight:600;color:var(--n800)}
+
+.content{flex:1;overflow-y:auto;padding:22px;scrollbar-width:thin;scrollbar-color:var(--n100) transparent}
+.content::-webkit-scrollbar{width:4px}
+.content::-webkit-scrollbar-thumb{background:var(--n100);border-radius:2px}
+
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px}
+.kpi-lbl{font-size:.75rem;color:var(--muted);font-weight:500;margin-bottom:7px;display:flex;justify-content:space-between;align-items:center}
+.kpi-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.kpi-icon svg{width:14px;height:14px}
+.kpi-val{font-family:'Sora',sans-serif;font-size:1.625rem;font-weight:800;color:var(--n800);line-height:1}
+.kpi-sub{font-size:.6875rem;margin-top:5px}
+.up{color:var(--green)}.down{color:var(--red)}.neutral{color:var(--muted)}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:16px}
+.card-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--border)}
+.card-title{font-family:'Sora',sans-serif;font-size:.875rem;font-weight:700;color:var(--n800)}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;font-family:'Sora',sans-serif;font-size:.75rem;font-weight:700;padding:6px 12px;border-radius:8px;cursor:pointer;border:none;transition:all .18s}
+.btn-dark{background:var(--n800);color:#fff}.btn-dark:hover{background:var(--n700)}
+.btn-gold{background:var(--g500);color:var(--n800)}.btn-gold:hover{background:var(--g400)}
+.btn-outline{background:transparent;color:var(--n800);border:1px solid var(--border)}.btn-outline:hover{background:var(--n50)}
+.btn-green{background:var(--green);color:#fff}.btn-green:hover{background:#15803D}
+.btn-red{background:var(--red);color:#fff}
+.btn-ghost{background:transparent;color:var(--n600);border:none;font-size:.75rem;font-weight:600;cursor:pointer;padding:5px 8px;border-radius:7px;transition:all .2s}
+.btn-ghost:hover{background:var(--n50);color:var(--n800)}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse}
+.tbl thead th{text-align:left;font-size:.625rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);padding:9px 15px;background:var(--bg)}
+.tbl tbody td{padding:12px 15px;font-size:.875rem;color:var(--text2);border-bottom:1px solid var(--bg);vertical-align:middle}
+.tbl tbody tr:last-child td{border-bottom:none}
+.tbl tbody tr:hover td{background:var(--bg)}
+.td-p{font-weight:600;color:var(--n800)}
+.td-m{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--n400)}
+
+/* STATUS CHIPS */
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:.625rem;font-weight:700;padding:3px 8px;border-radius:50px}
+.chip::before{content:'';width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.chip-green{background:var(--green-bg);color:var(--green);border:1px solid var(--green-b)}.chip-green::before{background:var(--green)}
+.chip-amber{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-b)}.chip-amber::before{background:var(--amber)}
+.chip-red{background:var(--red-bg);color:var(--red);border:1px solid var(--red-b)}.chip-red::before{background:var(--red)}
+.chip-blue{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-b)}.chip-blue::before{background:var(--blue)}
+.chip-gray{background:var(--bg);color:var(--muted);border:1px solid var(--border)}.chip-gray::before{background:var(--muted)}
+
+/* TWO-COL LAYOUT */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.three-two{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+
+/* SEAT MAP */
+.seat-map{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;max-width:190px;margin:12px auto}
+.seat{width:38px;height:34px;border-radius:7px;border:2px solid;display:flex;align-items:center;justify-content:center;font-size:.625rem;font-weight:700;cursor:pointer;transition:all .15s;font-family:'Sora',sans-serif}
+.s-a{background:#fff;border-color:var(--border);color:var(--muted)}.s-a:hover{border-color:var(--g500);background:var(--amber-bg);color:var(--n800)}
+.s-s{background:var(--n50);border-color:var(--n100);color:var(--muted);cursor:not-allowed}
+.s-d{background:var(--n800);border-color:var(--n700);color:var(--g400);cursor:not-allowed}
+
+/* FORM */
+.fgroup{margin-bottom:14px}
+.flabel{display:block;font-size:.8125rem;font-weight:600;color:var(--n400);margin-bottom:5px}
+.finput{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:10px 13px;font-size:.875rem;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;appearance:none;transition:border-color .2s}
+.finput:focus{border-color:var(--n600);background:#fff}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* TOGGLE */
+.toggle{width:40px;height:22px;background:var(--border);border-radius:50px;cursor:pointer;transition:background .25s;position:relative;border:none;flex-shrink:0}
+.toggle.on{background:var(--n600)}
+.toggle::after{content:'';position:absolute;width:16px;height:16px;background:#fff;border-radius:50%;top:3px;left:3px;transition:transform .25s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.toggle.on::after{transform:translateX(18px)}
+
+/* VIEWS */
+.view{display:none;animation:fadeIn .2s ease}
+.view.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulseDot{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.6);opacity:.55}}
+
+/* PREMIUM LOCK */
+.premium-lock{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:44px;text-align:center;background:linear-gradient(135deg,var(--n800) 0%,var(--n700) 100%);border-radius:14px}
+.pl-icon{font-size:2.5rem;margin-bottom:12px}
+.pl-title{font-family:'Sora',sans-serif;font-size:1.0625rem;font-weight:700;color:#fff;margin-bottom:6px}
+.pl-sub{font-size:.8125rem;color:rgba(255,255,255,.55);line-height:1.5;max-width:340px;margin-bottom:20px}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sb">
+    <div class="sb-header">
+      <div class="sb-logo">
+        <div class="sb-logo-icon">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M3 12s4-6 9-6 9 6 9 6" stroke="#0B1D45" stroke-width="2.2" stroke-linecap="round"/><path d="M3 17h18" stroke="#0B1D45" stroke-width="2.2" stroke-linecap="round"/><circle cx="7.5" cy="19.5" r="2" fill="#0B1D45"/><circle cx="16.5" cy="19.5" r="2" fill="#0B1D45"/></svg>
+        </div>
+        <span class="sb-logo-text">Operator <em>Portal</em></span>
+      </div>
+      <button class="sb-toggle" onclick="document.getElementById('sb').classList.toggle('collapsed')">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 5h14a1 1 0 010 2H3a1 1 0 010-2zm0 4h14a1 1 0 010 2H3a1 1 0 010-2zm0 4h14a1 1 0 010 2H3a1 1 0 010-2z" clip-rule="evenodd"/></svg>
+      </button>
+    </div>
+    <div class="sb-operator">
+      <div class="sb-op-name">Gateway Bus Ltd</div>
+      <div class="sb-op-role">Operator Admin · Active</div>
+    </div>
+    <nav class="sb-nav">
+      <div class="nav-group-lbl">Basic</div>
+      <button class="nav-item active" onclick="sv('dashboard',this)">
+        <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
+        <span class="nav-lbl">Dashboard</span>
+      </button>
+      <button class="nav-item" onclick="sv('trips',this)">
+        <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/><path d="M3 4a1 1 0 00-.82 1.573L5 9.63V15a1 1 0 001 1h1a1 1 0 001-1v-5a1 1 0 01.82-.984l4.96-1.24A1 1 0 0115 8.77V15a1 1 0 001 1h1a1 1 0 001-1V6a1 1 0 00-.66-.942L12 4H3z"/></svg>
+        <span class="nav-lbl">My Trips</span>
+        <span class="nav-badge gold">3</span>
+      </button>
+      <button class="nav-item" onclick="sv('seats',this)">
+        <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"/></svg>
+        <span class="nav-lbl">Seat Manager</span>
+      </button>
+      <button class="nav-item" onclick="sv('bookings',this)">
+        <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/></svg>
+        <span class="nav-lbl">Bookings</span>
+      </button>
+      <button class="nav-item" onclick="sv('parcels',this)">
+        <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3z"/></svg>
+        <span class="nav-lbl">Parcels</span>
+      </button>
+      <div class="nav-div"></div>
+      <div class="nav-group-lbl" style="color:var(--g500)">Premium ⭐</div>
+      <button class="nav-item" onclick="sv('financials',this)">
+        <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11 4a1 1 0 10-2 0v4a1 1 0 102 0V7zm-3 1a1 1 0 10-2 0v3a1 1 0 102 0V8zM8 9a1 1 0 00-2 0v2a1 1 0 102 0V9z" clip-rule="evenodd"/></svg>
+        <span class="nav-lbl">Financials</span>
+        <span class="pro-badge">PRO</span>
+      </button>
+      <button class="nav-item" onclick="sv('fleet',this)">
+        <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/><path d="M3 4a1 1 0 000 2v8a2 2 0 002 2h1a3 3 0 016 0h1a2 2 0 002-2V6a1 1 0 100-2H3z"/></svg>
+        <span class="nav-lbl">Fleet & Drivers</span>
+        <span class="pro-badge">PRO</span>
+      </button>
+      <button class="nav-item" onclick="sv('analytics',this)">
+        <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>
+        <span class="nav-lbl">Analytics</span>
+        <span class="pro-badge">PRO</span>
+      </button>
+      <div class="nav-div"></div>
+      <button class="nav-item" onclick="sv('settings',this)">
+        <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
+        <span class="nav-lbl">Settings</span>
+      </button>
+      <button class="nav-item" onclick="window.location='index.html'">
+        <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/></svg>
+        <span class="nav-lbl">View Site</span>
+      </button>
+    </nav>
+    <div class="sb-footer">
+      <div class="sb-user">
+        <div class="sb-avatar">GB</div>
+        <div style="overflow:hidden">
+          <div class="sb-uname">Gateway Bus Ltd</div>
+          <div class="sb-urole">gateway@bus.com</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <header class="topbar">
+      <div class="tb-left">
+        <div class="page-title" id="pt">Dashboard</div>
+      </div>
+      <div class="tb-right">
+        <button class="btn btn-gold" onclick="sv('trips-create',null)">+ New Trip</button>
+        <button class="tb-btn">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/></svg>
+          <span class="tb-dot"></span>
+        </button>
+        <div class="uc"><div class="uc-av">GB</div><span class="uc-name">Gateway Bus</span></div>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- ═══ DASHBOARD ═══ -->
+      <div class="view active" id="v-dashboard">
+        <!-- Welcome banner -->
+        <div style="background:linear-gradient(135deg,var(--n800) 0%,var(--n700) 100%);border-radius:14px;padding:22px 24px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:16px">
+          <div>
+            <div style="font-size:.6875rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:4px">Saturday, April 5 2026</div>
+            <h2 style="font-family:'Sora',sans-serif;font-size:1.25rem;font-weight:800;color:#fff;margin-bottom:4px">Good morning, Gateway Bus 👋</h2>
+            <p style="font-size:.875rem;color:rgba(255,255,255,.55)">You have 3 trips awaiting departure and 47 bookings today.</p>
+          </div>
+          <button class="btn btn-gold" style="flex-shrink:0" onclick="sv('trips',document.querySelector('.nav-item:nth-child(2)'))">View Today's Trips →</button>
+        </div>
+
+        <!-- KPIs -->
+        <div class="kpi-grid">
+          <div class="kpi">
+            <div class="kpi-lbl">Trips Today<div class="kpi-icon" style="background:#DBEAFE"><svg viewBox="0 0 20 20" fill="#1D4ED8"><path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/><path d="M3 4a1 1 0 00-.82 1.573L5 9.63V15a1 1 0 001 1h1a1 1 0 001-1v-5a1 1 0 01.82-.984l4.96-1.24A1 1 0 0115 8.77V15a1 1 0 001 1h1a1 1 0 001-1V6a1 1 0 00-.66-.942L12 4H3z"/></svg></div></div>
+            <div class="kpi-val">3</div><div class="kpi-sub neutral">1 pending approval</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-lbl">Seats Sold<div class="kpi-icon" style="background:var(--amber-bg)"><svg viewBox="0 0 20 20" fill="#D97706"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5z" clip-rule="evenodd"/></svg></div></div>
+            <div class="kpi-val">95 <span style="font-size:.875rem;font-weight:500;color:var(--muted)">/ 113</span></div><div class="kpi-sub up">84% occupancy</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-lbl">Revenue Today<div class="kpi-icon" style="background:#DCFCE7"><svg viewBox="0 0 20 20" fill="#16A34A"><path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"/></svg></div></div>
+            <div class="kpi-val" style="font-size:1.2rem">UGX 2.85M</div><div class="kpi-sub up">↑ 8% vs yesterday</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-lbl">New Bookings<div class="kpi-icon" style="background:#DCFCE7"><svg viewBox="0 0 20 20" fill="#16A34A"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg></div></div>
+            <div class="kpi-val">47</div><div class="kpi-sub neutral">Last 24 hours</div>
+          </div>
+        </div>
+
+        <div class="three-two" style="margin-bottom:0">
+          <!-- Today's trips -->
+          <div class="card">
+            <div class="card-hd"><span class="card-title">Today's Trips</span><button class="btn btn-dark" onclick="sv('trips',null)">View All</button></div>
+            <div style="overflow-x:auto">
+              <table class="tbl">
+                <thead><tr><th>Route</th><th>Departs</th><th>Seats</th><th>Revenue</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody>
+                  <tr><td class="td-p">Kampala → Nairobi</td><td>08:00</td><td><div style="display:flex;align-items:center;gap:6px"><div style="flex:1;height:5px;background:var(--border);border-radius:50px;overflow:hidden;width:60px"><div style="width:76%;height:100%;background:var(--green);border-radius:50px"></div></div><span style="font-size:.6875rem;color:var(--n800);font-weight:700">38/50</span></div></td><td style="font-weight:600;color:var(--green)">UGX 4.56M</td><td><span class="chip chip-green">Live</span></td><td><div style="display:flex;gap:5px"><button class="btn btn-outline" style="font-size:.6875rem;padding:4px 8px">Seats</button><button class="btn btn-dark" style="font-size:.6875rem;padding:4px 8px">Manage</button></div></td></tr>
+                  <tr><td class="td-p">Kampala → Gulu</td><td>06:00</td><td><div style="display:flex;align-items:center;gap:6px"><div style="flex:1;height:5px;background:var(--border);border-radius:50px;overflow:hidden;width:60px"><div style="width:100%;height:100%;background:var(--red);border-radius:50px"></div></div><span style="font-size:.6875rem;color:var(--red);font-weight:700">45/45</span></div></td><td style="font-weight:600;color:var(--green)">UGX 2.03M</td><td><span class="chip chip-red">Full</span></td><td><button class="btn btn-outline" style="font-size:.6875rem;padding:4px 8px">View</button></td></tr>
+                  <tr><td class="td-p">Kampala → Mbale</td><td>14:00</td><td><div style="display:flex;align-items:center;gap:6px"><div style="flex:1;height:5px;background:var(--border);border-radius:50px;overflow:hidden;width:60px"><div style="width:67%;height:100%;background:var(--amber);border-radius:50px"></div></div><span style="font-size:.6875rem;color:var(--n800);font-weight:700">12/18</span></div></td><td style="font-weight:600;color:var(--green)">UGX 360K</td><td><span class="chip chip-amber">Pending</span></td><td><button class="btn btn-outline" style="font-size:.6875rem;padding:4px 8px">Edit</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Quick stats + upgrade -->
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div class="card">
+              <div class="card-hd"><span class="card-title">Earnings Summary</span></div>
+              <div style="padding:14px 16px;display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--bg);border-radius:10px">
+                  <span style="font-size:.8125rem;color:var(--text2)">Withdrawable Balance</span>
+                  <span style="font-family:'Sora',sans-serif;font-weight:800;font-size:1rem;color:var(--g500)">UGX 40,000</span>
+                </div>
+                <div style="display:flex;justify-content:space-between">
+                  <span style="font-size:.8125rem;color:var(--muted)">This Month</span>
+                  <span style="font-family:'Sora',sans-serif;font-weight:700;color:var(--n800)">UGX 2.85M</span>
+                </div>
+                <div style="display:flex;justify-content:space-between">
+                  <span style="font-size:.8125rem;color:var(--muted)">Raylane Commission</span>
+                  <span style="font-size:.8125rem;font-weight:600;color:var(--red)">— UGX 285K</span>
+                </div>
+                <button class="btn btn-gold" style="width:100%;justify-content:center;margin-top:4px">Withdraw Funds</button>
+              </div>
+            </div>
+            <div style="background:linear-gradient(135deg,var(--n800),var(--n700));border-radius:14px;padding:18px">
+              <div style="font-size:.625rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--g400);margin-bottom:8px">⭐ Upgrade to Premium</div>
+              <p style="font-size:.875rem;font-weight:700;color:#fff;margin-bottom:4px">Unlock Advanced Features</p>
+              <p style="font-size:.75rem;color:rgba(255,255,255,.5);margin-bottom:14px">Financials, Fleet management, HR, Analytics, Fuel tracking and more.</p>
+              <button class="btn btn-gold" style="width:100%;justify-content:center;font-size:.75rem">View Plans →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ TRIPS ═══ -->
+      <div class="view" id="v-trips">
+        <div style="display:flex;justify-content:space-between;margin-bottom:16px">
+          <div style="display:flex;gap:7px">
+            <button class="btn btn-dark" onclick="sv('trips-create',null)">+ Create Trip</button>
+            <button class="btn btn-outline">Export</button>
+          </div>
+          <div style="display:flex;gap:7px">
+            <select class="finput" style="width:140px;padding:7px 10px;font-size:.8125rem"><option>All Status</option><option>Pending</option><option>Live</option><option>Completed</option></select>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><span class="card-title">All Trips</span></div>
+          <div style="overflow-x:auto">
+            <table class="tbl">
+              <thead><tr><th>ID</th><th>Route</th><th>Departure</th><th>Vehicle</th><th>Seats</th><th>Revenue</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td class="td-m">T-001</td><td class="td-p">Kampala → Nairobi</td><td>Today 08:00</td><td>UAM 123K (Coach)</td><td>38/50</td><td class="td-p" style="color:var(--green)">UGX 4.56M</td><td><span class="chip chip-green">Live</span></td><td><div style="display:flex;gap:5px"><button class="btn btn-outline" style="font-size:.6875rem;padding:4px 8px">Edit</button><button class="btn btn-dark" style="font-size:.6875rem;padding:4px 8px">Seats</button></div></td></tr>
+                <tr><td class="td-m">T-002</td><td class="td-p">Kampala → Gulu</td><td>Today 06:00</td><td>UBF 456G (Coach)</td><td>45/45</td><td class="td-p" style="color:var(--green)">UGX 2.03M</td><td><span class="chip chip-red">Full</span></td><td><div style="display:flex;gap:5px"><button class="btn btn-outline" style="font-size:.6875rem;padding:4px 8px">View</button></div></td></tr>
+                <tr><td class="td-m">T-003</td><td class="td-p">Kampala → Mbale</td><td>Today 14:00</td><td>UCA 789H (Minibus)</td><td>12/18</td><td class="td-p">UGX 360K</td><td><span class="chip chip-amber">Pending</span></td><td><div style="display:flex;gap:5px"><button class="btn btn-outline" style="font-size:.6875rem;padding:4px 8px">Edit</button><button class="btn btn-red" style="font-size:.6875rem;padding:4px 8px">Cancel</button></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ CREATE TRIP ═══ -->
+      <div class="view" id="v-trips-create">
+        <div class="card" style="max-width:600px">
+          <div class="card-hd"><span class="card-title">Create New Trip</span><span class="chip chip-amber">Requires Admin Approval</span></div>
+          <div style="padding:20px">
+            <div class="frow">
+              <div class="fgroup"><label class="flabel">From</label><select class="finput"><option>Kampala</option><option>Gulu</option><option>Mbale</option><option>Jinja</option></select></div>
+              <div class="fgroup"><label class="flabel">To</label><select class="finput"><option>Nairobi</option><option>Kigali</option><option>Mombasa</option><option>Juba</option></select></div>
+            </div>
+            <div class="frow">
+              <div class="fgroup"><label class="flabel">Departure Date</label><input type="date" class="finput"></div>
+              <div class="fgroup"><label class="flabel">Departure Time</label><input type="time" class="finput" value="08:00"></div>
+            </div>
+            <div class="frow">
+              <div class="fgroup"><label class="flabel">Vehicle (Plate)</label><select class="finput"><option>UAM 123K — Coach 50</option><option>UBF 456G — Coach 45</option><option>UCA 789H — Minibus 18</option></select></div>
+              <div class="fgroup"><label class="flabel">Assigned Driver</label><select class="finput"><option>John Okello</option><option>Peter Musisi</option><option>Grace Nabifo</option></select></div>
+            </div>
+            <div class="frow">
+              <div class="fgroup"><label class="flabel">Ticket Price (UGX)</label><input type="number" class="finput" placeholder="120,000"></div>
+              <div class="fgroup"><label class="flabel">Vehicle Type</label><select class="finput"><option>Coach / Bus</option><option>Minibus</option><option>Taxi / Matatu</option></select></div>
+            </div>
+            <div class="fgroup"><label class="flabel">Amenities</label>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px">
+                <label style="display:flex;align-items:center;gap:5px;font-size:.8125rem;color:var(--text2);cursor:pointer"><input type="checkbox" checked style="accent-color:var(--n600)"> AC</label>
+                <label style="display:flex;align-items:center;gap:5px;font-size:.8125rem;color:var(--text2);cursor:pointer"><input type="checkbox" style="accent-color:var(--n600)"> WiFi</label>
+                <label style="display:flex;align-items:center;gap:5px;font-size:.8125rem;color:var(--text2);cursor:pointer"><input type="checkbox" style="accent-color:var(--n600)"> USB Charging</label>
+                <label style="display:flex;align-items:center;gap:5px;font-size:.8125rem;color:var(--text2);cursor:pointer"><input type="checkbox" style="accent-color:var(--n600)"> Meals</label>
+              </div>
+            </div>
+            <div style="background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);border-radius:10px;padding:12px;margin-bottom:16px;font-size:.8125rem;color:var(--text2)">
+              ℹ️ This trip will be submitted to Raylane Admin for approval. It will go live once approved.
+            </div>
+            <div style="display:flex;gap:10px">
+              <button class="btn btn-dark" onclick="alert('Trip submitted for admin approval!')">Submit for Approval</button>
+              <button class="btn btn-outline" onclick="sv('trips',null)">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ BOOKINGS ═══ -->
+      <div class="view" id="v-bookings">
+        <div class="kpi-grid" style="margin-bottom:14px">
+          <div class="kpi"><div class="kpi-lbl">Total Today</div><div class="kpi-val">47</div><div class="kpi-sub up">↑ 14%</div></div>
+          <div class="kpi"><div class="kpi-lbl">Advance</div><div class="kpi-val">8</div><div class="kpi-sub neutral">UGX 192K committed</div></div>
+          <div class="kpi"><div class="kpi-lbl">Pending Pay</div><div class="kpi-val" style="color:var(--amber)">3</div><div class="kpi-sub down">Needs attention</div></div>
+          <div class="kpi"><div class="kpi-lbl">Cancelled</div><div class="kpi-val" style="color:var(--red)">1</div><div class="kpi-sub neutral">Refund: UGX 30K</div></div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><span class="card-title">Passenger Bookings</span><button class="btn btn-outline">Export CSV</button></div>
+          <div style="overflow-x:auto">
+            <table class="tbl">
+              <thead><tr><th>Ref</th><th>Passenger</th><th>Trip</th><th>Seat</th><th>Amount</th><th>Status</th><th>Time</th></tr></thead>
+              <tbody>
+                <tr><td class="td-m">RL-A7B3</td><td class="td-p">Sarah M.</td><td>Kampala → Nairobi · 08:00</td><td>14A</td><td>UGX 120,000</td><td><span class="chip chip-green">Confirmed</span></td><td style="font-size:.75rem;color:var(--muted)">2 min ago</td></tr>
+                <tr><td class="td-m">RL-C4D1</td><td class="td-p">James K.</td><td>Kampala → Mbale · 14:00</td><td>5B</td><td>UGX 30,000</td><td><span class="chip chip-amber">Pending</span></td><td style="font-size:.75rem;color:var(--muted)">8 min ago</td></tr>
+                <tr><td class="td-m">RL-G5H6</td><td class="td-p">David O.</td><td>Kampala → Gulu · 06:00</td><td>22</td><td>UGX 45,000</td><td><span class="chip chip-green">Confirmed</span></td><td style="font-size:.75rem;color:var(--muted)">22 min ago</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ SEAT MANAGER ═══ -->
+      <div class="view" id="v-seats">
+        <div style="display:flex;gap:12px;margin-bottom:14px">
+          <select class="finput" style="width:260px;padding:8px 12px;font-size:.8125rem"><option>T-001 · Kampala → Nairobi · 08:00</option><option>T-002 · Kampala → Gulu · 06:00</option><option>T-003 · Kampala → Mbale · 14:00</option></select>
+          <button class="btn btn-outline">Refresh</button>
+        </div>
+        <div class="two-col">
+          <div class="card">
+            <div class="card-hd"><span class="card-title">Seat Map — UAM 123K Coach</span><span class="chip chip-green">Live Trip</span></div>
+            <div style="padding:16px">
+              <div style="text-align:center;margin-bottom:10px">
+                <span style="display:inline-block;background:var(--n800);color:var(--g400);font-family:'Sora',sans-serif;font-size:.6875rem;font-weight:700;padding:4px 18px;border-radius:50px">🚌 Front (Right-Hand Drive)</span>
+              </div>
+              <div class="seat-map" id="seatMap"></div>
+              <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:10px">
+                <div style="display:flex;align-items:center;gap:5px;font-size:.6875rem;color:var(--muted)"><div style="width:14px;height:12px;border-radius:4px;background:#fff;border:1.5px solid var(--border)"></div>Available</div>
+                <div style="display:flex;align-items:center;gap:5px;font-size:.6875rem;color:var(--muted)"><div style="width:14px;height:12px;border-radius:4px;background:var(--n50);border:1.5px solid var(--n100)"></div>Booked</div>
+                <div style="display:flex;align-items:center;gap:5px;font-size:.6875rem;color:var(--muted)"><div style="width:14px;height:12px;border-radius:4px;background:var(--n800);border:1.5px solid var(--n700)"></div>Driver</div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-hd"><span class="card-title">Occupancy Stats</span></div>
+            <div style="padding:16px 18px">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+                <div style="background:var(--bg);border-radius:10px;padding:12px;text-align:center"><div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.375rem;color:var(--n800)">38</div><div style="font-size:.6875rem;color:var(--muted);margin-top:2px">Booked</div></div>
+                <div style="background:var(--bg);border-radius:10px;padding:12px;text-align:center"><div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.375rem;color:var(--green)">12</div><div style="font-size:.6875rem;color:var(--muted);margin-top:2px">Available</div></div>
+                <div style="background:var(--bg);border-radius:10px;padding:12px;text-align:center"><div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.375rem;color:var(--n800)">76%</div><div style="font-size:.6875rem;color:var(--muted);margin-top:2px">Occupancy</div></div>
+                <div style="background:var(--bg);border-radius:10px;padding:12px;text-align:center"><div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.375rem;color:var(--amber)">4</div><div style="font-size:.6875rem;color:var(--muted);margin-top:2px">Locked</div></div>
+              </div>
+              <div style="height:8px;background:var(--border);border-radius:50px;overflow:hidden;margin-bottom:8px"><div style="width:76%;height:100%;background:var(--n800);border-radius:50px"></div></div>
+              <p style="font-size:.6875rem;color:var(--muted);margin-bottom:14px">4 seats locked pending payment (auto-release in 3 min)</p>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <button class="btn btn-outline" style="justify-content:center;font-size:.75rem">Release Locked Seats</button>
+                <button class="btn btn-gold" style="justify-content:center;font-size:.75rem">Manual Assign</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ PARCELS ═══ -->
+      <div class="view" id="v-parcels">
+        <div class="kpi-grid" style="margin-bottom:14px">
+          <div class="kpi"><div class="kpi-lbl">Parcels Today</div><div class="kpi-val">24</div><div class="kpi-sub up">↑ 6%</div></div>
+          <div class="kpi"><div class="kpi-lbl">In Transit</div><div class="kpi-val" style="color:var(--amber)">14</div><div class="kpi-sub neutral">On your buses</div></div>
+          <div class="kpi"><div class="kpi-lbl">Delivered</div><div class="kpi-val" style="color:var(--green)">10</div><div class="kpi-sub up">100% on time</div></div>
+          <div class="kpi"><div class="kpi-lbl">Parcel Revenue</div><div class="kpi-val" style="font-size:1.1rem">UGX 420K</div><div class="kpi-sub neutral">Today</div></div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><span class="card-title">Parcel Manifest</span><button class="btn btn-dark">+ Add Parcel</button></div>
+          <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Ref</th><th>Sender</th><th>Recipient</th><th>Route</th><th>Weight</th><th>Bus</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td class="td-m">PAR-001</td><td class="td-p">John D.</td><td>Mary K.</td><td>Kampala → Nairobi</td><td>3 kg</td><td class="td-m">T-001</td><td><span class="chip chip-blue">In Transit</span></td></tr>
+            <tr><td class="td-m">PAR-002</td><td class="td-p">Sarah M.</td><td>David O.</td><td>Kampala → Gulu</td><td>1.5 kg</td><td class="td-m">T-002</td><td><span class="chip chip-green">Delivered</span></td></tr>
+          </tbody></table></div>
+        </div>
+      </div>
+
+      <!-- ═══ FINANCIALS (PREMIUM) ═══ -->
+      <div class="view" id="v-financials">
+        <div class="premium-lock">
+          <div class="pl-icon">💰</div>
+          <div class="pl-title">Financials — Premium Module</div>
+          <div class="pl-sub">Track income, expenses, vendor payments, fuel costs, loans, and generate financial statements. Upgrade to Premium to unlock.</div>
+          <button class="btn btn-gold" style="font-size:.875rem;padding:10px 24px">Upgrade to Premium — Request Access</button>
+        </div>
+      </div>
+
+      <!-- ═══ FLEET (PREMIUM) ═══ -->
+      <div class="view" id="v-fleet">
+        <div class="premium-lock">
+          <div class="pl-icon">🚌</div>
+          <div class="pl-title">Fleet & Drivers — Premium Module</div>
+          <div class="pl-sub">Manage vehicles, assign drivers, track maintenance, fuel logs, and monitor your entire fleet in real time.</div>
+          <button class="btn btn-gold" style="font-size:.875rem;padding:10px 24px">Request Premium Access</button>
+        </div>
+      </div>
+
+      <!-- ═══ ANALYTICS (PREMIUM) ═══ -->
+      <div class="view" id="v-analytics">
+        <div class="premium-lock">
+          <div class="pl-icon">📊</div>
+          <div class="pl-title">Analytics — Premium Module</div>
+          <div class="pl-sub">Route performance heatmaps, demand forecasting, passenger behaviour, competitor benchmarking, and custom reports.</div>
+          <button class="btn btn-gold" style="font-size:.875rem;padding:10px 24px">Request Premium Access</button>
+        </div>
+      </div>
+
+      <!-- ═══ SETTINGS ═══ -->
+      <div class="view" id="v-settings">
+        <div class="two-col">
+          <div class="card">
+            <div class="card-hd"><span class="card-title">Business Profile</span><button class="btn btn-dark">Save</button></div>
+            <div style="padding:18px;display:flex;flex-direction:column;gap:13px">
+              <div class="fgroup"><label class="flabel">Business Name</label><input type="text" class="finput" value="Gateway Bus Ltd"></div>
+              <div class="fgroup"><label class="flabel">Contact Email</label><input type="email" class="finput" value="gateway@bus.com"></div>
+              <div class="fgroup"><label class="flabel">Phone Number</label><input type="tel" class="finput" value="+256 700 111 222"></div>
+              <div class="fgroup"><label class="flabel">Primary Routes</label><input type="text" class="finput" value="Kampala–Nairobi, Kampala–Gulu"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-hd"><span class="card-title">Notifications</span></div>
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 18px;border-bottom:1px solid var(--bg)"><div><div style="font-size:.875rem;font-weight:500;color:var(--n800)">New Booking SMS</div><div style="font-size:.6875rem;color:var(--muted)">SMS alert for each new booking</div></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 18px;border-bottom:1px solid var(--bg)"><div><div style="font-size:.875rem;font-weight:500;color:var(--n800)">Trip Approval Alerts</div><div style="font-size:.6875rem;color:var(--muted)">Notified when admin approves</div></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 18px;border-bottom:1px solid var(--bg)"><div><div style="font-size:.875rem;font-weight:500;color:var(--n800)">Payout Notifications</div><div style="font-size:.6875rem;color:var(--muted)">When payout is processed</div></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 18px"><div><div style="font-size:.875rem;font-weight:500;color:var(--n800)">Full Bus Auto-Alert</div><div style="font-size:.6875rem;color:var(--muted)">Alert when trip reaches capacity</div></div><button class="toggle" onclick="this.classList.toggle('on')"></button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /shell -->
+
+<script>
+const titles={dashboard:'Dashboard',trips:'My Trips','trips-create':'Create New Trip',bookings:'Bookings',seats:'Seat Manager',parcels:'Parcels',financials:'Financials',fleet:'Fleet & Drivers',analytics:'Analytics',settings:'Settings'};
+function sv(id,navEl){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  const el=document.getElementById('v-'+id);
+  if(el)el.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(navEl)navEl.classList.add('active');
+  document.getElementById('pt').textContent=titles[id]||id;
+}
+
+// Seat map
+(function(){
+  const map=document.getElementById('seatMap');
+  if(!map)return;
+  const booked=[2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,33,34,35,36,37,38];
+  for(let i=1;i<=44;i++){
+    const s=document.createElement('div');
+    s.className='seat';
+    if(i===1){s.classList.add('s-d');s.textContent='D'}
+    else if(booked.includes(i)){s.classList.add('s-s');s.textContent=i}
+    else{s.classList.add('s-a');s.textContent=i;s.onclick=()=>{s.style.background=s.style.background?'':'var(--g500)';s.style.borderColor=s.style.borderColor?'':'var(--g400)';s.style.color=s.style.color?'':'var(--n800)'}}
+    map.appendChild(s);
+  }
+})();
+</script>
+</body>
+</html>
