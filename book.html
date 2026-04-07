@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book a Trip — Raylane Express</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --n800:#0B1D45;--n700:#132359;--n600:#1E3A8A;--n400:#4A6199;--n100:#C8D0E4;--n50:#EEF1FB;
+  --g500:#F5A623;--g400:#FBBF24;--g100:#FDE68A;
+  --bg:#F4F6FB;--surface:#fff;--border:#E8EAEF;
+  --text:#111827;--text2:#4B5563;--muted:#9CA3AF;
+  --green:#16A34A;--amber:#D97706;--red:#B91C1C;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:'Sora',sans-serif}
+a{text-decoration:none;color:inherit}
+
+/* NAV */
+nav{background:var(--n800);padding:0 20px;height:62px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.nav-logo{display:flex;align-items:center;gap:8px}
+.logo-ic{width:34px;height:34px;background:var(--g500);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.logo-ic svg{width:18px;height:18px}
+.logo-txt{font-family:'Sora',sans-serif;font-size:.9375rem;font-weight:800;color:#fff}
+.logo-txt em{color:var(--g500);font-style:normal}
+.nav-back{display:flex;align-items:center;gap:6px;font-size:.875rem;color:rgba(255,255,255,.7);cursor:pointer;transition:color .2s}
+.nav-back:hover{color:#fff}
+.nav-back svg{width:16px;height:16px}
+
+/* STEPS */
+.steps-bar{background:#fff;border-bottom:1px solid var(--border);padding:0 20px}
+.steps-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;height:52px;gap:4px}
+.step{display:flex;align-items:center;gap:8px;padding:0 12px;font-size:.8125rem;font-weight:500;color:var(--muted);flex-shrink:0}
+.step-num{width:24px;height:24px;border-radius:50%;background:var(--border);color:var(--muted);font-family:'Sora',sans-serif;font-size:.6875rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step.active .step-num{background:var(--n800);color:#fff}
+.step.done .step-num{background:var(--green);color:#fff}
+.step.active{color:var(--n800);font-weight:600}
+.step.done{color:var(--green)}
+.step-div{flex:1;height:1px;background:var(--border);min-width:16px}
+.step-div.done{background:var(--green)}
+
+/* MAIN LAYOUT */
+.page{max-width:900px;margin:0 auto;padding:24px 20px 60px;display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start}
+@media(max-width:700px){.page{grid-template-columns:1fr}}
+
+/* SEARCH SUMMARY BAR */
+.search-bar{max-width:900px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.sb-route{font-family:'Sora',sans-serif;font-weight:700;color:var(--n800);font-size:.9375rem;display:flex;align-items:center;gap:8px}
+.sb-arrow{color:var(--g500)}
+.sb-chip{background:#fff;border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:.8125rem;color:var(--text2);cursor:pointer;transition:border-color .2s}
+.sb-chip:hover{border-color:var(--n200)}
+.sb-edit{margin-left:auto;font-size:.8125rem;font-weight:600;color:var(--n600);cursor:pointer}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:12px}
+.card-hd{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-family:'Sora',sans-serif;font-size:.9375rem;font-weight:700;color:var(--n800)}
+
+/* TRIP RESULTS */
+.trip-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:10px;transition:all .25s;cursor:pointer}
+.trip-card:hover{border-color:rgba(245,166,35,.4);box-shadow:0 4px 20px rgba(11,29,69,.1);transform:translateY(-2px)}
+.trip-card.selected{border-color:var(--g500);box-shadow:0 0 0 3px rgba(245,166,35,.15)}
+.trip-card.raylane-fleet{border-color:rgba(245,166,35,.3);background:linear-gradient(to right,rgba(245,166,35,.03),#fff)}
+.trip-card.raylane-fleet:hover{border-color:rgba(245,166,35,.6);box-shadow:0 4px 24px rgba(245,166,35,.15),0 4px 20px rgba(11,29,69,.08)}
+.op-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.op-av{width:34px;height:34px;background:var(--n800);border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-size:.625rem;font-weight:700;color:var(--g400);flex-shrink:0}
+.op-name{font-family:'Sora',sans-serif;font-weight:700;color:var(--n800);font-size:.875rem}
+.op-meta{display:flex;align-items:center;gap:6px;margin-top:2px}
+.stars-sm{font-size:.6875rem;color:var(--g500)}
+.op-rating{font-size:.6875rem;color:var(--muted)}
+.route-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.time-big{font-family:'Sora',sans-serif;font-size:1.5rem;font-weight:800;color:var(--n800);line-height:1}
+.city-sm{font-size:.75rem;color:var(--muted);margin-top:2px}
+.route-mid{flex:1;text-align:center}
+.duration{font-size:.6875rem;color:var(--muted);margin-bottom:4px}
+.route-line{display:flex;align-items:center;gap:4px}
+.r-dot{width:8px;height:8px;border-radius:50%;border:2px solid var(--n400);background:#fff;flex-shrink:0}
+.r-line{flex:1;height:1px;background:var(--n100)}
+.r-arrow{color:var(--g500);font-size:.6875rem}
+.amenities{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.amen{font-size:.6875rem;color:var(--text2);background:var(--bg);border:1px solid var(--border);padding:3px 8px;border-radius:6px}
+.trip-footer{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.seat-info{font-size:.75rem;font-weight:700}
+.seat-hot{color:var(--red)}.seat-ok{color:var(--green)}
+.price-area{text-align:right}
+.price-main{font-family:'Sora',sans-serif;font-size:1.375rem;font-weight:800;color:var(--n800)}
+.price-sub{font-size:.6875rem;color:var(--muted)}
+.btn-select{background:var(--n800);color:#fff;font-family:'Sora',sans-serif;font-weight:700;font-size:.875rem;padding:10px 20px;border-radius:10px;border:none;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-select:hover{background:var(--n700)}
+.btn-select.sel{background:var(--g500);color:var(--n800)}
+
+/* SEAT MAP PAGE */
+.seat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:200px;margin:16px auto}
+.seat{width:42px;height:38px;border-radius:9px;border:2px solid;display:flex;align-items:center;justify-content:center;font-size:.6875rem;font-weight:700;font-family:'Sora',sans-serif;cursor:pointer;transition:all .15s}
+.s-a{background:#fff;border-color:var(--border);color:var(--muted)}.s-a:hover{border-color:var(--g500);background:#FEF9EC;color:var(--n800)}
+.s-x{background:var(--n50);border-color:var(--n100);color:var(--muted);cursor:not-allowed}
+.s-y{background:var(--g500);border-color:var(--g400);color:var(--n800)}
+.s-d{background:var(--n800);border-color:var(--n700);color:var(--g400);cursor:not-allowed}
+
+/* PAYMENT */
+.pay-method{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.pm{border:2px solid var(--border);border-radius:11px;padding:13px;text-align:left;cursor:pointer;transition:all .2s;background:#fff}
+.pm:hover{border-color:var(--n200)}
+.pm.active{border-color:var(--n600);background:var(--n50)}
+.pm-icon{font-size:1.25rem;display:block;margin-bottom:4px}
+.pm-label{font-family:'Sora',sans-serif;font-size:.75rem;font-weight:700;color:var(--n800)}
+
+/* TICKET */
+.ticket{background:var(--surface);border-radius:20px;overflow:hidden;box-shadow:0 8px 40px rgba(11,29,69,.18)}
+.ticket-hd{background:var(--n800);padding:20px 24px}
+.ticket-ref{font-family:'Sora',sans-serif;font-size:1.375rem;font-weight:800;color:var(--g500);letter-spacing:.05em}
+.ticket-body{padding:20px 24px}
+.t-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--bg)}
+.t-row:last-of-type{border-bottom:none}
+.t-lbl{font-size:.75rem;color:var(--muted)}
+.t-val{font-family:'Sora',sans-serif;font-weight:700;color:var(--n800);font-size:.875rem}
+.qr-area{padding:20px;border-top:2px dashed var(--border);display:flex;flex-direction:column;align-items:center;gap:8px}
+.qr{width:120px;height:120px;display:grid;grid-template-columns:repeat(9,1fr);gap:1px}
+.qr-cell{border-radius:1px}
+
+/* SUMMARY SIDEBAR */
+.summary{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px;position:sticky;top:76px}
+.sum-title{font-family:'Sora',sans-serif;font-size:.875rem;font-weight:700;color:var(--n800);margin-bottom:14px}
+.sum-row{display:flex;justify-content:space-between;font-size:.8125rem;padding:6px 0;border-bottom:1px solid var(--bg)}
+.sum-row:last-of-type{border-bottom:none}
+.sum-lbl{color:var(--muted)}
+.sum-val{font-weight:600;color:var(--n800)}
+.sum-total{display:flex;justify-content:space-between;font-family:'Sora',sans-serif;font-size:1rem;font-weight:800;color:var(--n800);padding:12px 0 0;border-top:2px solid var(--border);margin-top:8px}
+.sum-total span:last-child{color:var(--n800)}
+.sum-pay{display:flex;justify-content:space-between;margin-top:4px}
+.sum-pay-lbl{font-size:.75rem;color:var(--muted)}
+.sum-pay-val{font-size:.875rem;font-weight:700;color:var(--g500)}
+.btn-cta{width:100%;background:var(--g500);color:var(--n800);font-family:'Sora',sans-serif;font-weight:800;font-size:.9375rem;padding:13px;border-radius:11px;border:none;cursor:pointer;transition:all .25s;margin-top:14px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 16px rgba(245,166,35,.3)}
+.btn-cta:hover{background:var(--g400);transform:translateY(-2px);box-shadow:0 8px 24px rgba(245,166,35,.42)}
+.note{font-size:.6875rem;color:var(--muted);text-align:center;margin-top:8px;line-height:1.4}
+.note strong{color:var(--g500)}
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:.6875rem;font-weight:700;padding:3px 8px;border-radius:50px}
+.chip-green{background:#DCFCE7;color:var(--green);border:1px solid #BBF7D0}
+.chip-amber{background:#FEF3C7;color:var(--amber);border:1px solid #FDE68A}
+.chip-blue{background:#DBEAFE;color:var(--blue,#1D4ED8);border:1px solid #BFDBFE}
+
+/* FILTERS PANEL */
+.filter-panel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px}
+.filter-title{font-family:'Sora',sans-serif;font-size:.8125rem;font-weight:700;color:var(--n800);margin-bottom:10px}
+.filter-chips{display:flex;flex-wrap:wrap;gap:6px}
+.f-chip{font-size:.75rem;font-weight:600;padding:5px 12px;border-radius:50px;border:1.5px solid var(--border);background:#fff;color:var(--text2);cursor:pointer;transition:all .2s}
+.f-chip.active{border-color:var(--n600);background:var(--n50);color:var(--n800)}
+
+/* PAGE VIEWS */
+.view{display:none}.view.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.anim{animation:fadeUp .3s ease}
+
+/* PROGRESS SPINNER */
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{width:20px;height:20px;border:3px solid rgba(11,29,69,.2);border-top-color:var(--n800);border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class="logo-ic"><svg viewBox="0 0 24 24" fill="none"><path d="M3 12s4-6 9-6 9 6 9 6" stroke="#0B1D45" stroke-width="2.2" stroke-linecap="round"/><path d="M3 17h18" stroke="#0B1D45" stroke-width="2.2" stroke-linecap="round"/><circle cx="7.5" cy="19.5" r="2" fill="#0B1D45"/><circle cx="16.5" cy="19.5" r="2" fill="#0B1D45"/></svg></div>
+    <span class="logo-txt">Raylane <em>Express</em></span>
+  </a>
+  <div class="nav-back" onclick="window.location='index.html'">
+    <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd"/></svg>
+    Back to Home
+  </div>
+</nav>
+
+<!-- STEPS BAR -->
+<div class="steps-bar">
+  <div class="steps-inner" id="stepsBar">
+    <div class="step active" id="st0"><div class="step-num">1</div><span>Search Results</span></div>
+    <div class="step-div" id="sd0"></div>
+    <div class="step" id="st1"><div class="step-num">2</div><span>Select Seats</span></div>
+    <div class="step-div" id="sd1"></div>
+    <div class="step" id="st2"><div class="step-num">3</div><span>Payment</span></div>
+    <div class="step-div" id="sd2"></div>
+    <div class="step" id="st3"><div class="step-num">4</div><span>Your Ticket</span></div>
+  </div>
+</div>
+
+<!-- SEARCH SUMMARY BAR -->
+<div style="background:#fff;border-bottom:1px solid var(--border)">
+  <div class="search-bar">
+    <div class="sb-route">
+      <span>Kampala</span>
+      <svg class="sb-arrow" width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+      <span>Nairobi</span>
+    </div>
+    <div class="sb-chip">📅 Today, April 5</div>
+    <div class="sb-chip">🚌 Any Vehicle</div>
+    <div class="sb-chip">👤 1 Passenger</div>
+    <div class="sb-edit" onclick="window.location='index.html'">Edit Search ✎</div>
+  </div>
+</div>
+
+<!-- ═══ VIEW: SEARCH RESULTS ═══ -->
+<div class="view active anim" id="v-results">
+  <div style="max-width:900px;margin:0 auto;padding:20px 20px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+    <div style="font-size:.875rem;color:var(--muted);font-weight:500" id="tripCount">Searching...</div>
+    <div style="display:flex;gap:8px">
+      <select style="border:1px solid var(--border);border-radius:9px;padding:7px 12px;font-size:.8125rem;outline:none;background:#fff;color:var(--text2)">
+        <option>Sort: Earliest First</option>
+        <option>Sort: Cheapest First</option>
+        <option>Sort: Best Rated</option>
+      </select>
+    </div>
+  </div>
+  <div style="max-width:900px;margin:0 auto;padding:14px 20px;display:grid;grid-template-columns:1fr 280px;gap:16px;align-items:start">
+    <!-- Trip list -->
+    <div>
+      <!-- Filter chips -->
+      <div class="filter-panel">
+        <div class="filter-title">Vehicle Type</div>
+        <div class="filter-chips">
+          <button class="f-chip active">All</button>
+          <button class="f-chip">Taxi / Matatu</button>
+          <button class="f-chip">Minibus</button>
+          <button class="f-chip">Coach</button>
+        </div>
+      </div>
+
+      <!-- Skeleton loaders (shown briefly) -->
+      <div id="skeletons">
+        <div style="background:#fff;border-radius:14px;padding:18px;margin-bottom:10px;border:1px solid var(--border)">
+          <div style="height:14px;background:var(--bg);border-radius:8px;width:60%;margin-bottom:10px;animation:pulse 1.4s ease infinite"></div>
+          <div style="height:32px;background:var(--bg);border-radius:8px;margin-bottom:8px;animation:pulse 1.4s ease infinite"></div>
+          <div style="height:14px;background:var(--bg);border-radius:8px;width:40%;animation:pulse 1.4s ease infinite"></div>
+        </div>
+        <div style="background:#fff;border-radius:14px;padding:18px;margin-bottom:10px;border:1px solid var(--border)">
+          <div style="height:14px;background:var(--bg);border-radius:8px;width:55%;margin-bottom:10px;animation:pulse 1.4s ease .1s infinite"></div>
+          <div style="height:32px;background:var(--bg);border-radius:8px;margin-bottom:8px;animation:pulse 1.4s ease .1s infinite"></div>
+          <div style="height:14px;background:var(--bg);border-radius:8px;width:35%;animation:pulse 1.4s ease .1s infinite"></div>
+        </div>
+      </div>
+      <!-- Real results (hidden until loaded) -->
+      <div id="tripList" style="display:none"></div>
+    </div>
+
+    <!-- Filters sidebar -->
+    <div style="position:sticky;top:76px">
+      <div class="filter-panel" style="margin-bottom:12px">
+        <div class="filter-title">Price Range (UGX)</div>
+        <div style="display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);margin-bottom:6px"><span>0</span><span>200,000</span></div>
+        <input type="range" min="0" max="200000" value="200000" style="width:100%;accent-color:var(--n800)">
+        <div style="font-size:.75rem;font-weight:700;color:var(--n800);margin-top:4px">Up to UGX 200,000</div>
+      </div>
+      <div class="filter-panel" style="margin-bottom:12px">
+        <div class="filter-title">Departure Time</div>
+        <div class="filter-chips" style="flex-direction:column;gap:5px">
+          <button class="f-chip active" style="text-align:left">🌅 Early Morning (00:00–06:00)</button>
+          <button class="f-chip" style="text-align:left">☀️ Morning (06:00–12:00)</button>
+          <button class="f-chip" style="text-align:left">🌤 Afternoon (12:00–18:00)</button>
+          <button class="f-chip" style="text-align:left">🌙 Evening (18:00–24:00)</button>
+        </div>
+      </div>
+      <div class="filter-panel">
+        <div class="filter-title">Amenities</div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <label style="display:flex;align-items:center;gap:7px;font-size:.8125rem;color:var(--text2);cursor:pointer"><input type="checkbox" style="accent-color:var(--n600)"> WiFi</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:.8125rem;color:var(--text2);cursor:pointer"><input type="checkbox" checked style="accent-color:var(--n600)"> Air Conditioning</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:.8125rem;color:var(--text2);cursor:pointer"><input type="checkbox" style="accent-color:var(--n600)"> USB Charging</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:.8125rem;color:var(--text2);cursor:pointer"><input type="checkbox" style="accent-color:var(--n600)"> Meals</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Advance booking banner -->
+  <div style="max-width:900px;margin:0 auto;padding:0 20px 24px">
+    <div style="background:var(--n800);border-radius:14px;padding:18px 22px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+      <span style="font-size:1.5rem">📅</span>
+      <div style="flex:1">
+        <div style="font-family:'Sora',sans-serif;font-weight:700;color:#fff;font-size:.9375rem;margin-bottom:3px">Book up to 4 weeks in advance</div>
+        <div style="font-size:.8125rem;color:rgba(255,255,255,.55)">Pay just 20% commitment fee today. Balance due at departure. Seat guaranteed.</div>
+      </div>
+      <button style="background:var(--g500);color:var(--n800);font-family:'Sora',sans-serif;font-weight:700;font-size:.875rem;padding:10px 20px;border-radius:10px;border:none;cursor:pointer;white-space:nowrap;flex-shrink:0">Plan Ahead →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ VIEW: SEAT SELECTION ═══ -->
+<div class="view anim" id="v-seats">
+  <div class="page">
+    <div>
+      <div class="card">
+        <div class="card-hd">
+          <span class="card-title">Select Your Seat</span>
+          <span id="lockTimer" style="font-family:'Sora',sans-serif;font-size:.75rem;font-weight:700;color:var(--amber);background:var(--amber-bg)  ;border:1px solid #FDE68A;padding:4px 10px;border-radius:50px">⏱ 5:00</span>
+        </div>
+        <div style="padding:16px 18px">
+          <div style="text-align:center;margin-bottom:12px">
+            <span style="background:var(--n800);color:var(--g400);font-family:'Sora',sans-serif;font-size:.6875rem;font-weight:700;padding:5px 18px;border-radius:50px;display:inline-block">🚌 Front — Right-Hand Drive (Uganda)</span>
+          </div>
+          <div class="seat-grid" id="seatGrid"></div>
+          <div style="display:flex;gap:14px;justify-content:center;margin-top:12px;flex-wrap:wrap">
+            <div style="display:flex;align-items:center;gap:5px;font-size:.6875rem;color:var(--muted)"><div style="width:14px;height:12px;border-radius:4px;background:#fff;border:1.5px solid var(--border)"></div>Available</div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:.6875rem;color:var(--muted)"><div style="width:14px;height:12px;border-radius:4px;background:var(--g500);border:1.5px solid var(--g400)"></div>Selected</div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:.6875rem;color:var(--muted)"><div style="width:14px;height:12px;border-radius:4px;background:var(--n50);border:1.5px solid var(--n100)"></div>Taken</div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:.6875rem;color:var(--muted)"><div style="width:14px;height:12px;border-radius:4px;background:var(--n800);border:1.5px solid var(--n700)"></div>Driver</div>
+          </div>
+          <div id="seatMsg" style="display:none;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;padding:12px;margin-top:14px;font-size:.8125rem;color:#1D4ED8;text-align:center"></div>
+        </div>
+      </div>
+    </div>
+    <!-- Summary -->
+    <div>
+      <div class="summary">
+        <div class="sum-title">Booking Summary</div>
+        <div class="sum-row"><span class="sum-lbl">Route</span><span class="sum-val">Kampala → Nairobi</span></div>
+        <div class="sum-row"><span class="sum-lbl">Departure</span><span class="sum-val">Today 08:00</span></div>
+        <div class="sum-row"><span class="sum-lbl">Operator</span><span class="sum-val">Gateway Bus</span></div>
+        <div class="sum-row"><span class="sum-lbl">Selected Seat</span><span class="sum-val" id="seatSummary">—</span></div>
+        <div class="sum-row"><span class="sum-lbl">Price/seat</span><span class="sum-val">UGX 120,000</span></div>
+        <div class="sum-total"><span>Total</span><span id="totalAmt">UGX 0</span></div>
+        <div class="sum-pay">
+          <span class="sum-pay-lbl">Pay now (20%)</span>
+          <span class="sum-pay-val" id="commitAmt">UGX 0</span>
+        </div>
+        <button class="btn-cta" id="toPayBtn" disabled onclick="goStep(2)" style="opacity:.5;cursor:not-allowed">
+          Continue to Payment
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+        </button>
+        <div class="note">Seat locked for 5 min · Pay only <strong>20% now</strong></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ VIEW: PAYMENT ═══ -->
+<div class="view anim" id="v-payment">
+  <div class="page">
+    <div>
+      <div class="card">
+        <div class="card-hd"><span class="card-title">Choose Payment Method</span></div>
+        <div style="padding:18px">
+          <!-- Advance booking toggle -->
+          <div style="background:#FEF9EC;border:1.5px solid rgba(245,166,35,.3);border-radius:12px;padding:14px;margin-bottom:18px">
+            <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer">
+              <input type="checkbox" id="advanceToggle" style="margin-top:2px;accent-color:var(--n600);width:16px;height:16px;flex-shrink:0">
+              <div>
+                <div style="font-family:'Sora',sans-serif;font-weight:700;color:var(--n800);font-size:.9375rem;margin-bottom:3px">📅 Advance Booking — Pay 20% Now</div>
+                <div style="font-size:.8125rem;color:var(--text2);line-height:1.45">Lock your seat today. Pay remaining UGX 96,000 at the stage before departure.</div>
+                <div id="advanceDetails" style="display:none;margin-top:8px;font-size:.8125rem;font-weight:600;color:var(--green)">✓ Pay UGX 24,000 now · Balance UGX 96,000 at departure</div>
+              </div>
+            </label>
+          </div>
+
+          <div class="pay-method">
+            <button class="pm active" onclick="selPM(this)">
+              <span class="pm-icon">📱</span>
+              <span class="pm-label">MTN Mobile Money</span>
+            </button>
+            <button class="pm" onclick="selPM(this)">
+              <span class="pm-icon">📲</span>
+              <span class="pm-label">Airtel Money</span>
+            </button>
+            <button class="pm" onclick="selPM(this)">
+              <span class="pm-icon">🏦</span>
+              <span class="pm-label">Bank Transfer</span>
+            </button>
+            <button class="pm" onclick="selPM(this)">
+              <span class="pm-icon">💳</span>
+              <span class="pm-label">Visa / Mastercard</span>
+            </button>
+          </div>
+
+          <div id="momo-input">
+            <div style="margin-bottom:12px">
+              <label style="display:block;font-size:.875rem;font-weight:600;color:var(--n400);margin-bottom:5px">Mobile Number</label>
+              <input type="tel" id="phoneInput" placeholder="+256 7xx xxx xxx" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:11px;padding:12px 15px;font-size:.9375rem;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s" onfocus="this.style.borderColor='var(--n600)'" onblur="this.style.borderColor='var(--border)'">
+              <div style="font-size:.6875rem;color:var(--muted);margin-top:5px">A payment prompt will be sent to this number.</div>
+            </div>
+          </div>
+
+          <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px;font-size:.8125rem;color:var(--text2);display:flex;gap:8px">
+            <span>🔒</span>
+            <span>Payments are verified via API. Your booking is confirmed instantly once payment is received. Seat remains locked during payment.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="summary">
+        <div class="sum-title">Payment Summary</div>
+        <div class="sum-row"><span class="sum-lbl">Route</span><span class="sum-val">Kampala → Nairobi</span></div>
+        <div class="sum-row"><span class="sum-lbl">Seat</span><span class="sum-val" id="paymentSeat">14A</span></div>
+        <div class="sum-row"><span class="sum-lbl">Fare</span><span class="sum-val">UGX 120,000</span></div>
+        <div class="sum-row" id="commitRow" style="display:none"><span class="sum-lbl">Commitment (20%)</span><span class="sum-val" style="color:var(--g500)">UGX 24,000</span></div>
+        <div class="sum-row" id="balanceRow" style="display:none"><span class="sum-lbl">Balance at departure</span><span class="sum-val" style="color:var(--green)">UGX 96,000</span></div>
+        <div class="sum-total"><span>Pay Now</span><span id="payNowAmt">UGX 120,000</span></div>
+        <button class="btn-cta" id="payBtn" onclick="processPayment()">
+          Pay UGX 120,000
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>
+        </button>
+        <div class="note">🔒 256-bit SSL encrypted</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ VIEW: TICKET ═══ -->
+<div class="view anim" id="v-ticket">
+  <div style="max-width:540px;margin:0 auto;padding:28px 20px 60px">
+    <!-- Success header -->
+    <div style="text-align:center;margin-bottom:28px">
+      <div style="width:72px;height:72px;background:#DCFCE7;border:3px solid #BBF7D0;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
+        <svg width="36" height="36" viewBox="0 0 36 36" fill="none"><path d="M7 18l8 8 14-14" stroke="#16A34A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h2 style="font-family:'Sora',sans-serif;font-size:1.5rem;font-weight:800;color:var(--n800);margin-bottom:6px">Booking Confirmed!</h2>
+      <p style="font-size:.9375rem;color:var(--text2)">Your e-ticket has been sent to your phone via SMS.</p>
+    </div>
+
+    <!-- Ticket card -->
+    <div class="ticket">
+      <div class="ticket-hd">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <div>
+            <div style="font-size:.6875rem;color:rgba(255,255,255,.45);font-weight:600;margin-bottom:3px">BOOKING REFERENCE</div>
+            <div class="ticket-ref" id="ticketRef">RL-A7B3C2</div>
+          </div>
+          <div style="width:40px;height:40px;background:var(--g500);border-radius:10px;display:flex;align-items:center;justify-content:center">
+            <svg viewBox="0 0 24 24" fill="none" width="22" height="22"><path d="M3 12s4-6 9-6 9 6 9 6" stroke="#0B1D45" stroke-width="2.2" stroke-linecap="round"/><path d="M3 17h18" stroke="#0B1D45" stroke-width="2.2" stroke-linecap="round"/><circle cx="7.5" cy="19.5" r="2" fill="#0B1D45"/><circle cx="16.5" cy="19.5" r="2" fill="#0B1D45"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Route -->
+      <div style="padding:20px 24px 0;border-bottom:2px dashed var(--border)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div>
+            <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:2rem;color:var(--n800);line-height:1">08:00</div>
+            <div style="font-size:.75rem;font-weight:600;color:var(--text2);margin-top:3px">Kampala</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:.6875rem;color:var(--muted);margin-bottom:6px">10 hrs</div>
+            <svg width="40" height="12" viewBox="0 0 40 12" fill="none"><path d="M0 6h36M28 1l6 5-6 5" stroke="var(--g500)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div style="font-size:.625rem;color:var(--muted);margin-top:4px">Coach</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:2rem;color:var(--n800);line-height:1">18:00</div>
+            <div style="font-size:.75rem;font-weight:600;color:var(--text2);margin-top:3px">Nairobi</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Details -->
+      <div class="ticket-body">
+        <div class="t-row"><span class="t-lbl">Operator</span><span class="t-val">Gateway Bus Ltd</span></div>
+        <div class="t-row"><span class="t-lbl">Seat Number</span><span class="t-val" id="ticketSeat">14A</span></div>
+        <div class="t-row"><span class="t-lbl">Vehicle</span><span class="t-val">Coach · UAM 123K</span></div>
+        <div class="t-row"><span class="t-lbl">Date</span><span class="t-val">Saturday, April 5 2026</span></div>
+        <div class="t-row"><span class="t-lbl">Status</span><span class="t-val"><span class="chip chip-green">✓ Confirmed</span></span></div>
+      </div>
+
+      <!-- QR Code -->
+      <div class="qr-area">
+        <div class="qr" id="qrCode"></div>
+        <div style="font-size:.6875rem;color:var(--muted);text-align:center">Scan at boarding · Seat auto-marked as boarded</div>
+      </div>
+
+      <!-- Balance notice -->
+      <div style="margin:0 16px 16px;background:var(--amber-bg);border:1px solid var(--amber-b);border-radius:10px;padding:12px;text-align:center">
+        <div style="font-family:'Sora',sans-serif;font-size:.875rem;font-weight:700;color:var(--amber)">Balance due at departure</div>
+        <div style="font-size:1.125rem;font-weight:800;color:var(--n800);font-family:'Sora',sans-serif;margin-top:3px">UGX 96,000</div>
+        <div style="font-size:.6875rem;color:var(--text2);margin-top:3px">Pay via Mobile Money or cash at the stage</div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px">
+      <button onclick="window.print()" style="background:#fff;border:1.5px solid var(--border);color:var(--n800);font-family:'Sora',sans-serif;font-weight:700;font-size:.875rem;padding:12px;border-radius:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:all .2s">
+        🖨️ Print Ticket
+      </button>
+      <button onclick="window.location='index.html'" style="background:var(--n800);color:#fff;font-family:'Sora',sans-serif;font-weight:700;font-size:.875rem;padding:12px;border-radius:11px;border:none;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:7px">
+        Back to Home
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+</style>
+
+<script>
+// TRIPS DATA
+// Smart Priority Engine — Raylane Fleet always first, then top-rated, then cheapest
+// operator_type: 'RAYLANE' | 'THIRD_PARTY'  |  is_raylane_fleet: true = no commission, auto-approved
+const TRIPS=[
+  {id:'t0',op:'Raylane Express',opCode:'RL',dep:'07:30',arr:'17:30',dur:'10h',price:115000,seats:14,total:67,vehicle:'Coach 67',rating:5.0,amenities:['WiFi','AC','USB','Meals'],operator_type:'RAYLANE',is_raylane_fleet:true,priority:1},
+  {id:'t1',op:'Gateway Bus',opCode:'GB',dep:'08:00',arr:'18:00',dur:'10h',price:120000,seats:12,total:50,vehicle:'Coach',rating:4.8,amenities:['WiFi','AC','USB','Meals'],operator_type:'THIRD_PARTY',priority:2},
+  {id:'t4',op:'Safe Rider',opCode:'SR',dep:'14:00',arr:'00:00',dur:'10h',price:130000,seats:6,total:50,vehicle:'Coach',rating:4.9,amenities:['WiFi','AC','USB','Meals'],operator_type:'THIRD_PARTY',priority:3},
+  {id:'t2',op:'Kampala Coach',opCode:'KC',dep:'09:30',arr:'20:00',dur:'10.5h',price:110000,seats:4,total:45,vehicle:'Coach',rating:4.6,amenities:['AC','USB'],operator_type:'THIRD_PARTY',priority:4},
+  {id:'t3',op:'Link Express',opCode:'LE',dep:'06:00',arr:'16:00',dur:'10h',price:95000,seats:18,total:18,vehicle:'Minibus',rating:4.4,amenities:['AC'],operator_type:'THIRD_PARTY',priority:5},
+].sort((a,b)=>a.priority-b.priority);
+
+let selectedTrip=null, selectedSeat=null;
+let timerInterval=null, secs=300;
+
+// Step management
+const steps=['results','seats','payment','ticket'];
+let curStep=0;
+
+function goStep(n){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('v-'+steps[n]).classList.add('active');
+  curStep=n;
+  updateSteps();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function updateSteps(){
+  ['st0','st1','st2','st3'].forEach((id,i)=>{
+    const el=document.getElementById(id);
+    const div=document.getElementById('sd'+i);
+    el.className='step';
+    if(i<curStep){el.classList.add('done');if(div)div.classList.add('done')}
+    else if(i===curStep){el.classList.add('active')}
+    if(div)div.classList[i<curStep?'add':'remove']('done');
+  });
+}
+
+// Load trips
+setTimeout(()=>{
+  document.getElementById('skeletons').style.display='none';
+  const list=document.getElementById('tripList');
+  list.style.display='block';
+  document.getElementById('tripCount').textContent=TRIPS.length+' trips found — Kampala → Nairobi · Today';
+  TRIPS.forEach(t=>{
+    const d=document.createElement('div');
+    d.className='trip-card'+(t.is_raylane_fleet?' raylane-fleet':'');
+    const urgent=t.seats<=5;
+    // Priority badge logic
+    const isRaylane = t.operator_type === 'RAYLANE';
+    const priorityBadge = isRaylane
+      ? `<span style="display:inline-flex;align-items:center;gap:4px;font-family:'Sora',sans-serif;font-size:.5625rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;background:rgba(245,166,35,.18);border:1px solid rgba(245,166,35,.4);color:var(--g500);padding:3px 8px;border-radius:50px">⭐ Raylane Fleet · Best Match</span>`
+      : '';
+    const avBorder = isRaylane ? 'background:var(--g500);color:var(--n800)' : '';
+    d.innerHTML=`
+      <div class="op-row">
+        <div class="op-av" style="${avBorder}">${t.opCode}</div>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <div class="op-name">${t.op}</div>
+            ${priorityBadge}
+          </div>
+          <div class="op-meta">
+            <span class="stars-sm">${'★'.repeat(Math.floor(t.rating))}</span>
+            <span class="op-rating">${t.rating} · ${t.vehicle}</span>
+            ${isRaylane ? '<span style="font-size:.625rem;color:var(--green);font-weight:700">✓ No extra fees</span>' : ''}
+          </div>
+        </div>
+      </div>
+      <div class="route-row">
+        <div><div class="time-big">${t.dep}</div><div class="city-sm">Kampala</div></div>
+        <div class="route-mid">
+          <div class="duration">${t.dur}</div>
+          <div class="route-line"><div class="r-dot"></div><div class="r-line"></div><div class="r-arrow">→</div><div class="r-line"></div><div class="r-dot"></div></div>
+        </div>
+        <div style="text-align:right"><div class="time-big">${t.arr}</div><div class="city-sm">Nairobi</div></div>
+      </div>
+      <div class="amenities">${t.amenities.map(a=>`<span class="amen">${a}</span>`).join('')}</div>
+      <div class="trip-footer">
+        <span class="seat-info ${urgent?'seat-hot':'seat-ok'}">${urgent?'🔥':'✓'} ${t.seats} seat${t.seats>1?'s':''} left</span>
+        <div style="display:flex;align-items:center;gap:14px">
+          <div class="price-area">
+            <div class="price-main">UGX ${t.price.toLocaleString()}</div>
+            <div class="price-sub">per person</div>
+          </div>
+          <button class="btn-select" onclick="selectTrip(event,'${t.id}',this)">Select</button>
+        </div>
+      </div>
+    `;
+    list.appendChild(d);
+  });
+},1100);
+
+function selectTrip(e,id,btn){
+  selectedTrip=TRIPS.find(t=>t.id===id);
+  document.querySelectorAll('.trip-card').forEach(c=>c.classList.remove('selected'));
+  document.querySelectorAll('.btn-select').forEach(b=>{b.textContent='Select';b.classList.remove('sel')});
+  btn.closest('.trip-card').classList.add('selected');
+  btn.textContent='Selected ✓';btn.classList.add('sel');
+  setTimeout(()=>goStep(1),500);
+}
+
+// Seat map
+(function(){
+  const g=document.getElementById('seatGrid');
+  if(!g)return;
+  const booked=[2,4,6,8,10,12,14,16,18,22,24,26,28,30,32,33,34,35,36];
+  for(let i=1;i<=44;i++){
+    const s=document.createElement('div');s.className='seat';
+    if(i===1){s.classList.add('s-d');s.textContent='D'}
+    else if(booked.includes(i)){s.classList.add('s-x');s.textContent=i}
+    else{
+      s.classList.add('s-a');s.textContent=i;
+      s.onclick=()=>{
+        document.querySelectorAll('.seat.s-y').forEach(x=>{x.className='seat s-a';x.style.cssText=''});
+        s.className='seat s-y';
+        selectedSeat=i;
+        document.getElementById('seatSummary').textContent='Seat '+i;
+        document.getElementById('totalAmt').textContent='UGX '+(120000).toLocaleString();
+        document.getElementById('commitAmt').textContent='UGX '+(24000).toLocaleString();
+        const btn=document.getElementById('toPayBtn');
+        btn.disabled=false;btn.style.opacity='1';btn.style.cursor='pointer';
+        const msg=document.getElementById('seatMsg');
+        msg.style.display='block';msg.textContent='Seat '+i+' selected and locked. Continue to payment within 5 minutes.';
+        startTimer();
+        document.getElementById('paymentSeat').textContent='Seat '+i;
+        document.getElementById('ticketSeat').textContent='Seat '+i;
+      };
+    }
+    g.appendChild(s);
+  }
+})();
+
+function startTimer(){
+  clearInterval(timerInterval);secs=300;
+  timerInterval=setInterval(()=>{
+    secs--;
+    const m=Math.floor(secs/60),s=secs%60;
+    document.getElementById('lockTimer').textContent='⏱ '+m+':'+(s<10?'0':'')+s;
+    if(secs<=0){clearInterval(timerInterval);document.getElementById('lockTimer').textContent='⏱ Expired'}
+  },1000);
+}
+
+// Payment
+document.getElementById('advanceToggle').addEventListener('change',function(){
+  const ad=document.getElementById('advanceDetails');
+  const cr=document.getElementById('commitRow');
+  const br=document.getElementById('balanceRow');
+  const btn=document.getElementById('payBtn');
+  const amt=document.getElementById('payNowAmt');
+  if(this.checked){
+    ad.style.display='block';cr.style.display='flex';br.style.display='flex';
+    btn.textContent='Pay UGX 24,000 (20%)';btn.innerHTML='Pay UGX 24,000 Now <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>';
+    amt.textContent='UGX 24,000';
+  } else {
+    ad.style.display='none';cr.style.display='none';br.style.display='none';
+    amt.textContent='UGX 120,000';
+    btn.innerHTML='Pay UGX 120,000 <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>';
+  }
+});
+
+function selPM(el){document.querySelectorAll('.pm').forEach(p=>p.classList.remove('active'));el.classList.add('active')}
+
+let paying=false;
+function processPayment(){
+  if(paying)return;
+  const phone=document.getElementById('phoneInput').value;
+  if(!phone){document.getElementById('phoneInput').style.borderColor='var(--red)';return}
+  paying=true;
+  const btn=document.getElementById('payBtn');
+  btn.innerHTML='<span class="spinner"></span> Processing payment...';
+  btn.disabled=true;
+  // Simulate API verification
+  setTimeout(()=>{
+    const ref='RL-'+Math.random().toString(36).substr(2,6).toUpperCase();
+    document.getElementById('ticketRef').textContent=ref;
+    // Generate QR
+    const qr=document.getElementById('qrCode');
+    qr.innerHTML='';
+    for(let i=0;i<81;i++){
+      const c=document.createElement('div');c.className='qr-cell';
+      c.style.background=Math.random()>.45?'#0B1D45':'transparent';
+      qr.appendChild(c);
+    }
+    clearInterval(timerInterval);
+    goStep(3);
+  },2200);
+}
+
+// F-chip toggle
+document.querySelectorAll('.f-chip').forEach(c=>{
+  c.addEventListener('click',()=>{
+    c.closest('.filter-chips').querySelectorAll('.f-chip').forEach(x=>x.classList.remove('active'));
+    c.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

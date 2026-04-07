@@ -1,0 +1,319 @@
+{
+  "_comment": "Raylane Express — Backend API Schema v1.0",
+  "_stack": "Node.js + Express + PostgreSQL + Redis + Africa's Talking SMS",
+
+  "data_models": {
+
+    "Operator": {
+      "id": "uuid",
+      "name": "string",
+      "email": "string",
+      "phone": "string",
+      "registration_number": "string",
+      "operator_type": "'RAYLANE' | 'THIRD_PARTY'",
+      "is_raylane_fleet": "boolean — true = no commission, auto-approved, priority listed",
+      "status": "'pending' | 'active' | 'suspended'",
+      "commission_rate": "number — default 0.10 (10%), 0 for RAYLANE",
+      "modules_enabled": ["trips","bookings","seats","parcels","financials","fleet","analytics","hr"],
+      "priority_boost": "boolean — listed first in search if true",
+      "created_at": "timestamp"
+    },
+
+    "Vehicle": {
+      "id": "uuid",
+      "operator_id": "uuid FK → Operator",
+      "plate": "string",
+      "type": "'TAXI_14' | 'MINIBUS_22' | 'COACH_55' | 'COACH_65' | 'COACH_67'",
+      "seats": "number — 14 | 22 | 55 | 65 | 67",
+      "make_model": "string",
+      "year": "number",
+      "is_raylane_fleet": "boolean",
+      "maintenance_status": "'ok' | 'scheduled' | 'in_maintenance'",
+      "created_at": "timestamp"
+    },
+
+    "Driver": {
+      "id": "uuid",
+      "operator_id": "uuid FK → Operator",
+      "name": "string",
+      "phone": "string",
+      "license_number": "string",
+      "rating": "number",
+      "status": "'available' | 'on_trip' | 'off_duty'",
+      "created_at": "timestamp"
+    },
+
+    "Trip": {
+      "id": "uuid",
+      "operator_id": "uuid FK → Operator",
+      "vehicle_id": "uuid FK → Vehicle",
+      "driver_id": "uuid FK → Driver",
+      "from_city": "string",
+      "to_city": "string",
+      "departure_time": "timestamp",
+      "arrival_time_estimate": "timestamp",
+      "price": "number — UGX",
+      "total_seats": "number",
+      "booked_seats": "number",
+      "status": "'pending' | 'approved' | 'live' | 'departed' | 'cancelled'",
+      "auto_approved": "boolean — true if operator is RAYLANE",
+      "amenities": ["wifi","ac","usb","meals"],
+      "priority_score": "number — Raylane=1, top-rated=2, cheapest=3",
+      "created_at": "timestamp"
+    },
+
+    "Seat": {
+      "trip_id": "uuid FK → Trip",
+      "seat_number": "number — 1..67",
+      "status": "'available' | 'locked' | 'booked'",
+      "locked_until": "timestamp — Redis TTL: 5 minutes",
+      "booking_id": "uuid FK → Booking | null"
+    },
+
+    "Booking": {
+      "id": "uuid",
+      "reference": "string — RL-XXXXXX",
+      "trip_id": "uuid FK → Trip",
+      "passenger_name": "string",
+      "passenger_phone": "string",
+      "seat_numbers": ["number"],
+      "type": "'standard' | 'advance' | 'group' | 'charter'",
+      "total_amount": "number — UGX",
+      "commitment_paid": "number — 20% if advance",
+      "balance_due": "number — 80% at departure",
+      "payment_status": "'pending' | 'partial' | 'paid' | 'refunded'",
+      "booking_status": "'confirmed' | 'cancelled' | 'no_show' | 'boarded'",
+      "is_advance": "boolean",
+      "advance_weeks_ahead": "number — max 4",
+      "created_at": "timestamp"
+    },
+
+    "Payment": {
+      "id": "uuid",
+      "booking_id": "uuid FK → Booking",
+      "amount": "number — UGX",
+      "method": "'MTN_MOMO' | 'AIRTEL_MONEY' | 'BANK_TRANSFER' | 'VISA' | 'MASTERCARD' | 'CASH'",
+      "phone_number": "string — for mobile money",
+      "provider_reference": "string — MoMo transaction ID",
+      "status": "'pending' | 'verified' | 'failed' | 'refunded'",
+      "created_at": "timestamp"
+    },
+
+    "Parcel": {
+      "id": "uuid",
+      "trip_id": "uuid FK → Trip",
+      "reference": "string — RL-PAR-XXXXXX",
+      "sender_name": "string",
+      "sender_phone": "string",
+      "recipient_name": "string",
+      "recipient_phone": "string",
+      "weight_kg": "number",
+      "declared_value": "number — UGX",
+      "fee": "number — UGX",
+      "status": "'received' | 'in_transit' | 'delivered' | 'returned'",
+      "created_at": "timestamp"
+    },
+
+    "Alert": {
+      "id": "uuid",
+      "type": "'PAYMENT_MISMATCH' | 'OVERBOOKING_RISK' | 'TRIP_PENDING' | 'OPERATOR_APPLICATION' | 'PAYOUT_READY' | 'TRIP_FULL' | 'CHARTER_REQUEST'",
+      "priority": "'URGENT' | 'ACTION_REQUIRED' | 'INFO'",
+      "message": "string",
+      "action_link": "string — e.g. /admin/trips/pending/123",
+      "action_label": "string — e.g. Approve Now",
+      "metadata": "object — extra context data",
+      "resolved": "boolean",
+      "resolved_by": "uuid FK → AdminUser | null",
+      "created_at": "timestamp"
+    },
+
+    "TouristDestination": {
+      "id": "uuid",
+      "name": "string",
+      "category": "'wildlife' | 'adventure' | 'scenic' | 'nature' | 'cultural'",
+      "description": "string",
+      "image_url": "string",
+      "from_city": "string",
+      "drive_time_hours": "number",
+      "travel_tips": ["string"],
+      "status": "'draft' | 'active'",
+      "created_at": "timestamp"
+    },
+
+    "ItineraryTemplate": {
+      "id": "uuid",
+      "name": "string",
+      "days": "number",
+      "destinations": ["string — ordered list of cities"],
+      "estimated_budget_ugx": "number",
+      "description": "string",
+      "usage_count": "number",
+      "created_at": "timestamp"
+    }
+  },
+
+  "api_endpoints": {
+
+    "public": {
+      "search_trips": {
+        "method": "GET",
+        "path": "/api/trips",
+        "query": { "from": "string", "to": "string", "date": "YYYY-MM-DD", "type": "optional vehicle type" },
+        "response_note": "Sorted by priority: RAYLANE fleet first, then top-rated, then cheapest",
+        "returns": ["Trip[]"]
+      },
+      "get_trip_seats": {
+        "method": "GET",
+        "path": "/api/trips/:id/seats",
+        "returns": ["Seat[]"]
+      },
+      "lock_seat": {
+        "method": "POST",
+        "path": "/api/trips/:id/seats/:seat/lock",
+        "note": "Redis: 5 min TTL. Returns 409 if already locked.",
+        "returns": { "locked_until": "timestamp" }
+      },
+      "create_booking": {
+        "method": "POST",
+        "path": "/api/bookings",
+        "body": { "trip_id": "uuid", "seat_numbers": "[number]", "passenger_name": "string", "passenger_phone": "string", "is_advance": "boolean" },
+        "returns": ["Booking"]
+      },
+      "initiate_payment": {
+        "method": "POST",
+        "path": "/api/payments/initiate",
+        "body": { "booking_id": "uuid", "method": "string", "phone": "string", "amount": "number" },
+        "note": "Sends MoMo prompt. Returns payment ID to poll.",
+        "returns": { "payment_id": "uuid", "status": "pending" }
+      },
+      "verify_payment": {
+        "method": "GET",
+        "path": "/api/payments/verify/:id",
+        "note": "Poll every 3s. Returns verified when MoMo confirms.",
+        "returns": { "status": "'pending'|'verified'|'failed'", "booking_reference": "string" }
+      },
+      "get_tourist_destinations": {
+        "method": "GET",
+        "path": "/api/tourist/destinations",
+        "returns": ["TouristDestination[]"]
+      },
+      "get_itinerary_templates": {
+        "method": "GET",
+        "path": "/api/tourist/itineraries",
+        "returns": ["ItineraryTemplate[]"]
+      }
+    },
+
+    "operator": {
+      "note": "All endpoints require: Authorization: Bearer <operator_jwt>",
+      "list_my_trips": { "method": "GET", "path": "/api/operator/trips" },
+      "create_trip": {
+        "method": "POST",
+        "path": "/api/operator/trips",
+        "note": "If operator.is_raylane_fleet=true → auto-approved. Else → status=pending",
+        "body": { "vehicle_id": "uuid", "driver_id": "uuid", "from_city": "string", "to_city": "string", "departure_time": "timestamp", "price": "number", "amenities": "[string]" }
+      },
+      "get_my_bookings": { "method": "GET", "path": "/api/operator/bookings" },
+      "get_seat_map": { "method": "GET", "path": "/api/operator/trips/:id/seats" },
+      "list_parcels": { "method": "GET", "path": "/api/operator/parcels" },
+      "add_parcel": { "method": "POST", "path": "/api/operator/parcels" },
+      "get_financials": {
+        "method": "GET",
+        "path": "/api/operator/financials",
+        "note": "Premium module required. Returns P&L, expenses, payouts."
+      },
+      "list_fleet": { "method": "GET", "path": "/api/operator/fleet" },
+      "add_vehicle": { "method": "POST", "path": "/api/operator/fleet/vehicles" }
+    },
+
+    "admin": {
+      "note": "All endpoints require: Authorization: Bearer <admin_jwt>",
+      "get_alerts": {
+        "method": "GET",
+        "path": "/api/admin/alerts",
+        "query": { "priority": "optional filter", "resolved": "false" },
+        "returns": ["Alert[]"]
+      },
+      "resolve_alert": { "method": "POST", "path": "/api/admin/alerts/:id/resolve" },
+      "approve_trip": { "method": "POST", "path": "/api/admin/trips/:id/approve" },
+      "reject_trip": { "method": "POST", "path": "/api/admin/trips/:id/reject" },
+      "list_operators": { "method": "GET", "path": "/api/admin/operators" },
+      "approve_operator": { "method": "POST", "path": "/api/admin/operators/:id/approve" },
+      "reject_operator": { "method": "POST", "path": "/api/admin/operators/:id/reject" },
+      "process_payout": {
+        "method": "POST",
+        "path": "/api/admin/payouts/process",
+        "body": { "operator_ids": "[uuid]" },
+        "note": "Triggers MTN/Airtel B2C API transfer"
+      },
+      "add_raylane_vehicle": {
+        "method": "POST",
+        "path": "/api/admin/fleet/vehicles",
+        "body": { "plate": "string", "type": "string", "driver_id": "uuid", "is_raylane_fleet": true, "operator_type": "RAYLANE" }
+      },
+      "get_dashboard_kpis": { "method": "GET", "path": "/api/admin/dashboard" },
+      "manage_destinations": {
+        "list":   { "method": "GET",    "path": "/api/admin/tourist/destinations" },
+        "create": { "method": "POST",   "path": "/api/admin/tourist/destinations" },
+        "update": { "method": "PUT",    "path": "/api/admin/tourist/destinations/:id" },
+        "delete": { "method": "DELETE", "path": "/api/admin/tourist/destinations/:id" }
+      },
+      "manage_itineraries": {
+        "list":   { "method": "GET",    "path": "/api/admin/tourist/itineraries" },
+        "create": { "method": "POST",   "path": "/api/admin/tourist/itineraries" },
+        "update": { "method": "PUT",    "path": "/api/admin/tourist/itineraries/:id" }
+      }
+    }
+  },
+
+  "services": {
+    "database": {
+      "recommended": "PostgreSQL 15+",
+      "orm": "Prisma or Sequelize",
+      "hosting": "Render PostgreSQL (free tier) or Supabase"
+    },
+    "cache_seat_locks": {
+      "technology": "Redis",
+      "purpose": "Seat locking with 5-minute TTL auto-expiry",
+      "hosting": "Render Redis or Upstash (free tier)"
+    },
+    "payments": {
+      "mtn_momo": {
+        "api": "MTN MoMo API v1",
+        "docs": "https://momodeveloper.mtn.com",
+        "note": "Uganda Sandbox available. Use B2C for operator payouts."
+      },
+      "airtel_money": {
+        "api": "Airtel Money API",
+        "docs": "https://developers.airtel.africa",
+        "note": "Uganda collection + disbursement supported."
+      }
+    },
+    "sms": {
+      "provider": "Africa's Talking",
+      "docs": "https://africastalking.com/sms",
+      "note": "Supports Uganda numbers. Used for booking confirmations, alerts, OTPs."
+    },
+    "hosting": {
+      "frontend": "Render Static Site (free) or Netlify",
+      "backend_api": "Render Web Service (Node.js) or Railway",
+      "domain": "Namecheap or Hover — point A record to Render IP"
+    }
+  },
+
+  "environment_variables": {
+    "DATABASE_URL": "postgresql://user:pass@host:5432/raylane",
+    "REDIS_URL": "redis://host:6379",
+    "JWT_SECRET": "your-super-secret-jwt-key",
+    "MTN_MOMO_SUBSCRIPTION_KEY": "from-momo-developer-portal",
+    "MTN_MOMO_API_KEY": "from-momo-developer-portal",
+    "MTN_MOMO_BASE_URL": "https://sandbox.momodeveloper.mtn.com",
+    "AIRTEL_CLIENT_ID": "from-airtel-developer-portal",
+    "AIRTEL_CLIENT_SECRET": "from-airtel-developer-portal",
+    "AT_API_KEY": "africas-talking-api-key",
+    "AT_USERNAME": "africas-talking-username",
+    "PORT": "3000",
+    "NODE_ENV": "production",
+    "FRONTEND_URL": "https://raylane-express.onrender.com"
+  }
+}

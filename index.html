@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Raylane Express — Book buses, taxis and parcels across Uganda & East Africa in seconds. Real-time seats. Mobile money. Zero stress.">
+<meta name="theme-color" content="#0B1D45">
+<title>Raylane Express — Smart Travel Across East Africa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --n900:#060E25;--n800:#0B1D45;--n700:#132359;--n600:#1E3A8A;--n400:#4A6199;--n200:#9AABC8;--n100:#C8D0E4;--n50:#EEF1FB;
+  --g600:#D97706;--g500:#F5A623;--g400:#FBBF24;--g200:#FCD34D;--g100:#FDE68A;
+  --white:#fff;--surface:#F8F9FC;--border:#E5E7EB;
+  --text:#111827;--text2:#4B5563;--muted:#9CA3AF;
+  --green:#16A34A;--red:#DC2626;--amber:#D97706;
+  --r-sm:8px;--r-md:12px;--r-lg:20px;--r-xl:28px;--r-pill:50px;
+  --sh-sm:0 2px 8px rgba(11,29,69,.08);--sh-md:0 4px 20px rgba(11,29,69,.12);--sh-lg:0 8px 40px rgba(11,29,69,.18);
+  --sh-gold:0 4px 20px rgba(245,166,35,.30);--sh-gold-lg:0 8px 30px rgba(245,166,35,.45);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;color:var(--text);background:#fff;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,h5{font-family:'Sora',sans-serif}
+a{text-decoration:none;color:inherit}
+img{max-width:100%;display:block}
+.container{max-width:1200px;margin:0 auto;padding:0 20px}
+
+/* ═══ UTILITY ═══ */
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .65s ease,transform .65s ease}
+.reveal.in{opacity:1;transform:none}
+.d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}.d4{transition-delay:.32s}
+.section-label{display:block;font-family:'Sora',sans-serif;font-size:.6875rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--g500);margin-bottom:.75rem}
+.section-title{font-size:clamp(1.75rem,3.5vw,2.75rem);font-weight:800;color:var(--n800);line-height:1.12}
+.section-sub{font-size:1.0625rem;color:var(--text2);line-height:1.65;margin-top:.75rem}
+
+/* ═══ BUTTONS ═══ */
+.btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--g500);color:var(--n800);font-family:'Sora',sans-serif;font-weight:700;font-size:.9375rem;padding:.875rem 1.75rem;border-radius:var(--r-pill);border:none;cursor:pointer;box-shadow:var(--sh-gold);transition:all .25s ease}
+.btn-primary:hover{background:var(--g400);transform:translateY(-2px);box-shadow:var(--sh-gold-lg)}
+.btn-primary:active{transform:scale(.97)}
+.btn-secondary{display:inline-flex;align-items:center;gap:8px;background:transparent;color:#fff;font-family:'Sora',sans-serif;font-weight:600;font-size:.9375rem;padding:.8125rem 1.75rem;border-radius:var(--r-pill);border:2px solid rgba(255,255,255,.35);cursor:pointer;transition:all .25s ease;backdrop-filter:blur(4px)}
+.btn-secondary:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.65)}
+.btn-sm{padding:.625rem 1.25rem;font-size:.875rem;border-radius:var(--r-md)}
+
+/* ═══ NAVBAR ═══ */
+#navbar{position:fixed;top:0;left:0;right:0;z-index:1000;transition:all .4s ease}
+#navbar.transparent{background:transparent}
+#navbar.solid{background:var(--n800);box-shadow:0 2px 20px rgba(11,29,69,.3)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:72px;padding:0 24px;max-width:1300px;margin:0 auto}
+.nav-logo{display:flex;align-items:center;gap:10px}
+.logo-icon{width:42px;height:42px;background:var(--g500);border-radius:10px;display:flex;align-items:center;justify-content:center}
+.logo-icon svg{width:24px;height:24px}
+.logo-text{font-family:'Sora',sans-serif;font-size:1.125rem;font-weight:800;color:#fff}
+.logo-text em{color:var(--g500);font-style:normal}
+.nav-links{display:flex;align-items:center;gap:2px}
+.nav-links a{font-size:.875rem;font-weight:500;color:rgba(255,255,255,.8);padding:8px 14px;border-radius:8px;transition:all .2s}
+.nav-links a:hover{color:var(--g400);background:rgba(255,255,255,.08)}
+.nav-actions{display:flex;align-items:center;gap:10px}
+.nav-login{font-size:.875rem;font-weight:600;color:rgba(255,255,255,.8);padding:8px 18px;border-radius:var(--r-pill);border:1.5px solid rgba(255,255,255,.3);transition:all .2s}
+.nav-login:hover{color:#fff;border-color:rgba(255,255,255,.7)}
+.nav-book{font-family:'Sora',sans-serif;font-size:.875rem;font-weight:700;background:var(--g500);color:var(--n800);padding:9px 20px;border-radius:var(--r-pill);border:none;cursor:pointer;transition:all .2s}
+.nav-book:hover{background:var(--g400);transform:translateY(-1px)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:8px}
+.hamburger span{display:block;width:24px;height:2px;background:#fff;border-radius:2px;transition:all .3s}
+.hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+.mob-overlay{display:none;position:fixed;inset:0;background:rgba(6,14,37,.85);backdrop-filter:blur(6px);z-index:999}
+.mob-overlay.open{display:block}
+.mob-menu{position:absolute;top:72px;left:0;right:0;background:var(--n800);border-top:1px solid rgba(255,255,255,.1);padding:20px}
+.mob-menu a{display:block;color:rgba(255,255,255,.8);font-size:1rem;font-weight:500;padding:14px 16px;border-radius:10px;transition:all .2s}
+.mob-menu a:hover{background:rgba(255,255,255,.08);color:var(--g400)}
+.mob-actions{display:flex;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.1)}
+@media(max-width:960px){.nav-links{display:none}.hamburger{display:flex}}
+
+/* ═══ HERO ═══ */
+#hero{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden;background:var(--n800)}
+.hero-imgs{position:absolute;inset:0}
+.hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;animation:kenBurns 20s ease-in-out infinite alternate;transition:opacity 2s ease}
+.hero-img.active{opacity:.22}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(11,29,69,.97) 0%,rgba(19,35,89,.88) 55%,rgba(11,29,69,.78) 100%)}
+.hero-particles{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.particle{position:absolute;border-radius:50%;background:rgba(245,166,35,.18);animation:floatUp linear infinite}
+.hero-content{position:relative;z-index:2;width:100%;padding:108px 0 60px}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.live-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(245,166,35,.15);border:1px solid rgba(245,166,35,.35);color:var(--g400);font-family:'Sora',sans-serif;font-size:.75rem;font-weight:700;padding:6px 14px;border-radius:var(--r-pill);margin-bottom:20px}
+.pulse{width:8px;height:8px;background:var(--g500);border-radius:50%;animation:pulseDot 2s ease infinite;flex-shrink:0}
+.hero-h1{font-size:clamp(2.2rem,5vw,3.75rem);font-weight:800;color:#fff;line-height:1.06;margin-bottom:18px}
+.hero-h1 em{color:var(--g500);font-style:normal}
+.hero-sub{font-size:1.0625rem;color:rgba(255,255,255,.65);line-height:1.65;max-width:460px;margin-bottom:28px}
+.trust-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:30px}
+.trust-chip{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.8);font-size:.8125rem;font-weight:500;padding:7px 13px;border-radius:var(--r-pill)}
+.hero-ctas{display:flex;gap:12px;flex-wrap:wrap}
+
+/* SEARCH GLASS */
+.search-glass{background:rgba(255,255,255,.07);backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.15);border-radius:var(--r-xl);padding:28px}
+.s-tabs{display:flex;gap:3px;background:rgba(0,0,0,.25);border-radius:12px;padding:4px;margin-bottom:22px}
+.s-tab{flex:1;text-align:center;padding:9px 6px;border-radius:9px;font-family:'Sora',sans-serif;font-size:.8125rem;font-weight:700;color:rgba(255,255,255,.55);border:none;background:transparent;cursor:pointer;transition:all .2s}
+.s-tab.active{background:var(--g500);color:var(--n800);box-shadow:var(--sh-gold)}
+.s-label{display:block;font-size:.625rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:5px}
+.s-input{width:100%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:13px 16px;color:#fff;font-size:.9375rem;font-family:'DM Sans',sans-serif;outline:none;appearance:none;transition:border-color .2s}
+.s-input:focus{border-color:var(--g500);background:rgba(255,255,255,.14)}
+.s-input option{background:var(--n800);color:#fff}
+.s-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.s-quick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.s-q-btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:11px;border-radius:11px;font-family:'Sora',sans-serif;font-size:.8125rem;font-weight:700;cursor:pointer;border:none;transition:all .2s}
+.s-q-leaving{background:rgba(245,166,35,.15);border:1px solid rgba(245,166,35,.3);color:var(--g400)}
+.s-q-leaving:hover{background:rgba(245,166,35,.25)}
+.s-q-group{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8)}
+.s-q-group:hover{background:rgba(255,255,255,.14)}
+.s-submit{width:100%;background:var(--g500);color:var(--n800);font-family:'Sora',sans-serif;font-weight:800;font-size:1rem;padding:15px;border-radius:13px;border:none;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:var(--sh-gold);margin:14px 0 10px}
+.s-submit:hover{background:var(--g400);transform:translateY(-2px);box-shadow:var(--sh-gold-lg)}
+.s-note{text-align:center;font-size:.8rem;color:rgba(255,255,255,.4)}
+.s-note strong{color:var(--g400)}
+.hero-dots{display:flex;gap:6px;margin-top:24px}
+.hero-dot{height:4px;border-radius:2px;border:none;cursor:pointer;transition:all .35s}
+
+/* ═══ LEAVING SOON ═══ */
+#leaving{background:var(--n800);padding:22px 0}
+.leaving-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.leaving-title{font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;color:#fff;display:flex;align-items:center;gap:10px}
+.live-tag{display:flex;align-items:center;gap:5px;background:rgba(220,38,38,.2);border:1px solid rgba(220,38,38,.3);color:#FCA5A5;font-size:.6875rem;font-weight:700;padding:3px 10px;border-radius:var(--r-pill)}
+.fire-dot{width:6px;height:6px;background:#EF4444;border-radius:50%;animation:pulseDot 1.5s ease infinite}
+.leaving-scroll{display:flex;gap:14px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.leaving-scroll::-webkit-scrollbar{display:none}
+.dep-card{min-width:190px;flex-shrink:0;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:16px;transition:all .25s;cursor:pointer}
+.dep-card:hover{background:rgba(255,255,255,.1);border-color:rgba(245,166,35,.35);transform:translateY(-3px)}
+.dep-route{font-family:'Sora',sans-serif;font-weight:700;font-size:.875rem;color:#fff;margin-bottom:8px}
+.dep-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.dep-time{font-size:.8125rem;color:rgba(255,255,255,.6)}
+.dep-seats{font-size:.75rem;font-weight:700}
+.dep-seats.hot{color:#FCA5A5}
+.dep-seats.ok{color:#86EFAC}
+.dep-price{font-family:'Sora',sans-serif;font-size:1.125rem;font-weight:800;color:var(--g500);margin-bottom:10px}
+.dep-cta{width:100%;background:var(--g500);color:var(--n800);font-family:'Sora',sans-serif;font-weight:700;font-size:.8125rem;padding:9px;border-radius:9px;border:none;cursor:pointer;transition:all .2s}
+.dep-cta:hover{background:var(--g400)}
+
+/* ═══ STATS BAR ═══ */
+.stats-bar{background:var(--g500);padding:20px 0}
+.stats-inner{display:flex;justify-content:space-around;align-items:center;flex-wrap:wrap;gap:16px}
+.stat-item{text-align:center}
+.stat-num{display:block;font-family:'Sora',sans-serif;font-size:clamp(1.5rem,3vw,2.25rem);font-weight:800;color:var(--n800)}
+.stat-lbl{display:block;font-size:.6875rem;font-weight:700;color:rgba(11,29,69,.6);text-transform:uppercase;letter-spacing:.08em;margin-top:2px}
+.stat-div{width:1px;height:36px;background:rgba(11,29,69,.15)}
+@media(max-width:600px){.stat-div{display:none}}
+
+/* ═══ SERVICES ═══ */
+#services{padding:90px 0;background:#fff}
+.services-hd{text-align:center;margin-bottom:56px}
+.services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:20px}
+.svc-card{background:#fff;border-radius:var(--r-lg);padding:32px 24px;text-align:center;border:1px solid var(--n50);border-bottom:3px solid transparent;transition:all .3s ease;cursor:pointer;position:relative;overflow:hidden}
+.svc-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(245,166,35,.04) 0%,transparent 60%);opacity:0;transition:opacity .3s}
+.svc-card:hover{transform:translateY(-7px);box-shadow:var(--sh-lg);border-bottom-color:var(--g500)}
+.svc-card:hover::before{opacity:1}
+.svc-icon{width:64px;height:64px;background:var(--n800);border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;transition:all .3s}
+.svc-card:hover .svc-icon{background:var(--g500);transform:scale(1.1) rotate(-5deg)}
+.svc-icon svg{width:28px;height:28px;color:var(--g500);transition:color .3s}
+.svc-card:hover .svc-icon svg{color:var(--n800)}
+.svc-name{font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;color:var(--n800);margin-bottom:8px}
+.svc-desc{font-size:.875rem;color:var(--text2);line-height:1.55}
+.svc-link{display:inline-flex;align-items:center;gap:4px;font-size:.8125rem;font-weight:700;color:var(--g600);margin-top:12px;opacity:0;transition:opacity .2s}
+.svc-card:hover .svc-link{opacity:1}
+
+/* ═══ WHERE WE GO ═══ */
+#routes{padding:90px 0;background:var(--n800);position:relative;overflow:hidden}
+.routes-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.routes-left .section-label{color:var(--g500)}
+.routes-left .section-title{color:#fff}
+.routes-left .section-sub{color:rgba(255,255,255,.6)}
+.dest-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.dest-chip{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.75);font-size:.875rem;font-weight:500;padding:9px 16px;border-radius:var(--r-pill);cursor:pointer;transition:all .2s}
+.dest-chip:hover,.dest-chip.active{background:rgba(245,166,35,.2);border-color:rgba(245,166,35,.45);color:var(--g400)}
+.dest-chip svg{width:12px;height:12px;color:var(--g500)}
+.map-box{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:var(--r-xl);padding:20px}
+.map-box svg{width:100%;height:auto}
+/* route info panel */
+.route-info{margin-top:20px;background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.25);border-radius:14px;padding:16px;display:none}
+.route-info.show{display:block}
+.ri-title{font-family:'Sora',sans-serif;font-size:.9375rem;font-weight:700;color:#fff;margin-bottom:4px}
+.ri-sub{font-size:.8125rem;color:rgba(255,255,255,.55)}
+
+/* ═══ ADVANCE BOOKING ═══ */
+#advance{padding:90px 0;background:linear-gradient(135deg,var(--n600) 0%,var(--n800) 100%)}
+.adv-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.adv-left .section-title{color:#fff}
+.adv-left .section-sub{color:rgba(255,255,255,.6)}
+.adv-steps{display:flex;flex-direction:column;gap:20px;margin-top:30px}
+.adv-step{display:flex;align-items:flex-start;gap:16px}
+.adv-num{width:40px;height:40px;background:rgba(245,166,35,.15);border:1px solid rgba(245,166,35,.3);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Sora',sans-serif;font-weight:800;font-size:.875rem;color:var(--g400)}
+.adv-step-title{font-family:'Sora',sans-serif;font-size:.9375rem;font-weight:700;color:#fff;margin-bottom:4px}
+.adv-step-sub{font-size:.8125rem;color:rgba(255,255,255,.5);line-height:1.5}
+.adv-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:var(--r-xl);padding:32px}
+.adv-card-title{font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;color:#fff;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.1)}
+.adv-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.07)}
+.adv-row:last-of-type{border-bottom:none;padding-top:16px;margin-top:6px}
+.adv-row-label{font-size:.875rem;color:rgba(255,255,255,.55)}
+.adv-row-val{font-family:'Sora',sans-serif;font-weight:700;color:#fff;font-size:.9375rem}
+.adv-row-val.gold{color:var(--g400)}
+.adv-row-val.green{color:#86EFAC}
+.adv-notice{background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.2);border-radius:12px;padding:14px;margin-top:16px;font-size:.8125rem;color:rgba(255,255,255,.65);line-height:1.5}
+
+/* ═══ TOURIST PLANNER ═══ */
+#planner{padding:90px 0;background:var(--surface)}
+.planner-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start}
+.tip-card{background:var(--n800);border-radius:var(--r-lg);padding:22px;margin-top:24px}
+.tip-eyebrow{font-family:'Sora',sans-serif;font-size:.625rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--g500);margin-bottom:8px}
+.tip-text{font-size:.9375rem;color:rgba(255,255,255,.8);line-height:1.55;transition:opacity .3s}
+.popular-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.ptag{display:inline-flex;align-items:center;gap:6px;background:rgba(245,166,35,.12);border:1px solid rgba(245,166,35,.25);color:var(--g600);font-size:.8125rem;font-weight:600;padding:7px 14px;border-radius:var(--r-pill);cursor:pointer;transition:all .2s}
+.ptag:hover{background:rgba(245,166,35,.22);color:var(--g500)}
+.planner-form{background:#fff;border:1px solid var(--border);border-radius:var(--r-xl);padding:36px;box-shadow:var(--sh-md)}
+.fgroup{margin-bottom:16px}
+.flabel{display:block;font-size:.875rem;font-weight:600;color:var(--n400);margin-bottom:6px}
+.finput{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:12px 16px;color:var(--text);font-size:.9375rem;font-family:'DM Sans',sans-serif;outline:none;appearance:none;transition:border-color .2s}
+.finput:focus{border-color:var(--n600);background:#fff;box-shadow:0 0 0 3px rgba(30,58,138,.08)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+/* ═══ SIGHTSEEING ═══ */
+#sights{padding:90px 0;background:var(--n800)}
+.sights-hd{text-align:center;margin-bottom:44px}
+.sights-hd .section-title{color:#fff}
+.sights-hd .section-sub{color:rgba(255,255,255,.55);max-width:540px;margin-inline:auto}
+.sights-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
+.sight-card{border-radius:var(--r-lg);overflow:hidden;position:relative;cursor:pointer}
+.sight-img-wrap{height:220px;overflow:hidden;position:relative}
+.sight-img-wrap::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(11,29,69,.9) 0%,transparent 55%)}
+.sight-bg{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+.sight-card:hover .sight-bg{transform:scale(1.07)}
+.sight-info{position:absolute;bottom:0;left:0;right:0;padding:18px}
+.sight-cat{display:inline-block;font-size:.625rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:rgba(245,166,35,.25);border:1px solid rgba(245,166,35,.4);color:var(--g400);padding:3px 10px;border-radius:var(--r-pill);margin-bottom:6px}
+.sight-name{font-family:'Sora',sans-serif;font-size:1.0625rem;font-weight:700;color:#fff;line-height:1.3;margin-bottom:4px}
+.sight-meta{font-size:.75rem;color:rgba(255,255,255,.6)}
+/* colour accents per sight */
+.sight-card.s1{background:#1a4a2e}.sight-card.s2{background:#1a3a5e}.sight-card.s3{background:#3a1a0e}
+.sight-card.s4{background:#0e2a3a}.sight-card.s5{background:#2a1a3e}.sight-card.s6{background:#1a3a1e}
+
+/* ═══ CHARTER ═══ */
+#charter{padding:90px 0;background:#fff}
+.charter-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.charter-vehicles{display:flex;flex-direction:column;gap:16px;margin-top:24px}
+.cv{display:flex;align-items:center;gap:16px;background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:16px;transition:all .2s;cursor:pointer}
+.cv:hover,.cv.sel{border-color:var(--n600);background:rgba(30,58,138,.04)}
+.cv-icon{width:44px;height:44px;background:var(--n800);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.25rem}
+.cv-name{font-family:'Sora',sans-serif;font-size:.9375rem;font-weight:700;color:var(--n800)}
+.cv-desc{font-size:.8125rem;color:var(--text2)}
+.charter-form{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-xl);padding:36px}
+.vehicle-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.vopt{background:#fff;border:2px solid var(--border);border-radius:12px;padding:14px 10px;text-align:center;cursor:pointer;transition:all .2s}
+.vopt.active{border-color:var(--n600);background:rgba(30,58,138,.04)}
+.vopt .emoji{font-size:1.5rem;display:block;margin-bottom:6px}
+.vopt span{font-size:.75rem;font-weight:600;color:var(--text2);display:block}
+
+/* ═══ PARTNERS ═══ */
+#partners{padding:70px 0;background:var(--surface);overflow:hidden}
+.partners-hd{text-align:center;margin-bottom:36px}
+.track-wrap{overflow:hidden}
+.p-track{display:flex;gap:20px;animation:scrollX 28s linear infinite;width:max-content}
+.p-track:hover{animation-play-state:paused}
+.p-logo{background:#fff;border:1px solid var(--border);border-radius:14px;padding:14px 28px;display:flex;align-items:center;justify-content:center;min-width:160px;height:64px;flex-shrink:0;transition:all .2s;cursor:default}
+.p-logo:hover{border-color:var(--g400);box-shadow:var(--sh-sm);transform:translateY(-2px)}
+.p-logo-name{font-family:'Sora',sans-serif;font-size:.9375rem;font-weight:700;color:var(--n800)}
+
+/* ═══ TESTIMONIALS ═══ */
+#testimonials{padding:90px 0;background:#fff}
+.testi-hd{text-align:center;margin-bottom:16px}
+.rating-big{font-family:'Sora',sans-serif;font-size:3.5rem;font-weight:800;color:var(--n800);line-height:1}
+.stars-row{display:flex;justify-content:center;gap:4px;margin:8px 0}
+.star{width:20px;height:20px;color:var(--g500)}
+.star.half{color:var(--n100)}
+.reviews-count{font-size:.875rem;color:var(--muted);margin-bottom:44px}
+.testi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:20px}
+.testi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:28px;transition:all .3s}
+.testi-card:hover{transform:translateY(-5px);box-shadow:var(--sh-md)}
+.testi-quote{font-family:'Sora',sans-serif;font-size:2.75rem;font-weight:800;color:var(--g200);line-height:.8;margin-bottom:10px}
+.testi-text{font-size:.9375rem;color:var(--text2);line-height:1.65;margin-bottom:20px}
+.testi-author{display:flex;align-items:center;gap:12px}
+.t-avatar{width:40px;height:40px;background:var(--n800);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-size:.75rem;font-weight:700;color:var(--g400);flex-shrink:0}
+.t-name{font-family:'Sora',sans-serif;font-size:.875rem;font-weight:700;color:var(--n800)}
+.t-route{font-size:.75rem;color:var(--muted)}
+
+/* ═══ ECOSYSTEM ═══ */
+#ecosystem{padding:90px 0;background:var(--n800)}
+.eco-hd{text-align:center;margin-bottom:52px}
+.eco-hd .section-title{color:#fff}
+.eco-hd .section-sub{color:rgba(255,255,255,.55)}
+.eco-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.eco-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:var(--r-lg);padding:28px;transition:all .3s;cursor:pointer}
+.eco-card:hover{background:rgba(255,255,255,.09);border-color:rgba(245,166,35,.35);transform:translateY(-4px)}
+.eco-ic{width:50px;height:50px;background:rgba(245,166,35,.12);border:1px solid rgba(245,166,35,.25);border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.eco-ic svg{width:22px;height:22px;color:var(--g400)}
+.eco-name{font-family:'Sora',sans-serif;font-size:1.0625rem;font-weight:700;color:#fff;margin-bottom:8px}
+.eco-desc{font-size:.8125rem;color:rgba(255,255,255,.5);line-height:1.55;margin-bottom:14px}
+.eco-link{font-size:.8125rem;font-weight:700;color:var(--g400);display:flex;align-items:center;gap:5px;transition:gap .2s}
+.eco-card:hover .eco-link{gap:8px}
+
+/* ═══ CTA ═══ */
+#cta{padding:90px 0;background:var(--n900);position:relative;overflow:hidden;text-align:center}
+.cta-rings{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none}
+.cta-ring{position:absolute;border:1px solid rgba(245,166,35,.07);border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%)}
+.cta-h2{font-size:clamp(1.75rem,4vw,3rem);font-weight:800;color:#fff;margin-bottom:14px;position:relative;z-index:1}
+.cta-sub{font-size:1.0625rem;color:rgba(255,255,255,.55);max-width:500px;margin:0 auto 36px;position:relative;z-index:1;line-height:1.6}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1}
+
+/* ═══ FOOTER ═══ */
+footer{background:#040B1C;color:rgba(255,255,255,.45);padding:60px 0 0}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;gap:40px;margin-bottom:52px}
+.footer-brand .footer-desc{font-size:.875rem;line-height:1.65;color:rgba(255,255,255,.4);max-width:280px;margin:14px 0 20px}
+.f-socials{display:flex;gap:8px}
+.f-soc{width:36px;height:36px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:rgba(255,255,255,.5);transition:all .2s;cursor:pointer}
+.f-soc:hover{background:rgba(245,166,35,.15);border-color:rgba(245,166,35,.35);color:var(--g400)}
+.f-col-title{font-family:'Sora',sans-serif;font-size:.875rem;font-weight:700;color:#fff;margin-bottom:18px}
+.f-links{list-style:none;display:flex;flex-direction:column;gap:10px}
+.f-links li a{font-size:.875rem;color:rgba(255,255,255,.4);transition:color .2s}
+.f-links li a:hover{color:var(--g400)}
+.footer-eco{padding:20px 0;border-top:1px solid rgba(255,255,255,.06);display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:0}
+.f-eco-link{font-size:.75rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.4);padding:6px 14px;border-radius:var(--r-pill);transition:all .2s}
+.f-eco-link:hover{background:rgba(245,166,35,.12);border-color:rgba(245,166,35,.3);color:var(--g400)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.06);padding:20px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.footer-bottom p{font-size:.8125rem;color:rgba(255,255,255,.3)}
+.footer-legal{display:flex;gap:20px}
+.footer-legal a{font-size:.8125rem;color:rgba(255,255,255,.3);transition:color .2s}
+.footer-legal a:hover{color:var(--g400)}
+
+/* ═══ MOBILE BOTTOM NAV ═══ */
+.mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--n800);border-top:1px solid rgba(255,255,255,.1);z-index:900;padding:6px 0 max(8px,env(safe-area-inset-bottom))}
+.mob-nav-inner{display:flex;justify-content:space-around}
+.mob-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:5px 10px;color:rgba(255,255,255,.45);text-decoration:none;min-width:56px;transition:color .2s}
+.mob-item svg{width:22px;height:22px}
+.mob-item span{font-family:'Sora',sans-serif;font-size:.5625rem;font-weight:700}
+.mob-item.active,.mob-item:hover{color:var(--g500)}
+.mob-item.mob-book{background:var(--g500);border-radius:12px;color:var(--n800);padding:6px 14px;margin:-4px 4px 0}
+.mob-item.mob-book:hover{color:var(--n800);background:var(--g400)}
+
+/* ═══ KEYFRAMES ═══ */
+@keyframes kenBurns{from{transform:scale(1.08) translate(-1%,0%)}to{transform:scale(1.16) translate(1%,-1%)}}
+@keyframes pulseDot{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.6);opacity:.55}}
+@keyframes floatUp{0%{transform:translateY(100vh) rotate(0deg);opacity:0}10%{opacity:1}90%{opacity:.35}100%{transform:translateY(-60px) rotate(720deg);opacity:0}}
+@keyframes scrollX{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:900px){
+  .hero-grid,.routes-grid,.adv-grid,.planner-grid,.charter-grid{grid-template-columns:1fr;gap:40px}
+  .hero-right{order:-1}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .footer-brand{grid-column:1/-1}
+  .mob-nav{display:block}
+  body{padding-bottom:68px}
+}
+@media(max-width:600px){
+  .services-grid{grid-template-columns:1fr 1fr}
+  .s-row,.frow{grid-template-columns:1fr}
+  .hero-ctas{flex-direction:column}
+  .cta-btns{flex-direction:column;align-items:center}
+  .footer-grid{grid-template-columns:1fr}
+  .sights-grid{grid-template-columns:1fr}
+  .stats-bar .stat-div{display:none}
+  .eco-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ NAVBAR ═══ -->
+<nav id="navbar" class="transparent">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M3 12s4-6 9-6 9 6 9 6" stroke="#0B1D45" stroke-width="2.2" stroke-linecap="round"/>
+          <path d="M3 17h18" stroke="#0B1D45" stroke-width="2.2" stroke-linecap="round"/>
+          <circle cx="7.5" cy="19.5" r="2" fill="#0B1D45"/>
+          <circle cx="16.5" cy="19.5" r="2" fill="#0B1D45"/>
+          <path d="M12 5l2 4h-4l2-4z" fill="#0B1D45"/>
+        </svg>
+      </div>
+      <span class="logo-text">Raylane <em>Express</em></span>
+    </a>
+    <nav class="nav-links">
+      <a href="#routes">Routes</a>
+      <a href="#services">Services</a>
+      <a href="#planner">Plan Trip</a>
+      <a href="#charter">Charter</a>
+      <a href="#sights">Sightseeing</a>
+      <a href="admin.html">Admin</a>
+    </nav>
+    <div class="nav-actions">
+      <a href="admin.html" class="nav-login">Login</a>
+      <button class="nav-book" onclick="window.location='book.html'">Book Now</button>
+    </div>
+    <button class="hamburger" onclick="toggleMenu()" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mob-overlay" id="mobOverlay">
+  <div class="mob-menu">
+    <a href="#routes" onclick="closeMenu()">Routes</a>
+    <a href="#services" onclick="closeMenu()">Services</a>
+    <a href="#planner" onclick="closeMenu()">Plan Trip</a>
+    <a href="#charter" onclick="closeMenu()">Charter</a>
+    <a href="#sights" onclick="closeMenu()">Sightseeing</a>
+    <div class="mob-actions" style="display:flex;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.1)">
+      <a href="admin.html" class="btn-secondary" style="flex:1;justify-content:center;border-radius:12px">Login</a>
+      <button class="btn-primary" style="flex:1;justify-content:center;border-radius:12px" onclick="closeMenu()">Book Now</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ HERO ═══ -->
+<section id="hero">
+  <div class="hero-imgs">
+    <img class="hero-img active" loading="eager" src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=1600&q=80" alt="Bus on Uganda highway">
+    <img class="hero-img" loading="lazy" src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=1600&q=80" alt="Coach on road">
+    <img class="hero-img" loading="lazy" src="https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=1600&q=80" alt="Long distance bus">
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-particles" id="heroParticles"></div>
+  <div class="hero-content">
+    <div class="container">
+      <div class="hero-grid">
+        <div class="hero-left" style="animation:fadeUpAnim .8s ease both">
+          <div class="live-badge"><span class="pulse"></span>Live seat availability</div>
+          <h1 class="hero-h1">Smart Travel Across<br><em>Uganda &amp; East Africa</em></h1>
+          <p class="hero-sub">Book buses, taxis and parcels in seconds. Real-time seats. Mobile money. Zero stress.</p>
+          <div class="trust-row">
+            <div class="trust-chip"><span>✓</span>No Signup</div>
+            <div class="trust-chip"><span>📱</span>Mobile Money</div>
+            <div class="trust-chip"><span>🎫</span>Instant Ticket</div>
+            <div class="trust-chip"><span>📅</span>Book 4 Weeks Ahead</div>
+          </div>
+          <div class="hero-ctas">
+            <button class="btn-primary" onclick="window.location='book.html'">
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
+              Book a Trip
+            </button>
+            <button class="btn-secondary" onclick="document.getElementById('planner').scrollIntoView({behavior:'smooth'})">Plan My Journey</button>
+          </div>
+          <div class="hero-dots">
+            <button class="hero-dot active" onclick="setSlide(0)" style="width:32px;background:var(--g500)"></button>
+            <button class="hero-dot" onclick="setSlide(1)" style="width:8px;background:rgba(255,255,255,.3)"></button>
+            <button class="hero-dot" onclick="setSlide(2)" style="width:8px;background:rgba(255,255,255,.3)"></button>
+          </div>
+        </div>
+        <div class="hero-right" id="search" style="animation:fadeUpAnim .8s ease .2s both">
+          <div class="search-glass">
+            <div class="s-tabs">
+              <button class="s-tab active" onclick="setTab(this)">One Way</button>
+              <button class="s-tab" onclick="setTab(this)">Round Trip</button>
+              <button class="s-tab" onclick="setTab(this)">Parcel</button>
+              <button class="s-tab" onclick="setTab(this)">Plan Trip</button>
+            </div>
+            <div class="sf">
+              <label class="s-label">From</label>
+              <select class="s-input">
+                <option>Kampala</option><option>Gulu</option><option>Mbale</option><option>Jinja</option><option>Mbarara</option><option>Fort Portal</option><option>Kabale</option><option>Lira</option>
+              </select>
+            </div>
+            <div class="sf" style="margin-top:10px">
+              <label class="s-label">To</label>
+              <select class="s-input">
+                <option>Nairobi, Kenya</option><option>Mbale</option><option>Gulu</option><option>Kigali, Rwanda</option><option>Mombasa</option><option>Juba, S. Sudan</option><option>Arusha</option>
+              </select>
+            </div>
+            <div class="s-row">
+              <div class="sf">
+                <label class="s-label">Date</label>
+                <input type="date" class="s-input" id="tripDate" style="color-scheme:dark">
+              </div>
+              <div class="sf">
+                <label class="s-label">Vehicle</label>
+                <select class="s-input">
+                  <option>Any Type</option><option>Taxi / Matatu</option><option>Minibus</option><option>Coach / Bus</option>
+                </select>
+              </div>
+            </div>
+            <div class="s-quick">
+              <button class="s-q-btn s-q-leaving" onclick="document.getElementById('leaving').scrollIntoView({behavior:'smooth'})">⏰ Leaving Soon</button>
+              <button class="s-q-btn s-q-group" onclick="document.getElementById('charter').scrollIntoView({behavior:'smooth'})">👥 Group (10+)</button>
+            </div>
+            <button class="s-submit">
+              <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
+              Search Available Trips
+            </button>
+            <p class="s-note">Secure your seat with <strong>just 20% today</strong> — pay rest at departure</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ LEAVING SOON ═══ -->
+<section id="leaving">
+  <div class="container">
+    <div class="leaving-hd">
+      <div class="leaving-title">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" style="color:var(--g500)"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>
+        Leaving Soon
+        <span class="live-tag"><span class="fire-dot"></span>🔥 Live</span>
+      </div>
+      <a href="#" style="font-size:.8125rem;font-weight:600;color:var(--g400)">View all →</a>
+    </div>
+    <div class="leaving-scroll">
+      <div class="dep-card"><div class="dep-route">Kampala → Mbale</div><div class="dep-row"><span class="dep-time">2:30 PM · 4hr</span><span class="dep-seats hot">🔥 4 left</span></div><div class="dep-price">UGX 30,000</div><button class="dep-cta">Book Now</button></div>
+      <div class="dep-card"><div class="dep-route">Kampala → Jinja</div><div class="dep-row"><span class="dep-time">3:00 PM · 2hr</span><span class="dep-seats ok">✓ 6 left</span></div><div class="dep-price">UGX 15,000</div><button class="dep-cta">Book Now</button></div>
+      <div class="dep-card"><div class="dep-route">Nairobi → Kisumu</div><div class="dep-row"><span class="dep-time">3:15 PM · 4hr</span><span class="dep-seats hot">🔥 5 left</span></div><div class="dep-price">KES 1,200</div><button class="dep-cta">Book Now</button></div>
+      <div class="dep-card"><div class="dep-route">Kampala → Gulu</div><div class="dep-row"><span class="dep-time">4:00 PM · 5hr</span><span class="dep-seats ok">✓ 12 left</span></div><div class="dep-price">UGX 45,000</div><button class="dep-cta">Book Now</button></div>
+      <div class="dep-card"><div class="dep-route">Kampala → Kigali</div><div class="dep-row"><span class="dep-time">5:00 PM · 9hr</span><span class="dep-seats hot">🔥 3 left</span></div><div class="dep-price">UGX 120,000</div><button class="dep-cta">Book Now</button></div>
+      <div class="dep-card"><div class="dep-route">Mbarara → Kampala</div><div class="dep-row"><span class="dep-time">5:30 PM · 3hr</span><span class="dep-seats ok">✓ 8 left</span></div><div class="dep-price">UGX 25,000</div><button class="dep-cta">Book Now</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="container">
+    <div class="stats-inner">
+      <div class="stat-item"><span class="stat-num" data-target="50000">50,000+</span><span class="stat-lbl">Trips Booked</span></div>
+      <div class="stat-div"></div>
+      <div class="stat-item"><span class="stat-num">120+</span><span class="stat-lbl">Operators</span></div>
+      <div class="stat-div"></div>
+      <div class="stat-item"><span class="stat-num">15</span><span class="stat-lbl">Cities</span></div>
+      <div class="stat-div"></div>
+      <div class="stat-item"><span class="stat-num">4.8★</span><span class="stat-lbl">Rating</span></div>
+      <div class="stat-div"></div>
+      <div class="stat-item"><span class="stat-num">98%</span><span class="stat-lbl">On-Time</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SERVICES ═══ -->
+<section id="services">
+  <div class="container">
+    <div class="services-hd">
+      <span class="section-label">What We Offer</span>
+      <h2 class="section-title">Everything You Need to Travel</h2>
+      <p class="section-sub">From solo trips to full charter — Raylane handles it all, seamlessly.</p>
+    </div>
+    <div class="services-grid">
+      <div class="svc-card reveal">
+        <div class="svc-icon"><svg viewBox="0 0 28 28" fill="none"><path d="M4 18L6 11H22L24 18" stroke="currentColor" stroke-width="2"/><rect x="3" y="18" width="22" height="6" rx="2" stroke="currentColor" stroke-width="2"/><circle cx="9" cy="27" r="2" fill="currentColor"/><circle cx="19" cy="27" r="2" fill="currentColor"/></svg></div>
+        <div class="svc-name">Coach Booking</div>
+        <div class="svc-desc">Long-distance coach travel across Uganda and East Africa. Real-time seat selection.</div>
+        <div class="svc-link">Book Now →</div>
+      </div>
+      <div class="svc-card reveal d1">
+        <div class="svc-icon"><svg viewBox="0 0 28 28" fill="none"><path d="M5 18L7 12H21L23 18" stroke="currentColor" stroke-width="2"/><rect x="4" y="18" width="20" height="5" rx="2" stroke="currentColor" stroke-width="2"/><circle cx="9" cy="25.5" r="1.5" fill="currentColor"/><circle cx="19" cy="25.5" r="1.5" fill="currentColor"/><path d="M11 12V9M17 12V9" stroke="currentColor" stroke-width="1.5"/></svg></div>
+        <div class="svc-name">Taxi / Matatu</div>
+        <div class="svc-desc">Right-hand drive shared taxis for shorter city-to-city routes. Fast and affordable.</div>
+        <div class="svc-link">Book Taxi →</div>
+      </div>
+      <div class="svc-card reveal d2">
+        <div class="svc-icon"><svg viewBox="0 0 28 28" fill="none"><rect x="3" y="9" width="22" height="14" rx="2" stroke="currentColor" stroke-width="2"/><path d="M9 9V6a5 5 0 0110 0v3" stroke="currentColor" stroke-width="2"/><path d="M3 17h22" stroke="currentColor" stroke-width="1.5"/></svg></div>
+        <div class="svc-name">Send a Parcel</div>
+        <div class="svc-desc">Same-day and next-day parcel delivery across East Africa via our bus network.</div>
+        <div class="svc-link">Send Now →</div>
+      </div>
+      <div class="svc-card reveal d3">
+        <div class="svc-icon"><svg viewBox="0 0 28 28" fill="none"><rect x="3" y="13" width="22" height="9" rx="2" stroke="currentColor" stroke-width="2"/><path d="M7 13V10a7 7 0 0114 0v3" stroke="currentColor" stroke-width="2"/><circle cx="9" cy="24" r="2" fill="currentColor"/><circle cx="19" cy="24" r="2" fill="currentColor"/></svg></div>
+        <div class="svc-name">Charter Vehicle</div>
+        <div class="svc-desc">Private vehicle + dedicated driver for groups of 10+. Fixed quote in 2 hours.</div>
+        <div class="svc-link">Get Quote →</div>
+      </div>
+      <div class="svc-card reveal">
+        <div class="svc-icon"><svg viewBox="0 0 28 28" fill="none"><path d="M14 3C9.03 3 5 7.03 5 12c0 7 9 17 9 17s9-10 9-17c0-4.97-4.03-9-9-9z" stroke="currentColor" stroke-width="2"/><circle cx="14" cy="12" r="3" stroke="currentColor" stroke-width="1.5"/></svg></div>
+        <div class="svc-name">Tourist Planning</div>
+        <div class="svc-desc">Plan your Uganda journey with personalised itineraries, tips and transport links.</div>
+        <div class="svc-link">Plan Trip →</div>
+      </div>
+      <div class="svc-card reveal d1">
+        <div class="svc-icon"><svg viewBox="0 0 28 28" fill="none"><rect x="3" y="5" width="22" height="18" rx="2" stroke="currentColor" stroke-width="2"/><path d="M8 12h12M8 16h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div class="svc-name">Operator Services</div>
+        <div class="svc-desc">Join our platform. Manage trips, drivers, fleet and financials in one dashboard.</div>
+        <div class="svc-link">Apply Now →</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ WHERE WE GO ═══ -->
+<section id="routes">
+  <div class="container">
+    <div class="routes-grid">
+      <div class="routes-left reveal">
+        <span class="section-label">Our Network</span>
+        <h2 class="section-title">Where We Go</h2>
+        <p class="section-sub">Connecting Uganda and growing across East Africa. Click a city to see routes.</p>
+        <div class="dest-chips">
+          <div class="dest-chip active" onclick="showRoute(this,'kampala','Kampala Hub · 12 routes · 38 daily departures')"><svg viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="3"/></svg>Kampala</div>
+          <div class="dest-chip" onclick="showRoute(this,'gulu','Gulu · 4 routes · 8 daily departures')"><svg viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="3"/></svg>Gulu</div>
+          <div class="dest-chip" onclick="showRoute(this,'mbale','Mbale · 6 routes · 14 daily departures')"><svg viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="3"/></svg>Mbale</div>
+          <div class="dest-chip" onclick="showRoute(this,'jinja','Jinja · 5 routes · 18 daily departures')"><svg viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="3"/></svg>Jinja</div>
+          <div class="dest-chip" onclick="showRoute(this,'mbarara','Mbarara · 5 routes · 10 daily departures')"><svg viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="3"/></svg>Mbarara</div>
+          <div class="dest-chip" onclick="showRoute(this,'kigali','Kigali, Rwanda · 3 routes · 5 daily')"><svg viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="3"/></svg>Kigali</div>
+          <div class="dest-chip" onclick="showRoute(this,'nairobi','Nairobi, Kenya · 4 routes · 6 daily')"><svg viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="3"/></svg>Nairobi</div>
+          <div class="dest-chip" onclick="showRoute(this,'juba','Juba, S. Sudan · 2 routes · 3 daily')"><svg viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="3"/></svg>Juba</div>
+          <div class="dest-chip" onclick="showRoute(this,'mombasa','Mombasa, Kenya · 2 routes · 2 daily')"><svg viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="3"/></svg>Mombasa</div>
+        </div>
+        <div class="route-info show" id="routeInfo">
+          <div class="ri-title" id="riTitle">Kampala Hub</div>
+          <div class="ri-sub" id="riSub">12 active routes · 38 daily departures</div>
+          <button class="btn-primary btn-sm" style="margin-top:14px" onclick="window.location='#leaving'">View Trips →</button>
+        </div>
+      </div>
+      <div class="reveal d2">
+        <div class="map-box">
+          <svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+            <!-- Uganda outline -->
+            <path d="M120,80 L145,65 L175,60 L210,68 L235,72 L255,85 L268,100 L272,120 L265,140 L260,160 L268,180 L270,200 L260,220 L248,240 L240,265 L230,280 L215,290 L195,295 L175,288 L158,275 L145,260 L132,242 L118,225 L108,208 L100,188 L95,165 L98,145 L105,125 L110,105 Z" fill="rgba(245,166,35,.08)" stroke="rgba(245,166,35,.4)" stroke-width="1.5"/>
+            <!-- Kenya -->
+            <path d="M255,85 L280,78 L310,82 L335,95 L350,115 L358,140 L360,165 L350,190 L340,215 L328,230 L310,240 L290,245 L270,248 L248,240 L260,220 L268,200 L270,180 L268,160 L265,140 L272,120 L255,85Z" fill="rgba(100,150,255,.06)" stroke="rgba(100,150,255,.25)" stroke-width="1"/>
+            <!-- Tanzania -->
+            <path d="M248,240 L270,248 L300,255 L325,262 L340,280 L345,310 L335,335 L315,350 L290,355 L265,348 L245,330 L230,310 L228,285 L230,265 L240,248Z" fill="rgba(100,200,100,.05)" stroke="rgba(100,200,100,.2)" stroke-width="1"/>
+            <!-- Rwanda -->
+            <path d="M158,275 L175,288 L195,295 L205,310 L198,325 L180,330 L162,322 L150,308 L148,292Z" fill="rgba(200,100,255,.07)" stroke="rgba(200,100,255,.25)" stroke-width="1"/>
+            <!-- S Sudan -->
+            <path d="M108,80 L120,80 L110,105 L105,125 L98,145 L95,165 L88,155 L80,135 L82,110 L95,95Z" fill="rgba(200,200,200,.04)" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+            <!-- Lake Victoria -->
+            <ellipse cx="210" cy="240" rx="28" ry="20" fill="rgba(56,182,255,.2)" stroke="rgba(56,182,255,.45)" stroke-width="1"/>
+            <text x="210" y="243" text-anchor="middle" font-size="7" fill="rgba(56,182,255,.65)" font-family="DM Sans,sans-serif">L. Victoria</text>
+            <!-- Routes -->
+            <g stroke="rgba(245,166,35,.45)" stroke-width="1.2" stroke-dasharray="5,4" fill="none">
+              <line x1="175" y1="188" x2="140" y2="100"/>
+              <line x1="175" y1="188" x2="225" y2="168"/>
+              <line x1="175" y1="188" x2="215" y2="200"/>
+              <line x1="175" y1="188" x2="145" y2="255"/>
+              <line x1="175" y1="188" x2="165" y2="310"/>
+              <line x1="175" y1="188" x2="305" y2="220"/>
+              <line x1="305" y1="220" x2="325" y2="355"/>
+            </g>
+            <!-- Kampala -->
+            <circle cx="175" cy="188" r="12" fill="rgba(245,166,35,.2)"/>
+            <circle cx="175" cy="188" r="7" fill="#F5A623" stroke="#FDE68A" stroke-width="1.5"/>
+            <circle cx="175" cy="188" r="3.5" fill="#0B1D45"/>
+            <text x="175" y="203" text-anchor="middle" font-size="10" font-weight="700" fill="white" font-family="Sora,sans-serif">Kampala</text>
+            <!-- Other cities -->
+            <circle cx="140" cy="100" r="5.5" fill="#F5A623" stroke="rgba(245,166,35,.4)" stroke-width="1.5"/><circle cx="140" cy="100" r="2.5" fill="#0B1D45"/>
+            <text x="152" y="98" font-size="9.5" font-weight="600" fill="white" font-family="Sora,sans-serif">Gulu</text>
+            <circle cx="228" cy="168" r="5.5" fill="#F5A623" stroke="rgba(245,166,35,.4)" stroke-width="1.5"/><circle cx="228" cy="168" r="2.5" fill="#0B1D45"/>
+            <text x="236" y="172" font-size="9.5" font-weight="600" fill="white" font-family="Sora,sans-serif">Mbale</text>
+            <circle cx="215" cy="202" r="4.5" fill="#F5A623" stroke="rgba(245,166,35,.35)" stroke-width="1.5"/>
+            <text x="222" y="205" font-size="8.5" fill="rgba(255,255,255,.8)" font-family="DM Sans,sans-serif">Jinja</text>
+            <circle cx="145" cy="255" r="4.5" fill="#F5A623" stroke="rgba(245,166,35,.35)" stroke-width="1.5"/>
+            <text x="100" y="258" font-size="8.5" fill="rgba(255,255,255,.8)" font-family="DM Sans,sans-serif">Mbarara</text>
+            <circle cx="162" cy="312" r="5.5" fill="#FBBF24" stroke="rgba(251,191,36,.4)" stroke-width="1.5"/><circle cx="162" cy="312" r="2.5" fill="#0B1D45"/>
+            <text x="170" y="316" font-size="9.5" font-weight="600" fill="#FDE68A" font-family="Sora,sans-serif">Kigali</text>
+            <circle cx="305" cy="220" r="5.5" fill="#FBBF24" stroke="rgba(251,191,36,.4)" stroke-width="1.5"/><circle cx="305" cy="220" r="2.5" fill="#0B1D45"/>
+            <text x="313" y="224" font-size="9.5" font-weight="600" fill="#FDE68A" font-family="Sora,sans-serif">Nairobi</text>
+            <circle cx="92" cy="60" r="4.5" fill="#9CA3AF" stroke="rgba(156,163,175,.4)" stroke-width="1.5"/>
+            <text x="100" y="64" font-size="8.5" fill="rgba(255,255,255,.55)" font-family="DM Sans,sans-serif">Juba</text>
+            <circle cx="325" cy="358" r="4.5" fill="#FBBF24" stroke="rgba(251,191,36,.35)" stroke-width="1.5"/>
+            <text x="285" y="364" font-size="8.5" fill="rgba(255,255,255,.65)" font-family="DM Sans,sans-serif">Mombasa</text>
+            <circle cx="118" cy="210" r="3.5" fill="#F5A623" stroke="rgba(245,166,35,.3)" stroke-width="1.5"/>
+            <text x="76" y="213" font-size="8" fill="rgba(255,255,255,.6)" font-family="DM Sans,sans-serif">Fort Portal</text>
+            <!-- Labels -->
+            <text x="175" y="130" text-anchor="middle" font-size="8" fill="rgba(245,166,35,.45)" font-family="DM Sans,sans-serif" font-weight="700">UGANDA</text>
+            <text x="305" y="155" text-anchor="middle" font-size="8" fill="rgba(100,150,255,.45)" font-family="DM Sans,sans-serif" font-weight="700">KENYA</text>
+            <text x="275" y="305" text-anchor="middle" font-size="8" fill="rgba(100,200,100,.4)" font-family="DM Sans,sans-serif" font-weight="700">TANZANIA</text>
+            <text x="165" y="345" text-anchor="middle" font-size="8" fill="rgba(200,100,255,.45)" font-family="DM Sans,sans-serif" font-weight="700">RWANDA</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ADVANCE BOOKING ═══ -->
+<section id="advance">
+  <div class="container">
+    <div class="adv-grid">
+      <div class="adv-left reveal">
+        <span class="section-label">Plan Ahead</span>
+        <h2 class="section-title">Book Up to 4 Weeks in Advance</h2>
+        <p class="section-sub">Lock your seat today with just 20% of the fare. Pay the balance at departure — no surprises, guaranteed seat.</p>
+        <div class="adv-steps">
+          <div class="adv-step"><div class="adv-num">1</div><div><div class="adv-step-title">Search &amp; Select Your Trip</div><div class="adv-step-sub">Choose route, date, operator and seat up to 4 weeks out.</div></div></div>
+          <div class="adv-step"><div class="adv-num">2</div><div><div class="adv-step-title">Pay 20% Commitment Fee</div><div class="adv-step-sub">Pay via MTN MoMo, Airtel Money, Visa, or bank. Seat is locked instantly.</div></div></div>
+          <div class="adv-step"><div class="adv-num">3</div><div><div class="adv-step-title">Travel &amp; Pay Balance</div><div class="adv-step-sub">Arrive at the stage, show your QR ticket, pay remaining balance.</div></div></div>
+        </div>
+        <button class="btn-primary" style="margin-top:28px">Plan Ahead Now →</button>
+      </div>
+      <div class="reveal d2">
+        <div class="adv-card">
+          <div class="adv-card-title">Booking Summary Preview</div>
+          <div class="adv-row"><span class="adv-row-label">Route</span><span class="adv-row-val">Kampala → Nairobi</span></div>
+          <div class="adv-row"><span class="adv-row-label">Travel Date</span><span class="adv-row-val">June 14, 2026</span></div>
+          <div class="adv-row"><span class="adv-row-label">Passengers</span><span class="adv-row-val">2 Adults</span></div>
+          <div class="adv-row"><span class="adv-row-label">Average Fare</span><span class="adv-row-val">UGX 120,000</span></div>
+          <div class="adv-row"><span class="adv-row-label">Commitment (20%)</span><span class="adv-row-val gold">UGX 24,000</span></div>
+          <div class="adv-row"><span class="adv-row-label">Balance at Departure</span><span class="adv-row-val green">UGX 96,000</span></div>
+          <div class="adv-notice">💡 Seat locked for <strong style="color:var(--g400)">28 days</strong>. Pay via Mobile Money, Visa or bank transfer.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TOURIST PLANNER ═══ -->
+<section id="planner">
+  <div class="container">
+    <div class="planner-grid">
+      <div class="reveal">
+        <span class="section-label">Explore Uganda</span>
+        <h2 class="section-title">Plan Your Perfect Journey</h2>
+        <p class="section-sub">Tell us your destination and budget. We'll build a personalised itinerary with transport, tips and must-see spots.</p>
+        <div class="tip-card">
+          <div class="tip-eyebrow">💡 Travel Tip of the Day</div>
+          <div class="tip-text" id="tipText">The best time to visit Bwindi for gorilla trekking is June–August (dry season). Book transport and permits well in advance!</div>
+        </div>
+        <div class="popular-tags" style="margin-top:16px">
+          <span class="section-label" style="width:100%;margin-bottom:4px">Popular Destinations</span>
+          <span class="ptag">🦍 Bwindi Forest</span>
+          <span class="ptag">🌊 Source of Nile</span>
+          <span class="ptag">💦 Murchison Falls</span>
+          <span class="ptag">🏞 Lake Bunyonyi</span>
+          <span class="ptag">⛰ Sipi Falls</span>
+          <span class="ptag">🐒 Kibale Chimps</span>
+        </div>
+      </div>
+      <div class="reveal d2">
+        <div class="planner-form">
+          <h3 style="font-family:'Sora',sans-serif;font-size:1.125rem;font-weight:800;color:var(--n800);margin-bottom:4px">Where are you headed?</h3>
+          <p style="font-size:.875rem;color:var(--text2);margin-bottom:22px">We'll create your personalised itinerary.</p>
+          <div class="fgroup">
+            <label class="flabel">Destination</label>
+            <select class="finput">
+              <option>Bwindi (Gorilla Trekking)</option>
+              <option>Jinja (Source of the Nile)</option>
+              <option>Murchison Falls National Park</option>
+              <option>Lake Bunyonyi, Kabale</option>
+              <option>Queen Elizabeth National Park</option>
+              <option>Sipi Falls, Mbale</option>
+              <option>Kibale Forest (Chimpanzees)</option>
+            </select>
+          </div>
+          <div class="frow">
+            <div class="fgroup"><label class="flabel">Arrival Date</label><input type="date" class="finput"></div>
+            <div class="fgroup"><label class="flabel">Departure Date</label><input type="date" class="finput"></div>
+          </div>
+          <div class="frow">
+            <div class="fgroup"><label class="flabel">Budget (UGX)</label><input type="number" class="finput" placeholder="500,000"></div>
+            <div class="fgroup"><label class="flabel">Travellers</label><select class="finput"><option>1 Person</option><option>2 People</option><option>3–5</option><option>6–10</option><option>10+</option></select></div>
+          </div>
+          <div class="fgroup"><label class="flabel">Starting From</label><select class="finput"><option>Kampala</option><option>Entebbe Airport</option><option>Jinja</option><option>Gulu</option><option>Mbarara</option></select></div>
+          <button class="btn-primary" style="width:100%;justify-content:center;margin-top:8px">Get My Itinerary →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SIGHTSEEING ═══ -->
+<section id="sights">
+  <div class="container">
+    <div class="sights-hd reveal">
+      <span class="section-label">Along Our Routes</span>
+      <h2 class="section-title">Sights Worth Stopping For</h2>
+      <p class="section-sub">Incredible destinations along every Raylane route — your journey is part of the experience.</p>
+    </div>
+    <div class="sights-grid">
+      <div class="sight-card s1 reveal">
+        <div class="sight-img-wrap">
+          <img class="sight-bg" loading="lazy" src="https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=600&q=70" alt="Bwindi Forest">
+        </div>
+        <div class="sight-info"><span class="sight-cat">Wildlife</span><div class="sight-name">Bwindi Impenetrable Forest</div><div class="sight-meta">🚌 Kampala → Kabale · 7hr drive</div></div>
+      </div>
+      <div class="sight-card s2 reveal d1">
+        <div class="sight-img-wrap">
+          <img class="sight-bg" loading="lazy" src="https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=600&q=70" alt="Source of Nile">
+        </div>
+        <div class="sight-info"><span class="sight-cat">Adventure</span><div class="sight-name">Source of the Nile, Jinja</div><div class="sight-meta">🚌 Kampala → Jinja · 2hr drive</div></div>
+      </div>
+      <div class="sight-card s3 reveal d2">
+        <div class="sight-img-wrap">
+          <img class="sight-bg" loading="lazy" src="https://images.unsplash.com/photo-1559494007-9f5847c49d94?w=600&q=70" alt="Murchison Falls">
+        </div>
+        <div class="sight-info"><span class="sight-cat">Nature</span><div class="sight-name">Murchison Falls</div><div class="sight-meta">🚌 Kampala → Gulu road · 4hr drive</div></div>
+      </div>
+      <div class="sight-card s4 reveal">
+        <div class="sight-img-wrap">
+          <img class="sight-bg" loading="lazy" src="https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=600&q=70" alt="Lake Bunyonyi">
+        </div>
+        <div class="sight-info"><span class="sight-cat">Scenic</span><div class="sight-name">Lake Bunyonyi</div><div class="sight-meta">🚌 Kampala → Kabale · 7hr drive</div></div>
+      </div>
+      <div class="sight-card s5 reveal d1">
+        <div class="sight-img-wrap">
+          <img class="sight-bg" loading="lazy" src="https://images.unsplash.com/photo-1518623001395-125242310d0c?w=600&q=70" alt="Sipi Falls">
+        </div>
+        <div class="sight-info"><span class="sight-cat">Adventure</span><div class="sight-name">Sipi Falls, Mt Elgon</div><div class="sight-meta">🚌 Kampala → Mbale · 4hr drive</div></div>
+      </div>
+      <div class="sight-card s6 reveal d2">
+        <div class="sight-img-wrap">
+          <img class="sight-bg" loading="lazy" src="https://images.unsplash.com/photo-1503424886307-b090341d25d1?w=600&q=70" alt="Kibale Forest">
+        </div>
+        <div class="sight-info"><span class="sight-cat">Wildlife</span><div class="sight-name">Kibale Forest — Chimps</div><div class="sight-meta">🚌 Kampala → Fort Portal · 5hr drive</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CHARTER ═══ -->
+<section id="charter">
+  <div class="container">
+    <div class="charter-grid">
+      <div class="reveal">
+        <span class="section-label">Private Travel</span>
+        <h2 class="section-title">Travelling with 10+ People?</h2>
+        <p class="section-sub">Request a private vehicle with a dedicated driver. We match you with the best operator and send a fixed quote within 2 hours.</p>
+        <div class="charter-vehicles">
+          <div class="cv"><div class="cv-icon">🚌</div><div><div class="cv-name">Coach (50 seats)</div><div class="cv-desc">Long-distance intercity — AC, comfortable, ideal for large groups</div></div></div>
+          <div class="cv"><div class="cv-icon">🚐</div><div><div class="cv-name">Minibus (14–22 seats)</div><div class="cv-desc">Tours, events, corporate transfers, school excursions</div></div></div>
+          <div class="cv"><div class="cv-icon">🚙</div><div><div class="cv-name">Premium SUV / 4x4</div><div class="cv-desc">Safari, upcountry, executive travel, off-road ready</div></div></div>
+        </div>
+      </div>
+      <div class="reveal d2">
+        <div class="charter-form">
+          <h3 style="font-family:'Sora',sans-serif;font-size:1.0625rem;font-weight:800;color:var(--n800);margin-bottom:6px">Request a Quote</h3>
+          <p style="font-size:.8125rem;color:var(--text2);margin-bottom:20px">Response within 2 hours. WhatsApp: +256 700 123 466</p>
+          <div style="margin-bottom:16px">
+            <label class="flabel">Vehicle Type</label>
+            <div class="vehicle-grid">
+              <div class="vopt active" onclick="selectVehicle(this)"><span class="emoji">🚌</span><span>Coach</span></div>
+              <div class="vopt" onclick="selectVehicle(this)"><span class="emoji">🚐</span><span>Minibus</span></div>
+              <div class="vopt" onclick="selectVehicle(this)"><span class="emoji">🚙</span><span>SUV/4x4</span></div>
+            </div>
+          </div>
+          <div class="frow"><div class="fgroup"><label class="flabel">From</label><select class="finput"><option>Kampala</option><option>Gulu</option><option>Mbale</option></select></div><div class="fgroup"><label class="flabel">To</label><select class="finput"><option>Nairobi</option><option>Kigali</option><option>Mombasa</option></select></div></div>
+          <div class="frow"><div class="fgroup"><label class="flabel">Date</label><input type="date" class="finput"></div><div class="fgroup"><label class="flabel">People</label><input type="number" class="finput" placeholder="12" min="10"></div></div>
+          <div class="fgroup"><label class="flabel">Name &amp; Phone</label><input type="text" class="finput" placeholder="John Doe · +256 7xx xxx xxx"></div>
+          <button class="btn-primary" style="width:100%;justify-content:center;margin-top:4px" onclick="alert('Quote request sent! We will call you within 2 hours.')">Request a Quote →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PARTNERS ═══ -->
+<section id="partners">
+  <div class="container">
+    <div class="partners-hd">
+      <span class="section-label">Our Network</span>
+      <h2 class="section-title">Trusted Transport Partners</h2>
+      <p class="section-sub">Licensed operators vetted by Raylane. Automatically listed when onboarded.</p>
+    </div>
+  </div>
+  <div class="track-wrap">
+    <div class="p-track" id="pTrack">
+      <div class="p-logo"><span class="p-logo-name">Gateway Bus</span></div>
+      <div class="p-logo"><span class="p-logo-name">Gaagaa Express</span></div>
+      <div class="p-logo"><span class="p-logo-name">Post Bus UG</span></div>
+      <div class="p-logo"><span class="p-logo-name">Link Bus</span></div>
+      <div class="p-logo"><span class="p-logo-name">Kampala Coach</span></div>
+      <div class="p-logo"><span class="p-logo-name">Safe Rider</span></div>
+      <div class="p-logo"><span class="p-logo-name">Eagle Express</span></div>
+      <div class="p-logo"><span class="p-logo-name">Northern Coach</span></div>
+      <div class="p-logo"><span class="p-logo-name">Victoria Lines</span></div>
+      <div class="p-logo"><span class="p-logo-name">Pearl Transit</span></div>
+      <!-- duplicated for loop -->
+      <div class="p-logo"><span class="p-logo-name">Gateway Bus</span></div>
+      <div class="p-logo"><span class="p-logo-name">Gaagaa Express</span></div>
+      <div class="p-logo"><span class="p-logo-name">Post Bus UG</span></div>
+      <div class="p-logo"><span class="p-logo-name">Link Bus</span></div>
+      <div class="p-logo"><span class="p-logo-name">Kampala Coach</span></div>
+      <div class="p-logo"><span class="p-logo-name">Safe Rider</span></div>
+      <div class="p-logo"><span class="p-logo-name">Eagle Express</span></div>
+      <div class="p-logo"><span class="p-logo-name">Northern Coach</span></div>
+      <div class="p-logo"><span class="p-logo-name">Victoria Lines</span></div>
+      <div class="p-logo"><span class="p-logo-name">Pearl Transit</span></div>
+    </div>
+  </div>
+  <div class="container" style="text-align:center;margin-top:28px">
+    <a href="admin.html#operator-apply" class="btn-primary" style="background:var(--n800);color:var(--g400);box-shadow:none;border:2px solid var(--g400)">Join as an Operator →</a>
+  </div>
+</section>
+
+<!-- ═══ TESTIMONIALS ═══ -->
+<section id="testimonials">
+  <div class="container">
+    <div class="testi-hd">
+      <span class="section-label">Traveller Stories</span>
+      <h2 class="section-title">An Experience of a Lifetime</h2>
+      <div style="margin-top:16px">
+        <span class="rating-big">4.8</span>
+        <div class="stars-row">
+          <svg class="star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="star half" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <p class="reviews-count">Based on 2,840+ verified reviews</p>
+      </div>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card reveal"><div class="testi-quote">"</div><div class="testi-text">Booked Kampala to Nairobi with a few taps. Seat was reserved, bus was on time, and I paid the balance with Mobile Money at the stage. Incredible!</div><div class="testi-author"><div class="t-avatar">SM</div><div><div class="t-name">Sarah M.</div><div class="t-route">Kampala → Nairobi</div></div></div></div>
+      <div class="testi-card reveal d1"><div class="testi-quote">"</div><div class="testi-text">The tourist planner organised my entire Bwindi trip — transport, tips, everything. Travelling solo this gave me total confidence. Will use again.</div><div class="testi-author"><div class="t-avatar">JK</div><div><div class="t-name">James K.</div><div class="t-route">Solo · Bwindi Gorilla Trek</div></div></div></div>
+      <div class="testi-card reveal d2"><div class="testi-quote">"</div><div class="testi-text">Chartered a coach for 24 colleagues. Got a quote in under 2 hours. Driver was punctual, vehicle spotless. Raylane is changing transport in Uganda.</div><div class="testi-author"><div class="t-avatar">AB</div><div><div class="t-name">Alice B.</div><div class="t-route">Group Charter · Kampala–Gulu</div></div></div></div>
+      <div class="testi-card reveal d3"><div class="testi-quote">"</div><div class="testi-text">Advanced booking is brilliant. Paid 20% a week before and the seat was there waiting at the park. No stress whatsoever.</div><div class="testi-author"><div class="t-avatar">DO</div><div><div class="t-name">David O.</div><div class="t-route">Mbale → Kampala</div></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ECOSYSTEM ═══ -->
+<section id="ecosystem">
+  <div class="container">
+    <div class="eco-hd">
+      <span class="section-label" style="color:var(--g500)">Full Platform</span>
+      <h2 class="section-title">The Raylane Ecosystem</h2>
+      <p class="section-sub">Every part of the platform connected — booking, operations, finance, logistics.</p>
+    </div>
+    <div class="eco-grid">
+      <a href="admin.html" class="eco-card reveal">
+        <div class="eco-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
+        <div class="eco-name">Raylane Admin</div>
+        <div class="eco-desc">Full system control — operators, trips, bookings, payments, fleet, financials, API integrations.</div>
+        <div class="eco-link">Access Admin <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      </a>
+      <a href="admin.html#operator" class="eco-card reveal d1">
+        <div class="eco-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 18L7 10h10l4 8"/><rect x="2" y="18" width="20" height="4" rx="1.5"/><circle cx="8" cy="23" r="1.5" fill="currentColor"/><circle cx="16" cy="23" r="1.5" fill="currentColor"/></svg></div>
+        <div class="eco-name">Operator Portal</div>
+        <div class="eco-desc">Operators manage trips, seats, bookings, parcels, drivers, fleet, fuel, HR and analytics.</div>
+        <div class="eco-link">Operator Login <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      </a>
+      <a href="admin.html#apply" class="eco-card reveal d2">
+        <div class="eco-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg></div>
+        <div class="eco-name">Become an Operator</div>
+        <div class="eco-desc">Apply to list your vehicles on Raylane. Admin reviews and activates your account.</div>
+        <div class="eco-link">Apply Now <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      </a>
+      <a href="#parcels" class="eco-card reveal d3">
+        <div class="eco-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a4 4 0 00-8 0v2"/><path d="M2 12h20"/></svg></div>
+        <div class="eco-name">Parcel Logistics</div>
+        <div class="eco-desc">Send parcels via our bus network. Track status, rider assignment, and delivery updates.</div>
+        <div class="eco-link">Send a Parcel <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      </a>
+      <a href="admin.html#financials" class="eco-card reveal">
+        <div class="eco-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" stroke-linecap="round"/></svg></div>
+        <div class="eco-name">Financial Centre</div>
+        <div class="eco-desc">QuickBooks-style P&amp;L, payout tracking, vendor payments, commission insights, reports.</div>
+        <div class="eco-link">View Financials <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      </a>
+      <a href="#" class="eco-card reveal d1">
+        <div class="eco-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5" stroke-linecap="round"/></svg></div>
+        <div class="eco-name">Live Trip Tracker</div>
+        <div class="eco-desc">Real-time seat availability, departure alerts, live boarding status across all active routes.</div>
+        <div class="eco-link">Track a Trip <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA ═══ -->
+<section id="cta">
+  <div class="cta-rings">
+    <div class="cta-ring" style="width:200px;height:200px"></div>
+    <div class="cta-ring" style="width:380px;height:380px"></div>
+    <div class="cta-ring" style="width:560px;height:560px"></div>
+    <div class="cta-ring" style="width:740px;height:740px"></div>
+  </div>
+  <div class="container">
+    <span class="section-label" style="text-align:center;display:block">Ready to Go?</span>
+    <h2 class="cta-h2">Your Next Journey Starts Here</h2>
+    <p class="cta-sub">Book now. Pay only 20% to lock your seat. No signup required. Zero stress.</p>
+    <div class="cta-btns">
+      <button class="btn-primary" style="font-size:1rem;padding:1rem 2.25rem" onclick="document.getElementById('hero').scrollIntoView({behavior:'smooth'})">Book a Trip Now</button>
+      <button class="btn-secondary" style="font-size:1rem;padding:.9375rem 2.25rem" onclick="document.getElementById('planner').scrollIntoView({behavior:'smooth'})">Plan My Journey</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="logo-icon" style="width:38px;height:38px"><svg viewBox="0 0 24 24" fill="none"><path d="M3 12s4-6 9-6 9 6 9 6" stroke="#0B1D45" stroke-width="2.2" stroke-linecap="round"/><path d="M3 17h18" stroke="#0B1D45" stroke-width="2.2" stroke-linecap="round"/><circle cx="7.5" cy="19.5" r="2" fill="#0B1D45"/><circle cx="16.5" cy="19.5" r="2" fill="#0B1D45"/></svg></div>
+          <span class="logo-text" style="font-size:1rem">Raylane <em>Express</em></span>
+        </div>
+        <p class="footer-desc">Smart travel across Uganda and East Africa. Real-time booking, mobile money, zero-stress journeys for everyone.</p>
+        <div class="f-socials">
+          <div class="f-soc">Ig</div><div class="f-soc">Tw</div><div class="f-soc">Fb</div><div class="f-soc">Li</div>
+        </div>
+      </div>
+      <div>
+        <div class="f-col-title">Company</div>
+        <ul class="f-links">
+          <li><a href="#">About Us</a></li><li><a href="#">Careers</a></li><li><a href="#">Blog</a></li><li><a href="#">Press</a></li><li><a href="#">Our Impact</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="f-col-title">Services</div>
+        <ul class="f-links">
+          <li><a href="#">Book Travel</a></li><li><a href="#">Send a Parcel</a></li><li><a href="#charter">Charter Vehicle</a></li><li><a href="#planner">Tourist Planner</a></li><li><a href="#">Become Operator</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="f-col-title">Support</div>
+        <ul class="f-links">
+          <li><a href="#">Help Centre</a></li><li><a href="#">Contact Us</a></li><li><a href="#">FAQs</a></li><li><a href="#">Safety</a></li><li><a href="#">Refund Policy</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="f-col-title">Contact</div>
+        <ul class="f-links">
+          <li><a href="tel:+256700123466">📞 +256 700 123 466</a></li>
+          <li><a href="mailto:info@raylane.com">✉️ info@raylane.com</a></li>
+          <li><a href="#">📍 Kampala, Uganda</a></li>
+          <li><a href="admin.html" style="color:var(--g400);font-weight:600">Admin Panel →</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-eco">
+      <a href="admin.html" class="f-eco-link">Admin Portal →</a>
+      <a href="admin.html#operator" class="f-eco-link">Operator Portal →</a>
+      <a href="admin.html#apply" class="f-eco-link">Become an Operator →</a>
+      <a href="#" class="f-eco-link">Track Parcel →</a>
+      <a href="#" class="f-eco-link">Live Trip Tracker →</a>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Raylane Express Ltd. Registered in Uganda. All rights reserved.</p>
+      <div class="footer-legal">
+        <a href="#">Terms</a><a href="#">Privacy</a><a href="#">Cookies</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══ MOBILE BOTTOM NAV ═══ -->
+<nav class="mob-nav">
+  <div class="mob-nav-inner">
+    <a href="#" class="mob-item active" onclick="scrollToTop()">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
+      <span>Home</span>
+    </a>
+    <a href="#search" class="mob-item mob-book">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
+      <span>Book</span>
+    </a>
+    <a href="#planner" class="mob-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
+      <span>Plan</span>
+    </a>
+    <a href="admin.html" class="mob-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"/></svg>
+      <span>Account</span>
+    </a>
+  </div>
+</nav>
+
+<style>
+@keyframes fadeUpAnim{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+</style>
+<script>
+// Navbar scroll
+window.addEventListener('scroll',()=>{
+  document.getElementById('navbar').className=window.scrollY>60?'solid':'transparent';
+},{ passive:true });
+
+// Mobile menu
+function toggleMenu(){document.getElementById('mobOverlay').classList.toggle('open');document.querySelector('.hamburger').classList.toggle('open')}
+function closeMenu(){document.getElementById('mobOverlay').classList.remove('open');document.querySelector('.hamburger').classList.remove('open')}
+
+// Hero slideshow
+const heroImgs=document.querySelectorAll('.hero-img');
+const heroDots=document.querySelectorAll('.hero-dot');
+let cur=0;
+function setSlide(i){
+  heroImgs[cur].classList.remove('active');heroDots[cur].style.width='8px';heroDots[cur].style.background='rgba(255,255,255,.3)';
+  cur=i;heroImgs[cur].classList.add('active');heroDots[cur].style.width='32px';heroDots[cur].style.background='var(--g500)';
+}
+setInterval(()=>setSlide((cur+1)%heroImgs.length),7000);
+
+// Set today as default date
+document.getElementById('tripDate').valueAsDate=new Date();
+
+// Search tabs
+function setTab(el){document.querySelectorAll('.s-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active')}
+
+// Destination chips
+function showRoute(el,id,info){
+  document.querySelectorAll('.dest-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  const [title,...rest]=info.split(' · ');
+  document.getElementById('riTitle').textContent=title;
+  document.getElementById('riSub').textContent=rest.join(' · ');
+  document.getElementById('routeInfo').classList.add('show');
+}
+
+// Charter vehicle select
+function selectVehicle(el){document.querySelectorAll('.vopt').forEach(v=>v.classList.remove('active'));el.classList.add('active')}
+
+// Scroll reveals
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');obs.unobserve(e.target)}})},{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal').forEach((el,i)=>{
+  const sib=[...el.parentElement.children].filter(c=>c.classList.contains('reveal'));
+  const idx=sib.indexOf(el);
+  if(idx>0)el.style.transitionDelay=`${idx*0.09}s`;
+  obs.observe(el);
+});
+
+// Particles
+(function(){
+  const c=document.getElementById('heroParticles');
+  for(let i=0;i<12;i++){
+    const p=document.createElement('div');p.className='particle';
+    const sz=3+Math.random()*7;
+    p.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;bottom:-${sz}px;animation-duration:${14+Math.random()*18}s;animation-delay:${Math.random()*16}s;opacity:${.1+Math.random()*.3}`;
+    c.appendChild(p);
+  }
+})();
+
+// Tips rotation
+const tips=[
+  'The best time to visit Bwindi for gorilla trekking is June–August. Book transport and permits well in advance!',
+  'For the Source of the Nile in Jinja, depart Kampala early to catch boat tours before midday.',
+  'Murchison Falls is ~4 hours from Kampala. Pack snacks — fewer stops on the northern highway.',
+  'Sipi Falls: go at sunrise for the mist and a peaceful, crowd-free waterfall experience.',
+  'Roads to Kabale and Kisoro are scenic mountain routes — sit on the right for the best views!',
+  'Fort Portal is ideal base for Kibale Forest, Queen Elizabeth NP and Crater Lakes — all within 1 hour.',
+];
+let ti=0;
+const tipEl=document.getElementById('tipText');
+setInterval(()=>{
+  tipEl.style.opacity='0';
+  setTimeout(()=>{ti=(ti+1)%tips.length;tipEl.textContent=tips[ti];tipEl.style.opacity='1';},350);
+},6000);
+tipEl.style.transition='opacity .35s';
+
+function scrollToTop(){window.scrollTo({top:0,behavior:'smooth'})}
+</script>
+</body>
+</html>
