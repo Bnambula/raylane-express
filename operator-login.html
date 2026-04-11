@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Operator Login — Raylane Express</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --n800:#0B1D45;--n700:#132359;--n600:#1E3A8A;--n100:#C8D0E4;--n50:#EEF1FB;
+  --g500:#F5A623;--g400:#FBBF24;
+  --surface:#fff;--border:#E8EAEF;--bg:#F2F4F8;
+  --text:#0F172A;--text2:#475569;--muted:#94A3B8;
+  --green:#16A34A;--green-bg:#F0FDF4;--green-b:#BBF7D0;
+  --red:#DC2626;--red-bg:#FEF2F2;--red-b:#FECACA;
+  --amber:#D97706;--amber-bg:#FEF9EC;--amber-b:#FDE68A;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;min-height:100vh;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:'Sora',sans-serif}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:20px;box-shadow:0 8px 40px rgba(11,29,69,.12);width:100%;max-width:440px;overflow:hidden}
+.card-hd{background:var(--n800);padding:28px 32px;position:relative;overflow:hidden}
+.card-hd::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:40px 40px}
+.logo-row{display:flex;align-items:center;gap:10px;margin-bottom:18px;position:relative;z-index:1}
+.logo-ic{width:38px;height:38px;background:var(--g500);border-radius:9px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(245,166,35,.3)}
+.logo-ic svg{width:20px;height:20px}
+.logo-txt{font-family:'Sora',sans-serif;font-size:.9375rem;font-weight:800;color:#fff}
+.logo-txt em{color:var(--g500);font-style:normal}
+.hd-title{font-family:'Sora',sans-serif;font-size:1.25rem;font-weight:800;color:#fff;margin-bottom:4px;position:relative;z-index:1}
+.hd-sub{font-size:.8125rem;color:rgba(255,255,255,.5);position:relative;z-index:1}
+/* Operator badge */
+.op-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(245,166,35,.12);border:1px solid rgba(245,166,35,.28);color:var(--g400);font-family:'Sora',sans-serif;font-size:.5625rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:4px 11px;border-radius:50px;margin-bottom:14px;position:relative;z-index:1}
+.op-dot{width:5px;height:5px;background:var(--g500);border-radius:50%;animation:pulse 2s ease infinite}
+
+/* FORM */
+.form-body{padding:28px 32px}
+.fgroup{margin-bottom:16px}
+.flabel{display:block;font-size:.8125rem;font-weight:600;color:var(--text2);margin-bottom:5px}
+.finput{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:11px 14px;font-size:.9375rem;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;transition:all .2s;appearance:none}
+.finput:focus{border-color:var(--n600);background:var(--surface);box-shadow:0 0 0 3px rgba(30,58,138,.08)}
+.finput.err{border-color:var(--red);background:var(--red-bg)}
+.finput.ok{border-color:var(--green);background:var(--green-bg)}
+.pw-wrap{position:relative}
+.pw-wrap .finput{padding-right:52px}
+.show-pw{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);font-size:.75rem;font-weight:600;transition:color .2s;padding:4px}
+.show-pw:hover{color:var(--text)}
+
+/* Password strength */
+.pw-strength{margin-top:6px}
+.pw-bars{display:flex;gap:4px;margin-bottom:4px}
+.pw-bar{height:3px;flex:1;border-radius:50px;background:var(--border);transition:background .3s}
+.pw-lbl{font-size:.5625rem;font-weight:700;color:var(--muted)}
+
+/* MESSAGES */
+.msg{border-radius:10px;padding:11px 14px;font-size:.8125rem;font-weight:600;display:none;align-items:center;gap:8px;margin-bottom:16px}
+.msg.show{display:flex}
+.msg svg{width:16px;height:16px;flex-shrink:0}
+.msg-err{background:var(--red-bg);border:1px solid var(--red-b);color:var(--red)}
+.msg-ok{background:var(--green-bg);border:1px solid var(--green-b);color:var(--green)}
+.msg-info{background:var(--amber-bg);border:1px solid var(--amber-b);color:var(--amber)}
+
+/* SCREEN TABS */
+.screen{display:none}.screen.active{display:block}
+
+/* FIRST LOGIN NOTICE */
+.first-login-notice{background:var(--n50);border:1.5px solid var(--n100);border-radius:11px;padding:14px;margin-bottom:18px}
+.fln-title{font-family:'Sora',sans-serif;font-size:.875rem;font-weight:700;color:var(--n800);margin-bottom:4px}
+.fln-sub{font-size:.8125rem;color:var(--text2);line-height:1.5}
+
+/* BUTTONS */
+.btn-primary{width:100%;background:var(--n800);color:#fff;font-family:'Sora',sans-serif;font-weight:800;font-size:.9375rem;padding:13px;border-radius:11px;border:none;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:14px}
+.btn-primary:hover{background:var(--n700);transform:translateY(-1px)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-gold{background:var(--g500);color:var(--n800);box-shadow:0 4px 14px rgba(245,166,35,.28)}
+.btn-gold:hover{background:var(--g400)}
+.btn-ghost{background:transparent;color:var(--n600);border:none;font-size:.8125rem;font-weight:600;cursor:pointer;padding:6px 0;display:block;transition:color .2s;text-align:center;width:100%}
+.btn-ghost:hover{color:var(--n800)}
+
+/* DIVIDER */
+.divider{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.75rem;margin:14px 0}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* MODULE CHIPS */
+.module-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.mchip{font-size:.5625rem;font-weight:800;padding:3px 9px;border-radius:50px}
+.mc-basic{background:var(--n50);color:var(--n600);border:1px solid var(--n100)}
+.mc-premium{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-b)}
+
+/* STATUS badge */
+.status-active{display:inline-flex;align-items:center;gap:4px;background:var(--green-bg);border:1px solid var(--green-b);color:var(--green);font-size:.5625rem;font-weight:800;padding:3px 8px;border-radius:50px;text-transform:uppercase;letter-spacing:.06em}
+.status-dot{width:5px;height:5px;background:var(--green);border-radius:50%;animation:pulse 2s ease infinite}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.6);opacity:.55}}
+.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .65s linear infinite;display:inline-block}
+.spinner-dark{border-color:rgba(11,29,69,.2);border-top-color:var(--n800)}
+
+@media(max-width:480px){.form-body,.card-hd{padding:22px 20px}}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <!-- HEADER -->
+  <div class="card-hd">
+    <div class="logo-row">
+      <div class="logo-ic"><svg viewBox="0 0 24 24" fill="none"><path d="M3 12s4-6 9-6 9 6 9 6" stroke="#0B1D45" stroke-width="2.2" stroke-linecap="round"/><path d="M3 17h18" stroke="#0B1D45" stroke-width="2.2" stroke-linecap="round"/><circle cx="7.5" cy="19.5" r="2" fill="#0B1D45"/><circle cx="16.5" cy="19.5" r="2" fill="#0B1D45"/></svg></div>
+      <span class="logo-txt">Raylane <em>Express</em></span>
+    </div>
+    <div class="op-badge"><span class="op-dot"></span>Operator Portal</div>
+    <div class="hd-title" id="hdTitle">Operator Login</div>
+    <div class="hd-sub" id="hdSub">Access your dashboard, trips, bookings and earnings</div>
+  </div>
+
+  <!-- FORM BODY -->
+  <div class="form-body">
+
+    <!-- ═══ SCREEN 1: LOGIN ═══ -->
+    <div class="screen active" id="s-login">
+      <div class="msg msg-err" id="loginErr">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+        <span id="loginErrTxt">Invalid credentials. Use the email sent by Raylane on approval.</span>
+      </div>
+
+      <div class="fgroup">
+        <label class="flabel">Email Address</label>
+        <input class="finput" id="loginEmail" type="email" placeholder="operator@yourbusiness.com" autocomplete="email">
+      </div>
+
+      <div class="fgroup">
+        <label class="flabel">Password</label>
+        <div class="pw-wrap">
+          <input class="finput" id="loginPw" type="password" placeholder="Your password" autocomplete="current-password">
+          <button class="show-pw" onclick="togglePw('loginPw',this)">Show</button>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+        <label style="display:flex;align-items:center;gap:6px;font-size:.8125rem;color:var(--text2);cursor:pointer">
+          <input type="checkbox" style="accent-color:var(--n600)"> Keep me signed in
+        </label>
+        <button onclick="showScreen('s-forgot')" style="background:none;border:none;font-size:.8125rem;color:var(--n600);font-weight:600;cursor:pointer;transition:color .2s">Forgot password?</button>
+      </div>
+
+      <button class="btn-primary" onclick="doLogin()">
+        Sign In
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/></svg>
+      </button>
+
+      <div class="divider">or</div>
+
+      <div style="text-align:center;margin-bottom:6px">
+        <div style="font-size:.8125rem;color:var(--text2);margin-bottom:10px">Not yet a Raylane operator?</div>
+        <a href="apply.html" style="display:inline-flex;align-items:center;gap:6px;background:rgba(245,166,35,.1);border:1.5px solid rgba(245,166,35,.28);color:var(--g600);font-family:'Sora',sans-serif;font-weight:700;font-size:.875rem;padding:10px 20px;border-radius:var(--r-pill,50px);text-decoration:none;transition:all .2s">🚌 Apply to Join — Takes 10 min</a>
+      </div>
+
+      <div style="margin-top:14px;text-align:center">
+        <a href="index.html" style="font-size:.8125rem;color:var(--muted);font-weight:500;text-decoration:none;transition:color .2s">← Back to Raylane Express</a>
+      </div>
+    </div>
+
+    <!-- ═══ SCREEN 2: FIRST LOGIN (set password) ═══ -->
+    <div class="screen" id="s-firstlogin">
+      <div class="first-login-notice">
+        <div class="fln-title">👋 Welcome to Raylane, Gateway Bus!</div>
+        <div class="fln-sub">Your account was just activated by Raylane Admin. Set a secure password to access your operator dashboard.</div>
+      </div>
+
+      <!-- Account info preview -->
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:11px;padding:14px;margin-bottom:18px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <div style="font-family:'Sora',sans-serif;font-size:.875rem;font-weight:700;color:var(--n800)">Gateway Bus Ltd</div>
+          <span class="status-active"><span class="status-dot"></span>Active</span>
+        </div>
+        <div style="font-size:.75rem;color:var(--text2);margin-bottom:8px">gateway@bus.com · Commission: 10%</div>
+        <div style="font-size:.6875rem;color:var(--muted);margin-bottom:6px;font-weight:700;text-transform:uppercase;letter-spacing:.08em">Active Modules</div>
+        <div class="module-chips">
+          <span class="mchip mc-basic">✓ Trips</span>
+          <span class="mchip mc-basic">✓ Bookings</span>
+          <span class="mchip mc-basic">✓ Seats</span>
+          <span class="mchip mc-basic">✓ Parcels</span>
+          <span class="mchip mc-premium">+ Financials</span>
+        </div>
+      </div>
+
+      <div class="fgroup">
+        <label class="flabel">New Password</label>
+        <div class="pw-wrap">
+          <input class="finput" id="newPw" type="password" placeholder="At least 8 characters" oninput="checkPwStrength(this.value)">
+          <button class="show-pw" onclick="togglePw('newPw',this)">Show</button>
+        </div>
+        <div class="pw-strength">
+          <div class="pw-bars"><div class="pw-bar" id="bar1"></div><div class="pw-bar" id="bar2"></div><div class="pw-bar" id="bar3"></div><div class="pw-bar" id="bar4"></div></div>
+          <div class="pw-lbl" id="pwLbl">Enter a password</div>
+        </div>
+      </div>
+
+      <div class="fgroup">
+        <label class="flabel">Confirm Password</label>
+        <div class="pw-wrap">
+          <input class="finput" id="confirmPw" type="password" placeholder="Repeat your password" oninput="checkMatch()">
+          <button class="show-pw" onclick="togglePw('confirmPw',this)">Show</button>
+        </div>
+      </div>
+
+      <div class="msg msg-err" id="pwErr">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+        <span>Passwords don't match</span>
+      </div>
+
+      <button class="btn-primary btn-gold" id="setPwBtn" onclick="setPassword()">
+        Set Password &amp; Access Portal
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>
+      </button>
+
+      <div style="font-size:.6875rem;color:var(--muted);text-align:center;line-height:1.5">Password is hashed by Supabase Auth · Never stored in plain text · Session secured by JWT</div>
+    </div>
+
+    <!-- ═══ SCREEN 3: FORGOT PASSWORD ═══ -->
+    <div class="screen" id="s-forgot">
+      <div class="msg msg-ok" id="resetSent" style="margin-bottom:18px">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+        <span>Reset link sent! Check your email inbox.</span>
+      </div>
+
+      <div style="text-align:center;margin-bottom:20px">
+        <div style="width:56px;height:56px;background:var(--n50);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:1.5rem">📧</div>
+        <div style="font-family:'Sora',sans-serif;font-size:.9375rem;font-weight:700;color:var(--n800);margin-bottom:4px">Reset Your Password</div>
+        <div style="font-size:.8125rem;color:var(--text2)">Enter your operator email. Supabase sends a secure reset link.</div>
+      </div>
+
+      <div class="fgroup">
+        <label class="flabel">Operator Email</label>
+        <input class="finput" id="forgotEmail" type="email" placeholder="operator@yourbusiness.com">
+      </div>
+
+      <button class="btn-primary" onclick="sendReset()">
+        Send Reset Link
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>
+      </button>
+
+      <button onclick="showScreen('s-login')" class="btn-ghost">← Back to Login</button>
+    </div>
+
+    <!-- ═══ SCREEN 4: LOADING (redirect) ═══ -->
+    <div class="screen" id="s-loading">
+      <div style="text-align:center;padding:20px 0">
+        <div style="width:56px;height:56px;background:var(--green-bg);border:2px solid var(--green-b);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:1.5rem">✓</div>
+        <div style="font-family:'Sora',sans-serif;font-size:.9375rem;font-weight:700;color:var(--n800);margin-bottom:4px">Signed In Successfully</div>
+        <div style="font-size:.8125rem;color:var(--text2);margin-bottom:18px">Loading your operator dashboard...</div>
+        <div style="display:flex;justify-content:center">
+          <div style="width:24px;height:24px;border:3px solid var(--n100);border-top-color:var(--n800);border-radius:50%;animation:spin .7s linear infinite"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Security badge -->
+<div style="position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--n800);color:rgba(255,255,255,.5);font-size:.5625rem;font-weight:700;padding:6px 14px;border-radius:50px;display:flex;align-items:center;gap:6px;white-space:nowrap">
+  <svg width="10" height="10" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>
+  Secured by Supabase Auth · JWT sessions · Row Level Security on all data
+</div>
+
+<script>
+const SCREENS = ['s-login','s-firstlogin','s-forgot','s-loading'];
+
+function showScreen(id) {
+  SCREENS.forEach(s => {
+    const el = document.getElementById(s);
+    el.className = 'screen' + (s === id ? ' active' : '');
+  });
+  // Update header text
+  const titles = {
+    's-login': ['Operator Login','Access your dashboard, trips, bookings and earnings'],
+    's-firstlogin': ['Welcome! Set Your Password','First-time login — set a secure password to continue'],
+    's-forgot': ['Reset Password','We\'ll email you a secure reset link'],
+    's-loading': ['Loading Portal','Just a moment...']
+  };
+  if(titles[id]) {
+    document.getElementById('hdTitle').textContent = titles[id][0];
+    document.getElementById('hdSub').textContent = titles[id][1];
+  }
+}
+
+function togglePw(id, btn) {
+  const inp = document.getElementById(id);
+  if(inp.type === 'password') { inp.type = 'text'; btn.textContent = 'Hide'; }
+  else { inp.type = 'password'; btn.textContent = 'Show'; }
+}
+
+// ─── LOGIN ───
+function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pw = document.getElementById('loginPw').value;
+  const btn = event.target.closest('button');
+
+  if(!email || !pw) {
+    document.getElementById('loginErr').classList.add('show');
+    document.getElementById('loginErrTxt').textContent = 'Please enter your email and password.';
+    return;
+  }
+
+  btn.innerHTML = '<span class="spinner"></span> Authenticating...';
+  btn.disabled = true;
+
+  // Simulate Supabase Auth: supabase.auth.signInWithPassword({ email, password })
+  setTimeout(() => {
+    btn.innerHTML = 'Sign In <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/></svg>';
+    btn.disabled = false;
+
+    // Demo: first-time login check (email contains 'new' triggers setup flow)
+    if(email.includes('new') || email.includes('first')) {
+      showScreen('s-firstlogin');
+    } else {
+      // Normal login — check operator_users table via RLS
+      // In production: verify auth.uid() exists in operator_users → load operator data
+      showScreen('s-loading');
+      setTimeout(() => { window.location.href = 'operator-pro.html'; }, 1400);
+    }
+  }, 1500);
+}
+
+// ─── PASSWORD STRENGTH ───
+function checkPwStrength(val) {
+  const bars = [document.getElementById('bar1'),document.getElementById('bar2'),document.getElementById('bar3'),document.getElementById('bar4')];
+  const lbl = document.getElementById('pwLbl');
+  bars.forEach(b => b.style.background = 'var(--border)');
+  if(!val) { lbl.textContent = 'Enter a password'; lbl.style.color = 'var(--muted)'; return; }
+  let score = 0;
+  if(val.length >= 8) score++;
+  if(/[A-Z]/.test(val)) score++;
+  if(/[0-9]/.test(val)) score++;
+  if(/[^A-Za-z0-9]/.test(val)) score++;
+  const cols = ['var(--red)','var(--amber)','var(--amber)','var(--green)'];
+  const lbls = ['Too weak','Fair','Good','Strong ✓'];
+  bars.slice(0,score).forEach(b => b.style.background = cols[score-1]);
+  lbl.textContent = lbls[score-1] || 'Too weak';
+  lbl.style.color = cols[score-1] || 'var(--red)';
+}
+
+function checkMatch() {
+  const pw = document.getElementById('newPw').value;
+  const confirm = document.getElementById('confirmPw').value;
+  const errEl = document.getElementById('pwErr');
+  const confirmEl = document.getElementById('confirmPw');
+  if(confirm && pw !== confirm) {
+    errEl.classList.add('show');
+    confirmEl.classList.add('err');
+  } else {
+    errEl.classList.remove('show');
+    confirmEl.classList.remove('err');
+    if(confirm) confirmEl.classList.add('ok');
+  }
+}
+
+// ─── SET PASSWORD ───
+function setPassword() {
+  const pw = document.getElementById('newPw').value;
+  const confirm = document.getElementById('confirmPw').value;
+  if(pw.length < 8) { document.getElementById('pwErr').classList.add('show'); return; }
+  if(pw !== confirm) { document.getElementById('pwErr').classList.add('show'); return; }
+
+  const btn = document.getElementById('setPwBtn');
+  btn.innerHTML = '<span class="spinner spinner-dark"></span> Saving password...';
+  btn.disabled = true;
+
+  // In production: supabase.auth.updateUser({ password: pw })
+  // Then: INSERT INTO audit_log (user_id, action) VALUES (auth.uid(), 'first_login_password_set')
+  setTimeout(() => {
+    showScreen('s-loading');
+    setTimeout(() => { window.location.href = 'operator-pro.html'; }, 1200);
+  }, 1400);
+}
+
+// ─── FORGOT PASSWORD ───
+function sendReset() {
+  const email = document.getElementById('forgotEmail').value.trim();
+  if(!email) return;
+  const btn = event.target.closest('button');
+  btn.innerHTML = '<span class="spinner"></span> Sending...';
+  btn.disabled = true;
+  // In production: supabase.auth.resetPasswordForEmail(email, { redirectTo: '/operator/reset' })
+  setTimeout(() => {
+    document.getElementById('resetSent').classList.add('show');
+    btn.innerHTML = 'Send Reset Link <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>';
+    btn.disabled = false;
+  }, 1500);
+}
+
+// Enter key support
+document.addEventListener('keydown', e => {
+  if(e.key === 'Enter') {
+    const active = document.querySelector('.screen.active')?.id;
+    if(active === 's-login') doLogin();
+    else if(active === 's-forgot') sendReset();
+  }
+});
+</script>
+</body>
+</html>
