@@ -1,0 +1,1674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raylane Express — Super Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══ DESIGN TOKENS ═══ */
+:root{
+  /* Navy palette */
+  --n900:#040B1C;--n800:#0B1D45;--n700:#132359;--n600:#1E3A8A;--n500:#2563EB;--n400:#4A6199;--n200:#9AABC8;--n100:#C8D0E4;--n50:#EEF1FB;
+  /* Gold */
+  --g600:#D97706;--g500:#F5A623;--g400:#FBBF24;--g200:#FCD34D;--g100:#FDE68A;
+  /* Semantic */
+  --green:#16A34A;--green-bg:#F0FDF4;--green-b:#BBF7D0;
+  --amber:#D97706;--amber-bg:#FEF9EC;--amber-b:#FDE68A;
+  --red:#DC2626;--red-bg:#FEF2F2;--red-b:#FECACA;
+  --blue:#2563EB;--blue-bg:#EFF6FF;--blue-b:#BFDBFE;
+  --purple:#7C3AED;--purple-bg:#F5F3FF;--purple-b:#DDD6FE;
+  /* Surface */
+  --bg:#F2F4F8;--surface:#FFFFFF;--border:#E8EAEF;--border2:#F0F1F4;
+  --text:#0F172A;--text2:#475569;--muted:#94A3B8;
+  /* Sidebar */
+  --sb:#080F24;--sb2:#0E1830;--sb-border:rgba(255,255,255,.07);
+  /* Radius */
+  --r-sm:8px;--r-md:12px;--r-lg:16px;--r-xl:20px;--r-pill:50px;
+  /* Shadow */
+  --sh-xs:0 1px 3px rgba(15,23,42,.06),0 1px 2px rgba(15,23,42,.04);
+  --sh-sm:0 2px 8px rgba(11,29,69,.08);
+  --sh-md:0 4px 16px rgba(11,29,69,.10);
+  --sh-lg:0 8px 32px rgba(11,29,69,.14);
+  --sh-gold:0 4px 16px rgba(245,166,35,.28);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{height:100%}
+body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--bg);height:100%;overflow:hidden;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,h5{font-family:'Sora',sans-serif}
+button,select,input,textarea{font-family:'DM Sans',sans-serif}
+
+/* ═══ SHELL ═══ */
+.shell{display:flex;height:100vh;overflow:hidden}
+
+/* ═══ SIDEBAR ═══ */
+.sidebar{
+  width:236px;background:var(--sb);
+  display:flex;flex-direction:column;flex-shrink:0;
+  transition:width .26s cubic-bezier(.4,0,.2,1);overflow:hidden;
+  border-right:1px solid var(--sb-border);position:relative;z-index:20
+}
+.sidebar.col{width:62px}
+
+/* Sidebar Header */
+.sb-hd{height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;border-bottom:1px solid var(--sb-border);flex-shrink:0}
+.sb-logo{display:flex;align-items:center;gap:9px;overflow:hidden;white-space:nowrap;min-width:0}
+.sb-logo-ic{width:34px;height:34px;background:var(--g500);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(245,166,35,.3)}
+.sb-logo-ic svg{width:18px;height:18px}
+.sb-logo-txt{font-family:'Sora',sans-serif;font-size:.875rem;font-weight:800;color:#fff;line-height:1.15;white-space:nowrap;overflow:hidden}
+.sb-logo-txt span{color:var(--g400)}
+.sb-col-btn{width:28px;height:28px;background:rgba(255,255,255,.07);border:none;border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(255,255,255,.5);flex-shrink:0;transition:all .2s}
+.sb-col-btn:hover{background:rgba(255,255,255,.12);color:#fff}
+.sb-col-btn svg{width:14px;height:14px}
+
+/* Role chip */
+.sb-role{margin:8px 10px 2px;background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.25);border-radius:8px;padding:7px 10px;display:flex;align-items:center;gap:8px;overflow:hidden;flex-shrink:0}
+.role-dot{width:7px;height:7px;background:#EF4444;border-radius:50%;animation:pulse-dot 2s ease infinite;flex-shrink:0}
+.role-txt{font-size:.625rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#FCA5A5;white-space:nowrap}
+
+/* Nav */
+.sb-nav{flex:1;overflow-y:auto;overflow-x:hidden;padding:6px 8px;scrollbar-width:none}
+.sb-nav::-webkit-scrollbar{display:none}
+.nav-section{margin-bottom:2px}
+.nav-section-lbl{font-size:.5rem;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.28);padding:8px 10px 3px;white-space:nowrap;overflow:hidden;display:flex;align-items:center;gap:6px}
+.nav-section-lbl::after{content:'';flex:1;height:1px;background:var(--sb-border)}
+.sidebar.col .nav-section-lbl{opacity:0}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;color:rgba(255,255,255,.5);font-size:.8125rem;font-weight:500;cursor:pointer;transition:all .18s;white-space:nowrap;overflow:hidden;border:none;background:none;width:100%;text-align:left;position:relative}
+.nav-item:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.88)}
+.nav-item.active{background:rgba(245,166,35,.15);color:var(--g400)}
+.nav-item.active-raylane{background:rgba(245,166,35,.2);border-left:2px solid var(--g500);padding-left:8px}
+.nav-ic{width:16px;height:16px;flex-shrink:0;transition:transform .2s}
+.nav-lbl{flex:1;overflow:hidden;white-space:nowrap}
+.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:.5rem;font-weight:800;min-width:17px;height:17px;padding:0 4px;border-radius:50px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nav-badge.amber{background:var(--amber)}
+.nav-badge.gold{background:var(--g500);color:var(--n800)}
+.nav-div{height:1px;background:var(--sb-border);margin:6px 0}
+
+/* Sidebar footer */
+.sb-footer{padding:10px 8px;border-top:1px solid var(--sb-border);flex-shrink:0}
+.sb-user{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;cursor:pointer;transition:background .18s;overflow:hidden}
+.sb-user:hover{background:rgba(255,255,255,.07)}
+.sb-av{width:30px;height:30px;background:var(--n600);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-size:.625rem;font-weight:800;color:var(--g400);flex-shrink:0;border:1.5px solid rgba(245,166,35,.3)}
+.sb-user-info{overflow:hidden}
+.sb-uname{font-size:.8125rem;font-weight:600;color:rgba(255,255,255,.88);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-uemail{font-size:.6rem;color:rgba(255,255,255,.38);white-space:nowrap}
+
+/* ═══ MAIN PANEL ═══ */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+
+/* Top bar */
+.topbar{
+  height:60px;background:var(--surface);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;padding:0 22px;
+  flex-shrink:0;gap:12px
+}
+.tb-l{display:flex;align-items:center;gap:10px;min-width:0}
+.tb-breadcrumb{display:flex;align-items:center;gap:6px;font-size:.8125rem}
+.tb-bc-parent{color:var(--muted);font-weight:500}
+.tb-bc-sep{color:var(--muted)}
+.tb-bc-current{font-family:'Sora',sans-serif;font-weight:700;color:var(--text)}
+.tb-search{display:flex;align-items:center;gap:7px;background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:0 11px;height:34px;width:200px;flex-shrink:0}
+.tb-search input{border:none;background:transparent;outline:none;font-size:.8125rem;color:var(--text);width:100%}
+.tb-search input::placeholder{color:var(--muted)}
+.tb-search svg{width:14px;height:14px;color:var(--muted);flex-shrink:0}
+.tb-r{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.tb-icon-btn{width:34px;height:34px;background:var(--bg);border:1px solid var(--border);border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);transition:all .18s;position:relative;flex-shrink:0}
+.tb-icon-btn:hover{background:var(--n50);color:var(--n800);border-color:var(--n100)}
+.tb-icon-btn svg{width:16px;height:16px}
+.tb-notif-dot{position:absolute;top:6px;right:6px;width:6px;height:6px;background:var(--red);border-radius:50%;border:1.5px solid var(--surface)}
+.tb-user{display:flex;align-items:center;gap:7px;padding:4px 10px 4px 4px;background:var(--bg);border:1px solid var(--border);border-radius:50px;cursor:pointer;transition:all .18s;flex-shrink:0}
+.tb-user:hover{border-color:var(--n100)}
+.tb-av{width:26px;height:26px;background:var(--n800);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.5625rem;font-weight:800;font-family:'Sora',sans-serif;color:var(--g400)}
+.tb-uname{font-size:.8125rem;font-weight:600;color:var(--n800)}
+.tb-urole{font-size:.5625rem;font-weight:700;background:var(--red-bg);color:var(--red);border:1px solid var(--red-b);padding:2px 6px;border-radius:4px;text-transform:uppercase;letter-spacing:.04em}
+
+/* Tab strip */
+.tabstrip{background:var(--surface);border-bottom:1px solid var(--border);padding:0 22px;display:flex;gap:0;flex-shrink:0;overflow-x:auto;scrollbar-width:none}
+.tabstrip::-webkit-scrollbar{display:none}
+.tstab{padding:13px 16px;font-size:.8125rem;font-weight:600;color:var(--muted);border-bottom:2.5px solid transparent;cursor:pointer;white-space:nowrap;transition:all .2s;border:none;background:none}
+.tstab.active{color:var(--n800);border-bottom-color:var(--n800)}
+.tstab:hover:not(.active){color:var(--text2)}
+
+/* Content */
+.content{flex:1;overflow-y:auto;padding:20px 22px 40px;scrollbar-width:thin;scrollbar-color:var(--n100) transparent}
+.content::-webkit-scrollbar{width:4px}
+.content::-webkit-scrollbar-thumb{background:var(--n100);border-radius:2px}
+
+/* ═══ COMPONENTS ═══ */
+
+/* KPI Grid */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px 20px;transition:box-shadow .2s}
+.kpi:hover{box-shadow:var(--sh-sm)}
+.kpi-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.kpi-lbl{font-size:.75rem;font-weight:500;color:var(--muted)}
+.kpi-ic{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.kpi-ic svg{width:15px;height:15px}
+.kpi-val{font-family:'Sora',sans-serif;font-size:1.625rem;font-weight:800;color:var(--text);line-height:1;margin-bottom:5px}
+.kpi-val-sm{font-size:1.2rem}
+.kpi-trend{font-size:.75rem;font-weight:600;display:flex;align-items:center;gap:3px}
+.kpi-up{color:var(--green)}.kpi-down{color:var(--red)}.kpi-neutral{color:var(--muted)}
+
+/* Cards */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden}
+.card+.card{margin-top:14px}
+.card-hd{display:flex;align-items:center;justify-content:space-between;padding:15px 18px;border-bottom:1px solid var(--border);gap:10px;flex-wrap:wrap}
+.card-title{font-family:'Sora',sans-serif;font-size:.875rem;font-weight:700;color:var(--text)}
+.card-title-sub{font-size:.6875rem;color:var(--muted);font-weight:400;margin-top:1px}
+.card-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.card-action-link{font-size:.75rem;font-weight:600;color:var(--n600);cursor:pointer;background:none;border:none;display:flex;align-items:center;gap:4px;padding:4px 6px;border-radius:6px;transition:all .2s}
+.card-action-link:hover{background:var(--n50);color:var(--n800)}
+
+/* Grid layouts */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:2fr 1fr;gap:14px}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px}
+
+/* Table */
+.tbl-wrap{overflow-x:auto}
+.tbl{width:100%;border-collapse:collapse}
+.tbl thead th{text-align:left;font-size:.625rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);padding:9px 15px;background:var(--bg);white-space:nowrap}
+.tbl tbody td{padding:11px 15px;font-size:.8125rem;color:var(--text2);border-bottom:1px solid var(--border2);vertical-align:middle}
+.tbl tbody tr:last-child td{border-bottom:none}
+.tbl tbody tr:hover td{background:var(--bg)}
+.td-p{font-weight:600;color:var(--text)}
+.td-mono{font-family:'JetBrains Mono',monospace;font-size:.6875rem;color:var(--n400)}
+.td-muted{font-size:.6875rem;color:var(--muted)}
+
+/* Status chips */
+.chip{display:inline-flex;align-items:center;gap:3px;font-size:.625rem;font-weight:800;padding:3px 8px;border-radius:50px;white-space:nowrap}
+.chip::before{content:'';width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.c-green{background:var(--green-bg);color:var(--green);border:1px solid var(--green-b)}.c-green::before{background:var(--green)}
+.c-amber{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-b)}.c-amber::before{background:var(--amber)}
+.c-red{background:var(--red-bg);color:var(--red);border:1px solid var(--red-b)}.c-red::before{background:var(--red)}
+.c-blue{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-b)}.c-blue::before{background:var(--blue)}
+.c-gray{background:var(--bg);color:var(--muted);border:1px solid var(--border)}.c-gray::before{background:var(--muted)}
+.c-gold{background:rgba(245,166,35,.15);color:var(--g600);border:1px solid rgba(245,166,35,.35)}.c-gold::before{background:var(--g500)}
+.c-purple{background:var(--purple-bg);color:var(--purple);border:1px solid var(--purple-b)}.c-purple::before{background:var(--purple)}
+.c-navy{background:var(--n50);color:var(--n600);border:1px solid var(--n100)}.c-navy::before{background:var(--n600)}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:5px;font-family:'Sora',sans-serif;font-size:.6875rem;font-weight:700;padding:6px 11px;border-radius:var(--r-sm);cursor:pointer;border:none;transition:all .18s;white-space:nowrap}
+.btn svg{width:13px;height:13px;flex-shrink:0}
+.b-dark{background:var(--n800);color:#fff}.b-dark:hover{background:var(--n700)}
+.b-gold{background:var(--g500);color:var(--n800);box-shadow:var(--sh-gold)}.b-gold:hover{background:var(--g400)}
+.b-outline{background:transparent;color:var(--text2);border:1px solid var(--border)}.b-outline:hover{background:var(--bg);color:var(--text)}
+.b-green{background:var(--green);color:#fff}.b-green:hover{background:#15803D}
+.b-red{background:var(--red);color:#fff}.b-red:hover{background:#B91C1C}
+.b-ghost{background:transparent;color:var(--n600);border:none;font-size:.6875rem;font-weight:600;cursor:pointer;padding:5px 7px;border-radius:6px;transition:all .18s}
+.b-ghost:hover{background:var(--n50);color:var(--n800)}
+.b-lg{padding:10px 18px;font-size:.8125rem;border-radius:var(--r-md)}
+
+/* Input/Select */
+.inp{background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:8px 11px;font-size:.8125rem;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;transition:border-color .18s;width:100%;appearance:none}
+.inp:focus{border-color:var(--n600);background:var(--surface)}
+.inp-sm{padding:6px 10px;font-size:.75rem;width:auto}
+.inp-label{font-size:.75rem;font-weight:600;color:var(--n400);display:block;margin-bottom:5px}
+.inp-group{margin-bottom:13px}
+.inp-row{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.inp-note{font-size:.6875rem;color:var(--muted);margin-top:4px}
+
+/* Toggle */
+.toggle{width:38px;height:21px;background:var(--border);border-radius:50px;cursor:pointer;transition:background .22s;position:relative;border:none;flex-shrink:0}
+.toggle.on{background:var(--n600)}
+.toggle::after{content:'';position:absolute;width:15px;height:15px;background:#fff;border-radius:50%;top:3px;left:3px;transition:transform .22s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.toggle.on::after{transform:translateX(17px)}
+
+/* Bar chart */
+.bar-chart{display:flex;justify-content:space-between;align-items:flex-end;gap:4px;height:100px;margin-bottom:6px}
+.bc-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.bc-bar{width:100%;background:var(--n800);border-radius:4px 4px 0 0;min-height:4px;cursor:pointer;transition:background .2s}
+.bc-bar:hover{background:var(--g500)}
+.bc-bar.rl{background:var(--g500)}
+.bc-lbl{font-size:.5625rem;color:var(--muted);font-weight:500;text-align:center}
+
+/* Seat map */
+.seat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;max-width:196px;margin:0 auto}
+.seat{width:40px;height:36px;border-radius:8px;border:2px solid;display:flex;align-items:center;justify-content:center;font-size:.5625rem;font-weight:800;cursor:pointer;transition:all .15s;font-family:'Sora',sans-serif}
+.s-avail{background:var(--surface);border-color:var(--border);color:var(--muted)}.s-avail:hover{border-color:var(--g500);background:rgba(245,166,35,.08);color:var(--text)}
+.s-sold{background:var(--bg);border-color:var(--border2);color:var(--muted);cursor:not-allowed}
+.s-sel{background:var(--g500);border-color:var(--g400);color:var(--n800)}
+.s-driver{background:var(--n800);border-color:var(--n700);color:var(--g400);cursor:not-allowed}
+
+/* Occupancy bar */
+.occ-bar-wrap{height:6px;background:var(--border);border-radius:50px;overflow:hidden}
+.occ-bar{height:100%;border-radius:50px;transition:width .5s}
+.occ-high{background:var(--green)}
+.occ-mid{background:var(--amber)}
+.occ-low{background:var(--red)}
+
+/* Pipeline */
+.pipeline{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;background:var(--surface)}
+.pipe-col{padding:16px 18px;border-right:1px solid var(--border)}
+.pipe-col:last-child{border-right:none}
+.pipe-lbl{font-size:.5625rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:5px}
+.pipe-num{font-family:'Sora',sans-serif;font-size:2.25rem;font-weight:800;color:var(--text);line-height:1;margin-bottom:4px}
+.pipe-sub{font-size:.8125rem;font-weight:600;color:var(--text2);margin-bottom:10px}
+.pipe-detail{font-size:.6875rem;color:var(--muted);padding:3px 0;border-top:1px solid var(--bg)}
+
+/* Alert items */
+.alert-card{border-radius:var(--r-lg);padding:16px 18px;margin-bottom:10px;display:flex;gap:14px;border:1.5px solid;transition:all .25s}
+.alert-card.resolved{opacity:.4;pointer-events:none}
+.alert-ic{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.alert-ic svg{width:17px;height:17px;color:#fff}
+.alert-cat{font-size:.5625rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px}
+.alert-title{font-family:'Sora',sans-serif;font-size:.9375rem;font-weight:700;color:var(--text);margin-bottom:4px;line-height:1.3}
+.alert-msg{font-size:.8125rem;color:var(--text2);margin-bottom:12px;line-height:1.5}
+.alert-btns{display:flex;gap:7px;flex-wrap:wrap}
+.a-urgent{background:var(--red-bg);border-color:var(--red-b)}.a-urgent .alert-ic{background:var(--red)}.a-urgent .alert-cat{color:var(--red)}
+.a-action{background:var(--amber-bg);border-color:var(--amber-b)}.a-action .alert-ic{background:var(--amber)}.a-action .alert-cat{color:var(--amber)}
+.a-info{background:var(--blue-bg);border-color:var(--blue-b)}.a-info .alert-ic{background:var(--blue)}.a-info .alert-cat{color:var(--blue)}
+
+/* Financial cards */
+.fin-kpi{border-radius:var(--r-lg);padding:18px 20px}
+.fin-lbl{font-size:.625rem;font-weight:800;text-transform:uppercase;letter-spacing:.09em;margin-bottom:5px}
+.fin-val{font-family:'Sora',sans-serif;font-size:1.375rem;font-weight:800;line-height:1;margin-bottom:3px}
+.fin-sub{font-size:.6875rem}
+
+/* Module activation card */
+.mod-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;transition:border-color .2s}
+.mod-card.activated{border-color:var(--green-b)}
+.mod-ic{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mod-ic svg{width:17px;height:17px}
+.mod-name{font-family:'Sora',sans-serif;font-size:.8125rem;font-weight:700;color:var(--text);margin-bottom:2px}
+.mod-desc{font-size:.6875rem;color:var(--muted)}
+.mod-price{font-family:'Sora',sans-serif;font-size:.75rem;font-weight:700;color:var(--n400);text-align:right;white-space:nowrap}
+
+/* Notifications panel */
+.notif-panel{position:fixed;top:61px;right:14px;width:340px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);box-shadow:var(--sh-lg);z-index:300;display:none;overflow:hidden}
+.notif-panel.open{display:block;animation:fadeUp .2s ease}
+.notif-hd{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.notif-item{display:flex;gap:10px;padding:11px 16px;border-bottom:1px solid var(--border2);cursor:pointer;transition:background .15s}
+.notif-item:last-child{border-bottom:none}
+.notif-item:hover{background:var(--bg)}
+.notif-dot{width:7px;height:7px;border-radius:50%;margin-top:4px;flex-shrink:0}
+.notif-txt{font-size:.75rem;color:var(--text2);line-height:1.4}
+.notif-txt strong{color:var(--text);font-weight:600}
+.notif-time{font-size:.5625rem;color:var(--muted);margin-top:2px}
+
+/* Supabase integration banner */
+.supa-banner{background:linear-gradient(135deg,#1a1a2e 0%,#0f3460 100%);border:1px solid rgba(59,130,246,.25);border-radius:var(--r-md);padding:12px 16px;display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.supa-dot{width:8px;height:8px;background:#3ECF8E;border-radius:50%;animation:pulse-dot 2s ease infinite;flex-shrink:0}
+.supa-txt{font-size:.75rem;color:rgba(255,255,255,.7);flex:1}
+.supa-txt strong{color:#3ECF8E}
+
+/* Views */
+.view{display:none;animation:fadeUp .22s ease}
+.view.active{display:block}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse-dot{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.7);opacity:.55}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:inline-block}
+
+/* Responsive */
+@media(max-width:1024px){.kpi-grid{grid-template-columns:repeat(2,1fr)}.g2,.g3{grid-template-columns:1fr}.pipeline{grid-template-columns:1fr 1fr}}
+@media(max-width:768px){.kpi-grid{grid-template-columns:1fr 1fr}.sidebar{display:none}.tabstrip{display:none}}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-hd">
+    <div class="sb-logo">
+      <div class="sb-logo-ic">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M3 12s4-6 9-6 9 6 9 6" stroke="#0B1D45" stroke-width="2.2" stroke-linecap="round"/><path d="M3 17h18" stroke="#0B1D45" stroke-width="2.2" stroke-linecap="round"/><circle cx="7.5" cy="19.5" r="2" fill="#0B1D45"/><circle cx="16.5" cy="19.5" r="2" fill="#0B1D45"/></svg>
+      </div>
+      <div class="sb-logo-txt">Raylane<br><span>Super Admin</span></div>
+    </div>
+    <button class="sb-col-btn" onclick="toggleSidebar()" title="Collapse">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 5h14a1 1 0 010 2H3a1 1 0 010-2zm0 4h14a1 1 0 010 2H3a1 1 0 010-2zm0 4h14a1 1 0 010 2H3a1 1 0 010-2z" clip-rule="evenodd"/></svg>
+    </button>
+  </div>
+  <div class="sb-role">
+    <span class="role-dot"></span>
+    <span class="role-txt" id="roleLabel">Super Admin · Live</span>
+  </div>
+  <nav class="sb-nav">
+    <!-- Overview -->
+    <div class="nav-section">
+      <button class="nav-item active" onclick="nav('dashboard',this)">
+        <svg class="nav-ic" viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
+        <span class="nav-lbl">Dashboard</span>
+      </button>
+      <button class="nav-item" onclick="nav('alerts',this)" style="position:relative">
+        <svg class="nav-ic" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/></svg>
+        <span class="nav-lbl">Smart Alerts</span>
+        <span class="nav-badge" id="alertBadge">7</span>
+      </button>
+    </div>
+    <div class="nav-div"></div>
+    <!-- Raylane Fleet (special) -->
+    <div class="nav-section">
+      <div class="nav-section-lbl">Raylane Fleet ★</div>
+      <button class="nav-item active-raylane" onclick="nav('raylane-fleet',this)" style="background:rgba(245,166,35,.12)">
+        <svg class="nav-ic" viewBox="0 0 20 20" fill="currentColor" style="color:var(--g500)"><path d="M11 17a1 1 0 001.447.894l4-2A1 1 0 0017 15V9.236a1 1 0 00-1.447-.894l-4 2a1 1 0 00-.553.894V17zM15.211 6.276a1 1 0 000-1.788l-4.764-2.382a1 1 0 00-.894 0L4.789 4.488a1 1 0 000 1.788l4.764 2.382a1 1 0 00.894 0l4.764-2.382zM4.447 8.342A1 1 0 003 9.236V15a1 1 0 00.553.894l4 2A1 1 0 009 17v-5.764a1 1 0 00-.553-.894l-4-2z"/></svg>
+        <span class="nav-lbl" style="color:var(--g400);font-weight:700">Fleet Control</span>
+        <span class="nav-badge gold">RL</span>
+      </button>
+      <button class="nav-item" onclick="nav('fleet-financials',this)" style="padding-left:22px">
+        <svg class="nav-ic" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11 4a1 1 0 10-2 0v4a1 1 0 102 0V7zm-3 1a1 1 0 10-2 0v3a1 1 0 102 0V8zM8 9a1 1 0 00-2 0v2a1 1 0 102 0V9z" clip-rule="evenodd"/></svg>
+        <span class="nav-lbl">Fleet Financials</span>
+      </button>
+    </div>
+    <div class="nav-div"></div>
+    <!-- Operations -->
+    <div class="nav-section">
+      <div class="nav-section-lbl">Operations</div>
+      <button class="nav-item" onclick="nav('operators',this)">
+        <svg class="nav-ic" viewBox="0 0 20 20" fill="currentColor"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v1h8v-1zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-1a4 4 0 00-3-3.87M4 18v-1a4 4 0 013-3.87"/></svg>
+        <span class="nav-lbl">Operators</span>
+        <span class="nav-badge">3</span>
+      </button>
+      <button class="nav-item" onclick="nav('applications',this)">
+        <svg class="nav-ic" viewBox="0 0 20 20" fill="currentColor"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/></svg>
+        <span class="nav-lbl">Applications</span>
+        <span class="nav-badge amber">2</span>
+      </button>
+      <button class="nav-item" onclick="nav('modules',this)">
+        <svg class="nav-ic" viewBox="0 0 20 20" fill="currentColor"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+        <span class="nav-lbl">Module Control</span>
+      </button>
+      <button class="nav-item" onclick="nav('trips',this)">
+        <svg class="nav-ic" viewBox="0 0 20 20" fill="currentColor"><path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/><path d="M3 4a1 1 0 00-.82 1.573L5 9.63V15a1 1 0 001 1h1a1 1 0 001-1v-5a1 1 0 01.82-.984l4.96-1.24A1 1 0 0115 8.77V15a1 1 0 001 1h1a1 1 0 001-1V6a1 1 0 00-.66-.942L12 4H3z"/></svg>
+        <span class="nav-lbl">Trip Approvals</span>
+        <span class="nav-badge">12</span>
+      </button>
+      <button class="nav-item" onclick="nav('bookings',this)">
+        <svg class="nav-ic" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
+        <span class="nav-lbl">Bookings</span>
+      </button>
+      <button class="nav-item" onclick="nav('seats',this)">
+        <svg class="nav-ic" viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"/></svg>
+        <span class="nav-lbl">Seat Manager</span>
+      </button>
+      <button class="nav-item" onclick="nav('parcels',this)">
+        <svg class="nav-ic" viewBox="0 0 20 20" fill="currentColor"><path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3z"/></svg>
+        <span class="nav-lbl">Parcels</span>
+      </button>
+    </div>
+    <div class="nav-div"></div>
+    <!-- Finance -->
+    <div class="nav-section">
+      <div class="nav-section-lbl">Finance</div>
+      <button class="nav-item" onclick="nav('financials',this)">
+        <svg class="nav-ic" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11 4a1 1 0 10-2 0v4a1 1 0 102 0V7zm-3 1a1 1 0 10-2 0v3a1 1 0 102 0V8zM8 9a1 1 0 00-2 0v2a1 1 0 102 0V9z" clip-rule="evenodd"/></svg>
+        <span class="nav-lbl">Financials</span>
+      </button>
+      <button class="nav-item" onclick="nav('payments',this)">
+        <svg class="nav-ic" viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/></svg>
+        <span class="nav-lbl">Payments & Payouts</span>
+      </button>
+      <button class="nav-item" onclick="nav('audit',this)">
+        <svg class="nav-ic" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>
+        <span class="nav-lbl">Audit Log</span>
+      </button>
+    </div>
+    <div class="nav-div"></div>
+    <!-- Experience -->
+    <div class="nav-section">
+      <div class="nav-section-lbl">Experience</div>
+      <button class="nav-item" onclick="nav('tourist',this)">
+        <svg class="nav-ic" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
+        <span class="nav-lbl">Tourist Engine</span>
+      </button>
+      <button class="nav-item" onclick="nav('analytics',this)">
+        <svg class="nav-ic" viewBox="0 0 20 20" fill="currentColor"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>
+        <span class="nav-lbl">Analytics</span>
+      </button>
+    </div>
+    <div class="nav-div"></div>
+    <!-- System -->
+    <div class="nav-section">
+      <div class="nav-section-lbl">System</div>
+      <button class="nav-item" onclick="nav('settings',this)">
+        <svg class="nav-ic" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
+        <span class="nav-lbl">Platform Settings</span>
+      </button>
+      <button class="nav-item" onclick="window.location='index.html'">
+        <svg class="nav-ic" viewBox="0 0 20 20" fill="currentColor"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/></svg>
+        <span class="nav-lbl">View Website</span>
+      </button>
+    </div>
+  </nav>
+  <div class="sb-footer">
+    <div class="sb-user">
+      <div class="sb-av">RA</div>
+      <div class="sb-user-info">
+        <div class="sb-uname">Raylane Admin</div>
+        <div class="sb-uemail">super@raylane.com</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══ MAIN PANEL ═══ -->
+<div class="main">
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="tb-l">
+      <div class="tb-breadcrumb">
+        <span class="tb-bc-parent">Raylane Express</span>
+        <span class="tb-bc-sep">/</span>
+        <span class="tb-bc-current" id="pageTitle">Dashboard</span>
+      </div>
+    </div>
+    <div class="tb-r">
+      <div class="tb-search">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
+        <input type="text" placeholder="Search anything...">
+      </div>
+      <button class="tb-icon-btn" onclick="toggleNotif()">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/></svg>
+        <span class="tb-notif-dot"></span>
+      </button>
+      <button class="tb-icon-btn">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
+      </button>
+      <div class="tb-user">
+        <div class="tb-av">RA</div>
+        <span class="tb-uname">Raylane</span>
+        <span class="tb-urole">Super Admin</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Notifications -->
+  <div class="notif-panel" id="notifPanel">
+    <div class="notif-hd">
+      <span style="font-family:'Sora',sans-serif;font-size:.8125rem;font-weight:700;color:var(--text)">Notifications</span>
+      <button class="b-ghost">Mark all read</button>
+    </div>
+    <div class="notif-item"><span class="notif-dot" style="background:var(--red)"></span><div><div class="notif-txt"><strong>Payment mismatch</strong> — Booking RL-F1G8 · UGX 500 gap</div><div class="notif-time">2 min ago</div></div></div>
+    <div class="notif-item"><span class="notif-dot" style="background:var(--amber)"></span><div><div class="notif-txt"><strong>Trip pending approval</strong> — Gateway Bus · KLA→NBI 08:00</div><div class="notif-time">14 min ago</div></div></div>
+    <div class="notif-item"><span class="notif-dot" style="background:var(--green)"></span><div><div class="notif-txt"><strong>Payout processed</strong> — UGX 3.2M → Link Express</div><div class="notif-time">1 hr ago</div></div></div>
+    <div class="notif-item"><span class="notif-dot" style="background:var(--blue)"></span><div><div class="notif-txt"><strong>New application</strong> — Nexus Transport · 12 vehicles</div><div class="notif-time">2 hr ago</div></div></div>
+    <div style="padding:10px 16px;text-align:center;border-top:1px solid var(--border)"><button class="b-ghost" style="width:100%" onclick="nav('alerts',null)">View all alerts →</button></div>
+  </div>
+
+  <!-- Supabase realtime banner -->
+  <div id="supa-status" style="display:none"></div>
+
+  <!-- Content area -->
+  <div class="content" id="content">
+
+    <!-- ══════════════ DASHBOARD ══════════════ -->
+    <div class="view active" id="v-dashboard">
+      <!-- Supabase indicator -->
+      <div class="supa-banner">
+        <span class="supa-dot"></span>
+        <span class="supa-txt"><strong>Supabase Realtime</strong> connected — seat availability, alerts and bookings update live · PostgreSQL with RLS · Edge Functions active</span>
+        <button class="btn b-outline" style="font-size:.6rem;padding:4px 8px;flex-shrink:0;background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.6)">DB Status ✓</button>
+      </div>
+
+      <!-- KPI row -->
+      <div class="kpi-grid">
+        <div class="kpi">
+          <div class="kpi-top"><span class="kpi-lbl">Revenue Today</span><div class="kpi-ic" style="background:var(--green-bg)"><svg viewBox="0 0 20 20" fill="var(--green)"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"/></svg></div></div>
+          <div class="kpi-val kpi-val-sm">UGX 6.3M</div>
+          <div class="kpi-trend kpi-up">↑ 18% vs yesterday <span class="kpi-neutral" style="font-weight:400">· RL fleet: UGX 2.1M</span></div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-top"><span class="kpi-lbl">Active Trips</span><div class="kpi-ic" style="background:var(--blue-bg)"><svg viewBox="0 0 20 20" fill="var(--blue)"><path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/><path d="M3 4a1 1 0 00-.82 1.573L5 9.63V15a1 1 0 001 1h1a1 1 0 001-1v-5a1 1 0 01.82-.984l4.96-1.24A1 1 0 0115 8.77V15a1 1 0 001 1h1a1 1 0 001-1V6a1 1 0 00-.66-.942L12 4H3z"/></svg></div></div>
+          <div class="kpi-val">47</div>
+          <div class="kpi-trend kpi-neutral">12 pending approval · <span style="color:var(--g500)">8 Raylane Fleet</span></div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-top"><span class="kpi-lbl">Bookings Today</span><div class="kpi-ic" style="background:var(--amber-bg)"><svg viewBox="0 0 20 20" fill="var(--amber)"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg></div></div>
+          <div class="kpi-val">342</div>
+          <div class="kpi-trend kpi-up">↑ 28% · 47 advance bookings</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-top"><span class="kpi-lbl">Pending Payouts</span><div class="kpi-ic" style="background:var(--purple-bg)"><svg viewBox="0 0 20 20" fill="var(--purple)"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9z" clip-rule="evenodd"/></svg></div></div>
+          <div class="kpi-val kpi-val-sm">UGX 8.2M</div>
+          <div class="kpi-trend kpi-amber">4 operators · process today</div>
+        </div>
+      </div>
+
+      <!-- Pipeline -->
+      <div class="pipeline" style="margin-bottom:14px">
+        <div class="pipe-col">
+          <div class="pipe-lbl" style="color:var(--amber)"><span style="width:7px;height:7px;background:var(--amber);border-radius:50%;display:inline-block"></span>Trip Requests</div>
+          <div class="pipe-num">12</div>
+          <div class="pipe-sub">Awaiting approval</div>
+          <div class="pipe-detail">Same-day: 3 · Urgent: 1</div>
+          <div class="pipe-detail" style="margin-top:6px"><button class="btn b-dark" style="width:100%;justify-content:center;font-size:.5625rem" onclick="nav('trips',null)">Review All →</button></div>
+        </div>
+        <div class="pipe-col">
+          <div class="pipe-lbl" style="color:var(--blue)"><span style="width:7px;height:7px;background:var(--blue);border-radius:50%;display:inline-block"></span>Applications</div>
+          <div class="pipe-num">2</div>
+          <div class="pipe-sub">Operators pending</div>
+          <div class="pipe-detail">Docs complete: 1 · Review: 1</div>
+          <div class="pipe-detail" style="margin-top:6px"><button class="btn b-outline" style="width:100%;justify-content:center;font-size:.5625rem" onclick="nav('applications',null)">View →</button></div>
+        </div>
+        <div class="pipe-col">
+          <div class="pipe-lbl" style="color:var(--green)"><span style="width:7px;height:7px;background:var(--green);border-radius:50%;display:inline-block"></span>Confirmed Bookings</div>
+          <div class="pipe-num">342 <span style="font-size:1rem;color:var(--green)">↑</span></div>
+          <div class="pipe-sub">All confirmed & paid</div>
+          <div class="pipe-detail">Advance: 47 · Standard: 295</div>
+        </div>
+        <div class="pipe-col">
+          <div class="pipe-lbl" style="color:var(--purple)"><span style="width:7px;height:7px;background:var(--purple);border-radius:50%;display:inline-block"></span>Payouts</div>
+          <div class="pipe-num">4</div>
+          <div class="pipe-sub">UGX 8.2M due</div>
+          <div class="pipe-detail">Auto-schedule: tonight 23:59</div>
+          <div class="pipe-detail" style="margin-top:6px"><button class="btn b-gold" style="width:100%;justify-content:center;font-size:.5625rem">Process Now</button></div>
+        </div>
+      </div>
+
+      <!-- Main grid -->
+      <div class="g3" style="margin-bottom:0">
+        <!-- Revenue chart + recent bookings -->
+        <div>
+          <div class="card" style="margin-bottom:14px">
+            <div class="card-hd">
+              <div><div class="card-title">Revenue — April 2026</div><div class="card-title-sub">Raylane Fleet (gold) vs Third-Party operators (navy)</div></div>
+              <div class="card-actions">
+                <select class="inp inp-sm" style="width:130px"><option>This Month</option><option>Last Month</option><option>YTD 2026</option></select>
+                <button class="btn b-dark" onclick="adminExport('bookings')">↓ Export CSV</button>
+              </div>
+            </div>
+            <div style="padding:18px">
+              <div class="bar-chart">
+                <div class="bc-col"><div class="bc-bar rl" style="height:52%"></div><div class="bc-lbl">Apr 1</div></div>
+                <div class="bc-col"><div class="bc-bar" style="height:68%"></div><div class="bc-lbl">Apr 3</div></div>
+                <div class="bc-col"><div class="bc-bar rl" style="height:42%"></div><div class="bc-lbl">Apr 5</div></div>
+                <div class="bc-col"><div class="bc-bar" style="height:88%"></div><div class="bc-lbl">Apr 7</div></div>
+                <div class="bc-col"><div class="bc-bar rl" style="height:62%"></div><div class="bc-lbl">Apr 9</div></div>
+                <div class="bc-col"><div class="bc-bar" style="height:100%"></div><div class="bc-lbl">Apr 11</div></div>
+                <div class="bc-col"><div class="bc-bar rl" style="height:78%"></div><div class="bc-lbl">Apr 13</div></div>
+                <div class="bc-col"><div class="bc-bar rl" style="height:95%"></div><div class="bc-lbl" style="color:var(--g500);font-weight:700">Today</div></div>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--border);padding-top:12px">
+                <div style="text-align:center;border-right:1px solid var(--border);padding:0 10px"><div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.0625rem;color:var(--text)">UGX 47.3M</div><div style="font-size:.625rem;color:var(--muted);margin-top:2px">Month Total</div></div>
+                <div style="text-align:center;border-right:1px solid var(--border);padding:0 10px"><div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.0625rem;color:var(--g500)">UGX 18.2M</div><div style="font-size:.625rem;color:var(--muted);margin-top:2px">RL Fleet Revenue</div></div>
+                <div style="text-align:center;padding:0 10px"><div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.0625rem;color:var(--green)">↑ 22%</div><div style="font-size:.625rem;color:var(--muted);margin-top:2px">vs Last Month</div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent bookings -->
+          <div class="card">
+            <div class="card-hd">
+              <span class="card-title">Recent Bookings</span>
+              <div class="card-actions">
+                <button class="btn b-outline">Filter</button>
+                <button class="card-action-link" onclick="nav('bookings',null)">View All →</button>
+              </div>
+            </div>
+            <div class="tbl-wrap">
+              <table class="tbl">
+                <thead><tr><th>Reference</th><th>Passenger</th><th>Route</th><th>Operator</th><th>Amount</th><th>Type</th><th>Status</th><th></th></tr></thead>
+                <tbody>
+                  <tr><td class="td-mono">RL-A7B3C2</td><td class="td-p">Sarah M. <span class="td-muted">+256 77x</span></td><td>KLA→NBI</td><td><span class="chip c-gold">RL Fleet</span></td><td class="td-p">UGX 115K</td><td><span class="chip c-blue">Advance</span></td><td><span class="chip c-green">Confirmed</span></td><td><button class="btn b-outline" style="padding:3px 7px;font-size:.5rem">View</button></td></tr>
+                  <tr><td class="td-mono">RL-C4D1E8</td><td class="td-p">James K.</td><td>KLA→MBL</td><td><span class="chip c-navy">3rd Party</span></td><td class="td-p">UGX 30K</td><td><span class="chip c-gray">Standard</span></td><td><span class="chip c-amber">Pending Pay</span></td><td><button class="btn b-gold" style="padding:3px 7px;font-size:.5rem">Verify</button></td></tr>
+                  <tr><td class="td-mono">RL-E9F2G1</td><td class="td-p">Alice B. ×24</td><td>GUL→KLA</td><td><span class="chip c-navy">3rd Party</span></td><td class="td-p">UGX 1.08M</td><td><span class="chip c-purple">Group</span></td><td><span class="chip c-green">Confirmed</span></td><td></td></tr>
+                  <tr><td class="td-mono">RL-H3I5J7</td><td class="td-p">David O.</td><td>KLA→JIN</td><td><span class="chip c-gold">RL Fleet</span></td><td class="td-p">UGX 15K</td><td><span class="chip c-gray">Standard</span></td><td><span class="chip c-green">Confirmed</span></td><td></td></tr>
+                  <tr><td class="td-mono">RL-K2L4M6</td><td class="td-p">Mary N.</td><td>MBA→KLA</td><td><span class="chip c-navy">3rd Party</span></td><td class="td-p">UGX 25K</td><td><span class="chip c-gray">Standard</span></td><td><span class="chip c-red">Cancelled</span></td><td><button class="btn b-outline" style="padding:3px 7px;font-size:.5rem">Refund</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right column -->
+        <div>
+          <!-- Operator approvals -->
+          <div class="card" style="margin-bottom:14px">
+            <div class="card-hd"><span class="card-title">Pending Operator Approvals</span><button class="card-action-link" onclick="nav('applications',null)">View All →</button></div>
+            <div style="padding:0 16px">
+              <div style="padding:12px 0;border-bottom:1px solid var(--border2)">
+                <div style="display:flex;align-items:center;gap:9px;margin-bottom:8px">
+                  <div style="width:34px;height:34px;background:var(--n800);border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-size:.5625rem;font-weight:800;color:var(--g400);flex-shrink:0">NX</div>
+                  <div style="flex:1;min-width:0">
+                    <div style="font-weight:600;font-size:.875rem;color:var(--text)">Nexus Transport</div>
+                    <div style="font-size:.6875rem;color:var(--muted)">12 vehicles · Int'l routes · Docs submitted</div>
+                  </div>
+                </div>
+                <div style="display:flex;gap:6px"><button class="btn b-green" onclick="resolveAlert(event)">✓ Approve</button><button class="btn b-outline" onclick="nav('applications',null)">Review Docs</button><button class="btn b-red" onclick="resolveAlert(event)">✗</button></div>
+              </div>
+              <div style="padding:12px 0">
+                <div style="display:flex;align-items:center;gap:9px;margin-bottom:8px">
+                  <div style="width:34px;height:34px;background:var(--n800);border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-size:.5625rem;font-weight:800;color:var(--g400);flex-shrink:0">SR</div>
+                  <div style="flex:1;min-width:0">
+                    <div style="font-weight:600;font-size:.875rem;color:var(--text)">Star Rider Uganda</div>
+                    <div style="font-size:.6875rem;color:var(--muted)">3 vehicles · Local routes · Awaiting cert</div>
+                  </div>
+                </div>
+                <div style="display:flex;gap:6px"><button class="btn b-outline" onclick="adminRequestDocs(this)">Request Docs</button><button class="btn b-red" onclick="resolveAlert(event)">Reject</button></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Platform settings summary -->
+          <div class="card">
+            <div class="card-hd"><span class="card-title">Platform Config</span><button class="card-action-link" onclick="nav('settings',null)">Edit →</button></div>
+            <div style="padding:0 4px">
+              <div style="display:flex;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border2)"><span style="font-size:.8125rem;color:var(--text2)">Commission Rate</span><span style="font-family:'Sora',sans-serif;font-weight:800;font-size:.9rem">10%</span></div>
+              <div style="display:flex;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border2)"><span style="font-size:.8125rem;color:var(--text2)">RL Fleet Commission</span><span style="font-family:'Sora',sans-serif;font-weight:800;font-size:.9rem;color:var(--green)">0%</span></div>
+              <div style="display:flex;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border2)"><span style="font-size:.8125rem;color:var(--text2)">Seat Lock TTL</span><span style="font-family:'Sora',sans-serif;font-weight:800;font-size:.9rem">5 min</span></div>
+              <div style="display:flex;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border2)"><span style="font-size:.8125rem;color:var(--text2)">Advance Commitment</span><span style="font-family:'Sora',sans-serif;font-weight:800;font-size:.9rem">20%</span></div>
+              <div style="display:flex;justify-content:space-between;padding:10px 14px"><span style="font-size:.8125rem;color:var(--text2)">MTN MoMo Status</span><span class="chip c-green">Live ✓</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════ RAYLANE FLEET CONTROL ══════════════ -->
+    <div class="view" id="v-raylane-fleet">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+        <div style="background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.28);border-radius:10px;padding:9px 14px;display:flex;align-items:center;gap:9px">
+          <span style="font-size:.875rem">🚍</span>
+          <span style="font-family:'Sora',sans-serif;font-size:.75rem;font-weight:700;color:var(--g600)">operator_type: RAYLANE · is_raylane_fleet: true · commission_rate: 0% · auto_approved: true · priority_score: 1</span>
+        </div>
+        <div style="display:flex;gap:7px">
+          <button class="btn b-gold b-lg" onclick="adminAddVehicle()">+ Add Vehicle</button>
+          <button class="btn b-dark b-lg" onclick="adminCreateTrip()">+ Create Trip (Auto)</button>
+        </div>
+      </div>
+
+      <!-- Fleet KPIs -->
+      <div class="kpi-grid" style="margin-bottom:14px">
+        <div class="kpi" style="border-top:3px solid var(--g500)"><div class="kpi-top"><span class="kpi-lbl">Fleet Vehicles</span><div class="kpi-ic" style="background:rgba(245,166,35,.12)"><svg viewBox="0 0 20 20" fill="var(--g600)" width="15" height="15"><path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/><path d="M3 4a1 1 0 000 2v8a2 2 0 002 2h1a3 3 0 016 0h1a2 2 0 002-2V6a1 1 0 100-2H3z"/></svg></div></div><div class="kpi-val">12</div><div class="kpi-trend kpi-neutral">8 active · 1 maintenance · 3 standby</div></div>
+        <div class="kpi" style="border-top:3px solid var(--green)"><div class="kpi-top"><span class="kpi-lbl">Today Revenue (100% Retained)</span><div class="kpi-ic" style="background:var(--green-bg)"><svg viewBox="0 0 20 20" fill="var(--green)" width="15" height="15"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"/></svg></div></div><div class="kpi-val kpi-val-sm">UGX 2.1M</div><div class="kpi-trend kpi-up">↑ 22% · UGX 210K saved vs 10% commission</div></div>
+        <div class="kpi" style="border-top:3px solid var(--blue)"><div class="kpi-top"><span class="kpi-lbl">Active Drivers</span><div class="kpi-ic" style="background:var(--blue-bg)"><svg viewBox="0 0 20 20" fill="var(--blue)" width="15" height="15"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v1h8v-1z"/></svg></div></div><div class="kpi-val">8</div><div class="kpi-trend kpi-neutral">2 on standby · 2 off-duty</div></div>
+        <div class="kpi" style="border-top:3px solid var(--g500)"><div class="kpi-top"><span class="kpi-lbl">Search Priority</span><div class="kpi-ic" style="background:rgba(245,166,35,.12)"><svg viewBox="0 0 20 20" fill="var(--g500)" width="15" height="15"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg></div></div><div class="kpi-val" style="color:var(--g500)">#1</div><div class="kpi-trend" style="color:var(--g500)">Listed first in all search results</div></div>
+      </div>
+
+      <div class="g3" style="margin-bottom:14px">
+        <!-- Vehicle table -->
+        <div class="card">
+          <div class="card-hd">
+            <div><div class="card-title">Fleet Vehicles</div></div>
+            <div class="card-actions">
+              <select class="inp inp-sm" style="width:130px"><option>All Types</option><option>Taxi/Matatu (14)</option><option>Minibus (22)</option><option>Coach 55</option><option>Coach 65</option><option>Coach 67</option></select>
+              <button class="btn b-gold" onclick="adminAddVehicle()">+ Add Vehicle</button>
+            </div>
+          </div>
+          <div class="tbl-wrap">
+            <table class="tbl">
+              <thead><tr><th>Plate</th><th>Type / Seats</th><th>Driver</th><th>Status</th><th>Occupancy</th><th>Today Revenue</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td class="td-mono">UBA 001R</td><td class="td-p">Coach 67</td><td>John Okello</td><td><span class="chip c-green">Loading</span></td><td><div class="occ-bar-wrap" style="width:80px"><div class="occ-bar occ-high" style="width:90%"></div></div><span style="font-size:.625rem;font-weight:700;margin-left:4px">60/67</span></td><td style="font-weight:600;color:var(--green)">UGX 804K</td><td><div style="display:flex;gap:4px"><button class="btn b-gold" style="font-size:.5rem;padding:3px 7px" onclick="alert('Dispatch sent!')">Dispatch</button><button class="btn b-outline" style="font-size:.5rem;padding:3px 7px" onclick="adminEditVehicle(this)">Edit</button></div></td></tr>
+                <tr><td class="td-mono">UBB 002R</td><td class="td-p">Coach 65</td><td>Grace Nabifo</td><td><span class="chip c-green">Active</span></td><td><div class="occ-bar-wrap" style="width:80px"><div class="occ-bar occ-high" style="width:77%"></div></div><span style="font-size:.625rem;font-weight:700;margin-left:4px">50/65</span></td><td style="font-weight:600;color:var(--green)">UGX 780K</td><td><div style="display:flex;gap:4px"><button class="btn b-outline" style="font-size:.5rem;padding:3px 7px" onclick="alert('Delay alert sent to all passengers!')">⏱ Delay</button><button class="btn b-outline" style="font-size:.5rem;padding:3px 7px">Edit</button></div></td></tr>
+                <tr><td class="td-mono">UBC 003R</td><td class="td-p">Minibus 22</td><td>Peter Musisi</td><td><span class="chip c-amber">Maintenance</span></td><td><div class="occ-bar-wrap" style="width:80px"><div class="occ-bar occ-low" style="width:0%"></div></div><span style="font-size:.625rem;color:var(--muted);margin-left:4px">0/22</span></td><td style="color:var(--muted)">—</td><td><button class="btn b-outline" style="font-size:.5rem;padding:3px 7px">Schedule</button></td></tr>
+                <tr><td class="td-mono">UBD 004R</td><td class="td-p">Taxi 14</td><td>Alice Tendo</td><td><span class="chip c-green">Active</span></td><td><div class="occ-bar-wrap" style="width:80px"><div class="occ-bar occ-mid" style="width:71%"></div></div><span style="font-size:.625rem;font-weight:700;margin-left:4px">10/14</span></td><td style="font-weight:600;color:var(--green)">UGX 280K</td><td><button class="btn b-outline" style="font-size:.5rem;padding:3px 7px">Edit</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Add vehicle + P&L -->
+        <div>
+          <div class="card" style="margin-bottom:14px">
+            <div class="card-hd"><span class="card-title">Add Raylane Vehicle</span></div>
+            <div style="padding:16px">
+              <div class="inp-group"><label class="inp-label">Registration Plate</label><input class="inp" placeholder="e.g. UBE 005R" type="text"></div>
+              <div class="inp-group"><label class="inp-label">Vehicle Type</label><select class="inp"><option>Taxi / Matatu (14 seats)</option><option>Minibus (22 seats)</option><option>Coach (55 seats)</option><option>Coach (65 seats)</option><option>Coach (67 seats)</option></select></div>
+              <div class="inp-group"><label class="inp-label">Assign Driver</label><select class="inp"><option>John Okello</option><option>Grace Nabifo</option><option>Peter Musisi</option><option>Alice Tendo</option><option>+ Register New Driver</option></select></div>
+              <div class="inp-group"><label class="inp-label">Year / Make / Model</label><input class="inp" placeholder="2023 Toyota Coaster" type="text"></div>
+              <div style="background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);border-radius:8px;padding:9px 12px;font-size:.6875rem;color:var(--text2);margin-bottom:12px">✓ operator_type: RAYLANE · is_raylane_fleet: true · commission: 0% · priority: 1</div>
+              <div style="margin-bottom:12px">
+                <label class="inp-lbl">Ownership Type</label>
+                <select class="inp" id="vehicleOwnerType" onchange="toggleInspection(this)">
+                  <option value="raylane">Raylane-owned fleet vehicle</option>
+                  <option value="partner_inspect">Partner operator vehicle (requires inspection)</option>
+                </select>
+              </div>
+              <div id="inspectionNote" style="display:none;background:var(--amber-bg);border:1px solid var(--amber-b);border-radius:8px;padding:9px 12px;font-size:.6875rem;color:var(--amber);margin-bottom:12px">
+                ⚠️ This vehicle will be added as <strong>Pending Inspection</strong>. Raylane admin must physically inspect and verify before the vehicle goes live. Operator will be notified to bring vehicle to inspection point.
+              </div>
+              <button class="btn b-gold b-lg" style="width:100%;justify-content:center" onclick="adminAddVehicleSubmit()">Add to Fleet</button>
+            </div>
+          </div>
+
+          <!-- Fleet P&L summary -->
+          <div class="card">
+            <div class="card-hd"><span class="card-title">Fleet P&L — Today</span><button class="card-action-link" onclick="nav('fleet-financials',null)">Full Report →</button></div>
+            <div style="padding:14px">
+              <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border2)"><span style="font-size:.8125rem;color:var(--text2)">Gross Revenue</span><span style="font-family:'Sora',sans-serif;font-weight:800;color:var(--green)">UGX 2.1M</span></div>
+              <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border2)"><span style="font-size:.8125rem;color:var(--text2)">Fuel & Maintenance</span><span style="font-family:'Sora',sans-serif;font-weight:700;color:var(--red)">− UGX 380K</span></div>
+              <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border2)"><span style="font-size:.8125rem;color:var(--text2)">Driver Wages</span><span style="font-family:'Sora',sans-serif;font-weight:700;color:var(--red)">− UGX 240K</span></div>
+              <div style="display:flex;justify-content:space-between;padding:10px 0 4px"><span style="font-family:'Sora',sans-serif;font-weight:700;color:var(--text)">Net Profit</span><span style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.125rem;color:var(--text)">UGX 1.48M</span></div>
+              <div style="font-size:.625rem;color:var(--green);font-weight:700">Commission saved vs 10% rate: + UGX 210K</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Operations -->
+      <div class="card">
+        <div class="card-hd">
+          <div><div class="card-title">🔴 Live Operations — Buses Loading Now</div></div>
+          <span class="chip c-green" style="font-size:.625rem;animation:none"><span style="width:6px;height:6px;background:var(--green);border-radius:50%;display:inline-block;animation:pulse-dot 1.5s ease infinite;margin-right:3px"></span>Supabase Realtime</span>
+        </div>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th>Vehicle</th><th>Route</th><th>Status</th><th>ETD (Departure)</th><th>ETA (Arrival)</th><th>Loaded</th><th>Revenue</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr style="background:rgba(245,166,35,.03)">
+                <td class="td-p">UBA 001R <span class="td-muted">Coach 67</span></td><td>Kampala → Nairobi</td>
+                <td><span class="chip c-green">Loading</span></td><td style="font-family:'Sora',sans-serif;font-weight:700;color:var(--amber)">ETD 08:00 (22 min)</td><td style="font-family:'Sora',sans-serif;font-weight:600;color:var(--muted)">ETA 18:00 NBI</td>
+                <td><div style="display:flex;align-items:center;gap:6px"><div class="occ-bar-wrap" style="width:70px"><div class="occ-bar occ-high" style="width:90%"></div></div><span style="font-size:.625rem;font-weight:800">60/67</span></div></td>
+                <td style="font-weight:600;color:var(--green)">UGX 7.2M</td>
+                <td><div style="display:flex;gap:5px"><button class="btn b-dark" style="font-size:.5rem" onclick="alert('🚌 Dispatch command sent to driver!')">🚌 Dispatch</button><button class="btn b-outline" style="font-size:.5rem" onclick="alert('⏱ Delay notification sent to 60 passengers via SMS!')">⏱ Delay Alert</button></div></td>
+              </tr>
+              <tr>
+                <td class="td-p">UBD 004R <span class="td-muted">Taxi 14</span></td><td>Kampala → Jinja</td>
+                <td><span class="chip c-blue">Boarding</span></td><td style="font-family:'Sora',sans-serif;font-weight:700;color:var(--green)">ETD 09:00 (1h 22m)</td><td style="font-family:'Sora',sans-serif;font-weight:600;color:var(--muted)">ETA 11:00 JIN</td>
+                <td><div style="display:flex;align-items:center;gap:6px"><div class="occ-bar-wrap" style="width:70px"><div class="occ-bar occ-mid" style="width:71%"></div></div><span style="font-size:.625rem;font-weight:800">10/14</span></div></td>
+                <td style="font-weight:600;color:var(--green)">UGX 150K</td>
+                <td><div style="display:flex;gap:5px"><button class="btn b-gold" style="font-size:.5rem">Fill Seats</button></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════ APPLICATIONS (Operator Onboarding) ══════════════ -->
+    <div class="view" id="v-applications">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+        <div>
+          <div style="font-family:'Sora',sans-serif;font-size:.9375rem;font-weight:700;color:var(--text);margin-bottom:3px">Operator Onboarding — Application Pipeline</div>
+          <div style="font-size:.75rem;color:var(--muted)">Review documents, verify registration, approve or reject. Activated operators appear in the operators list.</div>
+        </div>
+        <button class="btn b-dark b-lg" onclick="adminExport('applications')">↓ Export Applications</button>
+      </div>
+
+      <div class="g3" style="margin-bottom:14px">
+        <div>
+          <div class="card">
+            <div class="card-hd"><span class="card-title">Active Applications</span><div class="card-actions"><select class="inp inp-sm"><option>All Status</option><option>Pending</option><option>Under Review</option><option>Approved</option><option>Rejected</option></select></div></div>
+            <div class="tbl-wrap">
+              <table class="tbl">
+                <thead><tr><th>Business Name</th><th>Fleet</th><th>Routes</th><th>Submitted</th><th>Docs</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody>
+                  <tr><td class="td-p">Nexus Transport Ltd</td><td>12 vehicles</td><td>Int'l</td><td class="td-muted">2 hrs ago</td><td><span class="chip c-green">Complete</span></td><td><span class="chip c-amber">Pending</span></td><td><div style="display:flex;gap:4px"><button class="btn b-green" onclick="approveOperator(this)">✓ Approve</button><button class="btn b-outline" onclick="nav('applications',null)">Review Docs</button><button class="btn b-red" style="padding:6px 7px" onclick="resolveAlert(event)">✗</button></div></td></tr>
+                  <tr><td class="td-p">Star Rider Uganda</td><td>3 vehicles</td><td>Local</td><td class="td-muted">5 hrs ago</td><td><span class="chip c-red">Missing cert</span></td><td><span class="chip c-blue">Awaiting Docs</span></td><td><div style="display:flex;gap:4px"><button class="btn b-outline" onclick="adminRequestDocs(this)">Request Docs</button><button class="btn b-red" style="padding:6px 7px" onclick="resolveAlert(event)">✗</button></div></td></tr>
+                  <tr><td class="td-p">Pearl Transit Co.</td><td>6 vehicles</td><td>KLA–KIS</td><td class="td-muted">1 day ago</td><td><span class="chip c-green">Complete</span></td><td><span class="chip c-green">Approved</span></td><td><div style="display:flex;gap:4px"><button class="btn b-outline" style="font-size:.5rem">View</button></div></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Application detail panel -->
+        <div class="card">
+          <div class="card-hd"><span class="card-title">Review: Nexus Transport</span></div>
+          <div style="padding:14px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:14px">
+              <div style="padding:8px 0;border-bottom:1px solid var(--border2)"><div style="font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:2px">Business</div><div style="font-size:.8125rem;font-weight:600;color:var(--text)">Nexus Transport Ltd</div></div>
+              <div style="padding:8px 12px;border-bottom:1px solid var(--border2)"><div style="font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:2px">Reg No.</div><div class="td-mono">UG-789012</div></div>
+              <div style="padding:8px 0;border-bottom:1px solid var(--border2)"><div style="font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:2px">Contact</div><div style="font-size:.8125rem;font-weight:600;color:var(--text)">James Mubiru</div></div>
+              <div style="padding:8px 12px;border-bottom:1px solid var(--border2)"><div style="font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:2px">Phone</div><div style="font-size:.8125rem">+256 780 123 456</div></div>
+              <div style="padding:8px 0;border-bottom:1px solid var(--border2)"><div style="font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:2px">Fleet</div><div style="font-size:.8125rem;font-weight:600;color:var(--text)">12 vehicles (Coaches)</div></div>
+              <div style="padding:8px 12px;border-bottom:1px solid var(--border2)"><div style="font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:2px">Routes</div><div style="font-size:.8125rem">KLA–NBI–MBA</div></div>
+            </div>
+            <!-- Documents -->
+            <div style="margin-bottom:14px">
+              <div style="font-size:.6875rem;font-weight:700;color:var(--text2);margin-bottom:6px">Submitted Documents</div>
+              <div style="display:flex;flex-direction:column;gap:5px">
+                <a href="#" style="display:flex;align-items:center;gap:7px;font-size:.75rem;color:var(--n600);text-decoration:none;padding:6px 10px;background:var(--bg);border-radius:6px;transition:background .15s">📄 Business Certificate.pdf<span style="margin-left:auto;color:var(--green);font-size:.5625rem;font-weight:700">✓ Verified</span></a>
+                <a href="#" style="display:flex;align-items:center;gap:7px;font-size:.75rem;color:var(--n600);text-decoration:none;padding:6px 10px;background:var(--bg);border-radius:6px">📄 Operator License.pdf<span style="margin-left:auto;color:var(--green);font-size:.5625rem;font-weight:700">✓ Verified</span></a>
+                <a href="#" style="display:flex;align-items:center;gap:7px;font-size:.75rem;color:var(--n600);text-decoration:none;padding:6px 10px;background:var(--bg);border-radius:6px">📄 Insurance Certificate.pdf<span style="margin-left:auto;color:var(--green);font-size:.5625rem;font-weight:700">✓ Verified</span></a>
+              </div>
+            </div>
+            <!-- Assign initial modules -->
+            <div style="margin-bottom:14px">
+              <div style="font-size:.6875rem;font-weight:700;color:var(--text2);margin-bottom:6px">Assign Modules on Approval</div>
+              <div style="display:flex;flex-direction:column;gap:5px">
+                <label style="display:flex;align-items:center;gap:7px;font-size:.75rem;color:var(--text2);cursor:pointer"><input type="checkbox" checked style="accent-color:var(--n600)"> Trips</label>
+                <label style="display:flex;align-items:center;gap:7px;font-size:.75rem;color:var(--text2);cursor:pointer"><input type="checkbox" checked style="accent-color:var(--n600)"> Bookings</label>
+                <label style="display:flex;align-items:center;gap:7px;font-size:.75rem;color:var(--text2);cursor:pointer"><input type="checkbox" checked style="accent-color:var(--n600)"> Seats</label>
+                <label style="display:flex;align-items:center;gap:7px;font-size:.75rem;color:var(--text2);cursor:pointer"><input type="checkbox" checked style="accent-color:var(--n600)"> Parcels</label>
+                <label style="display:flex;align-items:center;gap:7px;font-size:.75rem;color:var(--text2);cursor:pointer"><input type="checkbox" style="accent-color:var(--n600)"> Financials (Premium)</label>
+                <label style="display:flex;align-items:center;gap:7px;font-size:.75rem;color:var(--text2);cursor:pointer"><input type="checkbox" style="accent-color:var(--n600)"> Fleet Management (Premium)</label>
+              </div>
+            </div>
+            <div style="display:flex;gap:7px">
+              <button class="btn b-green b-lg" style="flex:1;justify-content:center" onclick="approveOperator(this)">✓ Approve & Create Account</button>
+              <button class="btn b-red b-lg" onclick="adminRejectOperator(this,'Nexus Transport Ltd')">✗ Reject</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════ MODULE CONTROL ══════════════ -->
+    <div class="view" id="v-modules">
+      <div style="font-size:.8125rem;color:var(--text2);background:var(--blue-bg);border:1px solid var(--blue-b);border-radius:10px;padding:11px 14px;margin-bottom:14px">
+        💡 Module activation is done here by admin after operator payment is confirmed. Operators request modules via their portal. All activation is recorded in the audit log.
+      </div>
+      <div class="card">
+        <div class="card-hd"><span class="card-title">Module Activation by Operator</span><div class="card-actions"><select class="inp inp-sm" style="width:180px"><option>Gateway Bus Ltd</option><option>Link Express</option><option>Post Bus UG</option><option>Nexus Transport</option></select></div></div>
+        <div style="padding:16px;display:flex;flex-direction:column;gap:10px">
+          <!-- Module cards -->
+          <div class="mod-card activated" style="background:var(--green-bg)">
+            <div class="mod-ic" style="background:var(--green-bg)"><svg viewBox="0 0 20 20" fill="var(--green)" width="17" height="17"><path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/><path d="M3 4a1 1 0 00-.82 1.573L5 9.63V15a1 1 0 001 1h1a1 1 0 001-1v-5a1 1 0 01.82-.984l4.96-1.24A1 1 0 0115 8.77V15a1 1 0 001 1h1a1 1 0 001-1V6a1 1 0 00-.66-.942L12 4H3z"/></svg></div>
+            <div style="flex:1"><div class="mod-name">Trips</div><div class="mod-desc">Trip creation, management, approval submission</div></div>
+            <div style="display:flex;align-items:center;gap:8px"><span class="chip c-green">Active</span><button class="toggle on" onclick="this.classList.toggle('on');updateModuleState(this)"></button></div>
+          </div>
+          <div class="mod-card activated" style="background:var(--green-bg)">
+            <div class="mod-ic" style="background:var(--green-bg)"><svg viewBox="0 0 20 20" fill="var(--green)" width="17" height="17"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg></div>
+            <div style="flex:1"><div class="mod-name">Bookings</div><div class="mod-desc">View and manage passenger bookings</div></div>
+            <div style="display:flex;align-items:center;gap:8px"><span class="chip c-green">Active</span><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+          </div>
+          <div class="mod-card activated" style="background:var(--green-bg)">
+            <div class="mod-ic" style="background:var(--green-bg)"><svg viewBox="0 0 20 20" fill="var(--green)" width="17" height="17"><path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"/></svg></div>
+            <div style="flex:1"><div class="mod-name">Seat Manager</div><div class="mod-desc">Live seat map and manual assignment</div></div>
+            <div style="display:flex;align-items:center;gap:8px"><span class="chip c-green">Active</span><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+          </div>
+          <div class="mod-card activated" style="background:var(--green-bg)">
+            <div class="mod-ic" style="background:var(--green-bg)"><svg viewBox="0 0 20 20" fill="var(--green)" width="17" height="17"><path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3z"/></svg></div>
+            <div style="flex:1"><div class="mod-name">Parcels</div><div class="mod-desc">Parcel manifest, tracking, delivery</div></div>
+            <div style="display:flex;align-items:center;gap:8px"><span class="chip c-green">Active</span><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+          </div>
+          <!-- PREMIUM modules -->
+          <div style="font-size:.625rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--g600);padding:6px 2px;display:flex;align-items:center;gap:8px">Premium Modules<span style="flex:1;height:1px;background:var(--border)"></span></div>
+          <div class="mod-card">
+            <div class="mod-ic" style="background:var(--amber-bg)"><svg viewBox="0 0 20 20" fill="var(--amber)" width="17" height="17"><path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3z" clip-rule="evenodd"/></svg></div>
+            <div style="flex:1"><div class="mod-name">Financials</div><div class="mod-desc">P&L, expenses, vendor payments, reports</div></div>
+            <div style="display:flex;align-items:center;gap:8px"><div class="mod-price">UGX 50K/mo</div><span class="chip c-gray">Inactive</span><button class="toggle" onclick="this.classList.toggle('on');activateModule(this,'Financials')"></button></div>
+          </div>
+          <div class="mod-card">
+            <div class="mod-ic" style="background:var(--blue-bg)"><svg viewBox="0 0 20 20" fill="var(--blue)" width="17" height="17"><path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/><path d="M3 4a1 1 0 000 2v8a2 2 0 002 2h1a3 3 0 016 0h1a2 2 0 002-2V6a1 1 0 100-2H3z"/></svg></div>
+            <div style="flex:1"><div class="mod-name">Fleet & Drivers</div><div class="mod-desc">Vehicle management, driver assignment, maintenance</div></div>
+            <div style="display:flex;align-items:center;gap:8px"><div class="mod-price">UGX 80K/mo</div><span class="chip c-gray">Inactive</span><button class="toggle" onclick="this.classList.toggle('on');activateModule(this,'Fleet')"></button></div>
+          </div>
+          <div class="mod-card">
+            <div class="mod-ic" style="background:var(--purple-bg)"><svg viewBox="0 0 20 20" fill="var(--purple)" width="17" height="17"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg></div>
+            <div style="flex:1"><div class="mod-name">Analytics</div><div class="mod-desc">Route performance, demand forecasting, insights</div></div>
+            <div style="display:flex;align-items:center;gap:8px"><div class="mod-price">UGX 60K/mo</div><span class="chip c-gray">Inactive</span><button class="toggle" onclick="this.classList.toggle('on');activateModule(this,'Analytics')"></button></div>
+          </div>
+          <div class="mod-card">
+            <div class="mod-ic" style="background:var(--green-bg)"><svg viewBox="0 0 20 20" fill="var(--green)" width="17" height="17"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v1h8v-1z"/></svg></div>
+            <div style="flex:1"><div class="mod-name">HR / Staff</div><div class="mod-desc">Employee management, payroll, driver records</div></div>
+            <div style="display:flex;align-items:center;gap:8px"><div class="mod-price">UGX 40K/mo</div><span class="chip c-gray">Inactive</span><button class="toggle" onclick="this.classList.toggle('on');activateModule(this,'HR')"></button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════ FINANCIALS ══════════════ -->
+    <div class="view" id="v-financials">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+        <div style="display:flex;gap:5px;background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:3px">
+          <button class="btn" id="fin-tab-month" onclick="setFinTab('month')" style="background:var(--surface);border:1px solid var(--border);color:var(--text)">This Month</button>
+          <button class="btn b-ghost" id="fin-tab-q1" onclick="setFinTab('q1')">Q1 2026</button>
+          <button class="btn b-ghost" id="fin-tab-ytd" onclick="setFinTab('ytd')">YTD</button>
+        </div>
+        <div style="display:flex;gap:7px">
+          <button class="btn b-dark b-lg" onclick="adminExport('pl')">↓ Export P&L</button>
+          <button class="btn b-outline b-lg">Generate Report</button>
+        </div>
+      </div>
+
+      <!-- P&L Summary cards -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px">
+        <div class="fin-kpi" style="background:var(--green-bg);border:1px solid var(--green-b)"><div class="fin-lbl" style="color:var(--green)">Total Income</div><div class="fin-val" style="color:#166534">UGX 48.7M</div><div class="fin-sub" style="color:var(--green)">↑ 18% vs last month</div></div>
+        <div class="fin-kpi" style="background:var(--red-bg);border:1px solid var(--red-b)"><div class="fin-lbl" style="color:var(--red)">Expenses</div><div class="fin-val" style="color:var(--red)">UGX 8.2M</div><div class="fin-sub" style="color:var(--text2)">Staff, SMS, infra, fuel</div></div>
+        <div class="fin-kpi" style="background:var(--n800);border:1px solid var(--n700)"><div class="fin-lbl" style="color:rgba(255,255,255,.5)">Net Profit</div><div class="fin-val" style="color:var(--g400)">UGX 40.5M</div><div class="fin-sub" style="color:rgba(255,255,255,.4)">After all deductions</div></div>
+        <div class="fin-kpi" style="background:var(--amber-bg);border:1px solid var(--amber-b)"><div class="fin-lbl" style="color:var(--amber)">Profit Margin</div><div class="fin-val" style="color:#92400E">83.2%</div><div class="fin-sub" style="color:var(--amber)">Industry avg: 65%</div></div>
+      </div>
+
+      <div class="g2">
+        <!-- Income breakdown -->
+        <div class="card">
+          <div class="card-hd"><span class="card-title">Income Breakdown</span><button class="btn b-outline" onclick="adminExport('data')">↓ Export</button></div>
+          <div class="tbl-wrap">
+            <table class="tbl">
+              <thead><tr><th>Source</th><th>This Month</th><th>YTD</th><th>% of Total</th></tr></thead>
+              <tbody>
+                <tr><td class="td-p">🚌 Raylane Fleet Revenue</td><td style="color:var(--g500);font-weight:700">UGX 18.2M</td><td>UGX 54.6M</td><td><div style="display:flex;align-items:center;gap:6px"><div class="occ-bar-wrap" style="width:60px"><div class="occ-bar occ-high" style="width:37%"></div></div>37%</div></td></tr>
+                <tr><td class="td-p">📊 Booking Commissions (10%)</td><td style="color:var(--green);font-weight:700">UGX 23.0M</td><td>UGX 69M</td><td><div style="display:flex;align-items:center;gap:6px"><div class="occ-bar-wrap" style="width:60px"><div class="occ-bar occ-high" style="width:47%"></div></div>47%</div></td></tr>
+                <tr><td class="td-p">⭐ Module Subscriptions</td><td style="color:var(--green);font-weight:600">UGX 2.8M</td><td>UGX 8.4M</td><td><div style="display:flex;align-items:center;gap:6px"><div class="occ-bar-wrap" style="width:60px"><div class="occ-bar occ-mid" style="width:6%"></div></div>6%</div></td></tr>
+                <tr><td class="td-p">🚐 Charter Markup</td><td style="color:var(--green);font-weight:600">UGX 2.5M</td><td>UGX 7.5M</td><td><div style="display:flex;align-items:center;gap:6px"><div class="occ-bar-wrap" style="width:60px"><div class="occ-bar occ-mid" style="width:5%"></div></div>5%</div></td></tr>
+                <tr><td class="td-p">📦 Parcel Commissions</td><td style="color:var(--green);font-weight:600">UGX 1.4M</td><td>UGX 4.2M</td><td><div style="display:flex;align-items:center;gap:6px"><div class="occ-bar-wrap" style="width:60px"><div class="occ-bar occ-mid" style="width:3%"></div></div>3%</div></td></tr>
+                <tr><td class="td-p">🏷️ Priority Listing Fees</td><td style="color:var(--green);font-weight:600">UGX 0.8M</td><td>UGX 2.4M</td><td><div style="display:flex;align-items:center;gap:6px"><div class="occ-bar-wrap" style="width:60px"><div class="occ-bar occ-low" style="width:2%"></div></div>2%</div></td></tr>
+                <tr style="background:var(--green-bg)"><td style="font-family:'Sora',sans-serif;font-weight:800;color:var(--text)">TOTAL</td><td style="font-family:'Sora',sans-serif;font-weight:800;color:var(--green)">UGX 48.7M</td><td style="font-family:'Sora',sans-serif;font-weight:800;color:var(--text)">UGX 145.8M</td><td style="font-family:'Sora',sans-serif;font-weight:800;color:var(--green)">100%</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Operator payouts -->
+        <div class="card">
+          <div class="card-hd"><span class="card-title">Operator Payouts</span><button class="btn b-gold">Process All</button></div>
+          <div class="tbl-wrap">
+            <table class="tbl">
+              <thead><tr><th>Operator</th><th>Net Amount</th><th>Method</th><th>Status</th><th></th></tr></thead>
+              <tbody>
+                <tr><td class="td-p">Post Bus UG</td><td class="td-p">UGX 2.1M</td><td class="td-muted">MTN MoMo</td><td><span class="chip c-amber">Pending</span></td><td><button class="btn b-dark" style="font-size:.5rem" onclick="resolveAlert(event)">Pay Now</button></td></tr>
+                <tr><td class="td-p">Safe Rider</td><td class="td-p">UGX 980K</td><td class="td-muted">Airtel</td><td><span class="chip c-amber">Pending</span></td><td><button class="btn b-dark" style="font-size:.5rem" onclick="resolveAlert(event)">Pay Now</button></td></tr>
+                <tr><td class="td-p">Link Express</td><td class="td-p">UGX 1.89M</td><td class="td-muted">MTN MoMo</td><td><span class="chip c-green">Paid</span></td><td></td></tr>
+                <tr><td class="td-p">Gateway Bus</td><td class="td-p">UGX 3.24M</td><td class="td-muted">Bank</td><td><span class="chip c-green">Paid</span></td><td></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="padding:12px 16px;border-top:1px solid var(--border);background:var(--amber-bg)">
+            <div style="font-size:.6875rem;color:var(--amber);font-weight:600">⚡ Auto-payout scheduled tonight at 23:59 via Supabase pg_cron → MTN B2C API</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════ SMART ALERTS ══════════════ -->
+    <div class="view" id="v-alerts">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn b-dark" onclick="markAllRead()">✓ Mark All Read</button>
+          <button class="btn b-outline">Archive Resolved</button>
+        </div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap">
+          <button class="btn b-outline" id="f-all" onclick="filterAlerts('all')" style="border-color:var(--n600);color:var(--n600)">All (7)</button>
+          <button class="btn b-outline" id="f-urgent" onclick="filterAlerts('urgent')">🚨 Urgent (2)</button>
+          <button class="btn b-outline" id="f-action" onclick="filterAlerts('action')">⚠️ Action Required (3)</button>
+          <button class="btn b-outline" id="f-info" onclick="filterAlerts('info')">ℹ️ Info (2)</button>
+        </div>
+      </div>
+      <div id="alertsList">
+        <!-- URGENT -->
+        <div class="alert-card a-urgent" data-cat="urgent">
+          <div class="alert-ic"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg></div>
+          <div style="flex:1"><div class="alert-cat">🚨 Urgent — Payment Mismatch</div><div class="alert-title">Booking RL-F1G8: paid UGX 14,500 vs expected UGX 15,000</div><div class="alert-msg">Passenger Robert K. paid UGX 500 short via MTN MoMo. Transaction TXN-0004 shows status: failed after retry. Seat is currently locked but will expire in 2 min.</div><div class="alert-btns"><button class="btn b-dark" onclick="adminInvestigate(event)">🔍 Investigate</button><button class="btn b-red" onclick="adminRefund(event)">↩ Refund</button><button class="btn b-outline" onclick="resolveAlert(event)">Dismiss</button></div></div>
+        </div>
+        <div class="alert-card a-urgent" data-cat="urgent">
+          <div class="alert-ic"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg></div>
+          <div style="flex:1"><div class="alert-cat">🚨 Urgent — Overbooking Risk</div><div class="alert-title">Trip T-002 Kampala → Gulu shows 47 confirmed / 45 seats</div><div class="alert-msg">Redis seat lock race condition. Seats 44 and 45 were simultaneously locked by 2 sessions. DB constraint caught overbooking. 2 passengers need to be re-seated or offered alternatives.</div><div class="alert-btns"><button class="btn b-dark" onclick="nav('seats',null);resolveAlert(event)">🪑 View Seat Map</button><button class="btn b-red" onclick="adminContactPassengers(event)">📞 Contact Passengers</button><button class="btn b-gold" onclick="adminSuggestAlternative(event)">🔄 Suggest Alternative</button></div></div>
+        </div>
+        <!-- ACTION REQUIRED -->
+        <div class="alert-card a-action" data-cat="action">
+          <div class="alert-ic"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/></svg></div>
+          <div style="flex:1"><div class="alert-cat">⚠️ Action Required — Trip Approval</div><div class="alert-title">Gateway Bus: Kampala → Nairobi 08:00 — 50 seats · 38 passengers waiting</div><div class="alert-msg">Trip created 14 minutes ago. status: pending. Departure in 2h 22min. 38 passengers attempted to book but seat selection is blocked until approved. Revenue at risk: UGX 5.7M.</div><div class="alert-btns"><button class="btn b-green" onclick="resolveAlert(event)">✓ Approve Trip</button><button class="btn b-outline" onclick="nav('trips',null)">View Trip Details</button><button class="btn b-red" onclick="adminRejectOperator(this,'Operator')">✗ Reject</button></div></div>
+        </div>
+        <div class="alert-card a-action" data-cat="action">
+          <div class="alert-ic"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v1h8v-1zM6 8a2 2 0 11-4 0 2 2 0 014 0z"/></svg></div>
+          <div style="flex:1"><div class="alert-cat">⚠️ Action Required — Operator Application</div><div class="alert-title">Nexus Transport Ltd — 12 vehicles, Kampala–Nairobi–Mombasa</div><div class="alert-msg">All documents verified. Reg No: UG-789012. Fleet: 12 coaches. Contact: James Mubiru +256780123456. Submitted 2 hours ago. Ready for approval.</div><div class="alert-btns"><button class="btn b-green" onclick="approveOperator(this)">✓ Approve Operator</button><button class="btn b-outline" onclick="nav('applications',null)">📋 Review Application</button><button class="btn b-red" onclick="adminRejectOperator(this,'Operator')">✗ Reject</button></div></div>
+        </div>
+        <div class="alert-card a-action" data-cat="action">
+          <div class="alert-ic"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9z" clip-rule="evenodd"/></svg></div>
+          <div style="flex:1"><div class="alert-cat">⚠️ Action Required — Payout Ready</div><div class="alert-title">4 operators ready for payout — UGX 8.2M total</div><div class="alert-msg">Post Bus UG (UGX 2.1M), Safe Rider (UGX 980K), Link Express (UGX 1.89M), Kampala Coach (UGX 3.23M). All bookings settled. Auto-payout at 23:59 or process now.</div><div class="alert-btns"><button class="btn b-dark" onclick="adminProcessPayouts(event)">💸 Process All Payouts</button><button class="btn b-outline" onclick="nav('payments',null)">📊 View Details</button></div></div>
+        </div>
+        <!-- INFO -->
+        <div class="alert-card a-info" data-cat="info">
+          <div class="alert-ic"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg></div>
+          <div style="flex:1"><div class="alert-cat">ℹ️ Trip Full</div><div class="alert-title">T-002 Kampala → Gulu — 45/45 seats booked</div><div class="alert-msg">Trip auto-hidden from search. DB trigger fired. Operator notified via SMS. System now suggesting T-006 Kampala → Gulu 12:00 as alternative to new searches on this route.</div><div class="alert-btns"><button class="btn b-outline" onclick="resolveAlert(event)">🔄 Suggest Alternatives</button><button class="btn b-ghost" onclick="resolveAlert(event)">Dismiss</button></div></div>
+        </div>
+        <div class="alert-card a-info" data-cat="info">
+          <div class="alert-ic"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg></div>
+          <div style="flex:1"><div class="alert-cat">ℹ️ Group Booking</div><div class="alert-title">Charter request: Alice B. × 24 pax · Kampala → Gulu · June 14</div><div class="alert-msg">Budget: UGX 1,200,000. Group contact: +256 772 345 678. No vehicle assigned yet. Suggest: 45-seat coach UBB 002R. Estimated revenue: UGX 1.08M.</div><div class="alert-btns"><button class="btn b-dark" onclick="adminAssignVehicle(event)">🚌 Assign Vehicle</button><button class="btn b-outline" onclick="resolveAlert(event)">Send Quote</button></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════ AUDIT LOG ══════════════ -->
+    <div class="view" id="v-audit">
+      <div class="card">
+        <div class="card-hd">
+          <div><div class="card-title">Audit Log</div><div class="card-title-sub">All admin and system actions · Supabase audit_log table · Immutable</div></div>
+          <div class="card-actions"><select class="inp inp-sm" style="width:130px"><option>All Actions</option><option>Trip Approvals</option><option>Operator Changes</option><option>Payments</option><option>Module Activation</option></select><button class="btn b-outline" onclick="adminExport('data')">↓ Export</button></div>
+        </div>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th>Time</th><th>User</th><th>Role</th><th>Action</th><th>Entity</th><th>IP Address</th></tr></thead>
+            <tbody>
+              <tr><td class="td-muted">Today 07:34:12</td><td class="td-p">Raylane Admin</td><td><span class="chip c-red">SUPER_ADMIN</span></td><td>approve_trip</td><td class="td-mono">trip::T-001</td><td class="td-mono">196.43.xx.xx</td></tr>
+              <tr><td class="td-muted">Today 07:28:45</td><td class="td-p">Finance Staff</td><td><span class="chip c-purple">FINANCE</span></td><td>process_payout</td><td class="td-mono">payout::PO-088</td><td class="td-mono">196.43.xx.xx</td></tr>
+              <tr><td class="td-muted">Today 07:15:22</td><td class="td-p">Raylane Admin</td><td><span class="chip c-red">SUPER_ADMIN</span></td><td>activate_module</td><td class="td-mono">operator::Gateway · module::Analytics</td><td class="td-mono">196.43.xx.xx</td></tr>
+              <tr><td class="td-muted">Today 06:59:01</td><td class="td-p">System (Auto)</td><td><span class="chip c-gray">CRON</span></td><td>auto_release_seat_lock</td><td class="td-mono">seat::T-003::42</td><td class="td-muted">System</td></tr>
+              <tr><td class="td-muted">Today 06:45:18</td><td class="td-p">Ops Staff</td><td><span class="chip c-blue">OPERATIONS</span></td><td>reject_operator</td><td class="td-mono">application::APP-012</td><td class="td-mono">196.43.xx.xx</td></tr>
+              <tr><td class="td-muted">Today 06:32:07</td><td class="td-p">System (Webhook)</td><td><span class="chip c-gray">API</span></td><td>payment_verified</td><td class="td-mono">payment::TXN-0001</td><td class="td-muted">MTN Callback</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════ SETTINGS ══════════════ -->
+    <div class="view" id="v-settings">
+      <div class="g2">
+        <div class="card">
+          <div class="card-hd"><span class="card-title">Platform Configuration</span><button class="btn b-gold">Save All</button></div>
+          <div style="padding:4px 0">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-bottom:1px solid var(--border2)"><div><div style="font-size:.875rem;font-weight:600;color:var(--text)">Commission Rate (%)</div><div style="font-size:.6875rem;color:var(--muted)">Applied to all third-party bookings</div></div><input class="inp inp-sm" type="number" value="10" min="0" max="50" style="width:80px"></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-bottom:1px solid var(--border2)"><div><div style="font-size:.875rem;font-weight:600;color:var(--text)">Raylane Fleet Commission</div><div style="font-size:.6875rem;color:var(--muted)">Always 0% — retained 100%</div></div><span style="font-family:'Sora',sans-serif;font-weight:800;color:var(--green)">0%</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-bottom:1px solid var(--border2)"><div><div style="font-size:.875rem;font-weight:600;color:var(--text)">Referral Commission (UGX)</div></div><input class="inp inp-sm" type="number" value="2000" style="width:90px"></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-bottom:1px solid var(--border2)"><div><div style="font-size:.875rem;font-weight:600;color:var(--text)">Seat Lock Duration (sec)</div><div style="font-size:.6875rem;color:var(--muted)">Redis TTL — must match payment timeout</div></div><input class="inp inp-sm" type="number" value="300" style="width:80px"></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-bottom:1px solid var(--border2)"><div><div style="font-size:.875rem;font-weight:600;color:var(--text)">Advance Booking Limit (weeks)</div></div><input class="inp inp-sm" type="number" value="4" min="1" max="12" style="width:80px"></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 18px"><div><div style="font-size:.875rem;font-weight:600;color:var(--text)">Commitment Fee (%)</div><div style="font-size:.6875rem;color:var(--muted)">Advance booking deposit</div></div><input class="inp inp-sm" type="number" value="20" style="width:80px"></div>
+          </div>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom:14px">
+            <div class="card-hd"><span class="card-title">Feature Toggles</span></div>
+            <div style="padding:4px 0">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 18px;border-bottom:1px solid var(--border2)"><div><div style="font-size:.875rem;font-weight:600;color:var(--text)">MTN MoMo API</div><div style="font-size:.625rem;color:var(--green)">Connected ✓ · Sandbox → Production</div></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 18px;border-bottom:1px solid var(--border2)"><div><div style="font-size:.875rem;font-weight:600;color:var(--text)">Airtel Money API</div><div style="font-size:.625rem;color:var(--green)">Connected ✓</div></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 18px;border-bottom:1px solid var(--border2)"><div><div style="font-size:.875rem;font-weight:600;color:var(--text)">SMS Notifications</div><div style="font-size:.625rem;color:var(--muted)">Africa's Talking</div></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 18px;border-bottom:1px solid var(--border2)"><div><div style="font-size:.875rem;font-weight:600;color:var(--text)">Supabase Realtime</div><div style="font-size:.625rem;color:var(--green)">Active · Seat locks, alerts</div></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 18px;border-bottom:1px solid var(--border2)"><div><div style="font-size:.875rem;font-weight:600;color:var(--text)">Auto Payout (pg_cron)</div><div style="font-size:.625rem;color:var(--muted)">Daily at 23:59 EAT</div></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 18px;border-bottom:1px solid var(--border2)"><div><div style="font-size:.875rem;font-weight:600;color:var(--text)">Dynamic Pricing</div><div style="font-size:.625rem;color:var(--muted)">Surge on peak routes</div></div><button class="toggle" onclick="this.classList.toggle('on')"></button></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 18px"><div><div style="font-size:.875rem;font-weight:600;color:var(--text)">Tourist AI Itinerary</div><div style="font-size:.625rem;color:var(--muted)">OpenAI integration</div></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-hd"><span class="card-title">Admin Roles</span><button class="btn b-dark">+ Add Staff</button></div>
+            <div style="padding:4px 0">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 18px;border-bottom:1px solid var(--border2)"><div style="display:flex;align-items:center;gap:8px"><div class="sb-av">RA</div><div><div style="font-size:.8125rem;font-weight:600;color:var(--text)">Raylane Admin</div><div style="font-size:.625rem;color:var(--muted)">super@raylane.com</div></div></div><span class="chip c-red">SUPER_ADMIN</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 18px;border-bottom:1px solid var(--border2)"><div style="display:flex;align-items:center;gap:8px"><div class="sb-av">FS</div><div><div style="font-size:.8125rem;font-weight:600;color:var(--text)">Finance Staff</div><div style="font-size:.625rem;color:var(--muted)">finance@raylane.com</div></div></div><span class="chip c-purple">FINANCE</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 18px"><div style="display:flex;align-items:center;gap:8px"><div class="sb-av">OS</div><div><div style="font-size:.8125rem;font-weight:600;color:var(--text)">Ops Staff</div><div style="font-size:.625rem;color:var(--muted)">ops@raylane.com</div></div></div><span class="chip c-blue">OPERATIONS</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Placeholder views for remaining modules -->
+    <div class="view" id="v-operators"><div class="card"><div class="card-hd"><span class="card-title">All Operators (120 active)</span><div class="card-actions"><input class="inp inp-sm" placeholder="Search operators..." style="width:180px"><button class="btn b-dark" onclick="adminManualOnboard()">+ Manual Onboard</button></div></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Operator</th><th>Type</th><th>Fleet</th><th>Routes</th><th>Commission</th><th>Rating</th><th>Modules</th><th>Status</th><th>Actions</th></tr></thead><tbody><tr><td><div style="display:flex;align-items:center;gap:8px"><div class="sb-av" style="font-size:.5rem">RL</div><div><div class="td-p">Raylane Express</div><div class="td-muted">super@raylane.com</div></div></div></td><td><span class="chip c-gold">RAYLANE</span></td><td>12 vehicles</td><td>All routes</td><td style="color:var(--green);font-weight:700">0%</td><td>⭐ 5.0</td><td><span class="chip c-green">All</span></td><td><span class="chip c-green">Active</span></td><td></td></tr><tr><td><div style="display:flex;align-items:center;gap:8px"><div class="sb-av" style="font-size:.5rem">GB</div><div><div class="td-p">Gateway Bus Ltd</div><div class="td-muted">gateway@bus.com</div></div></div></td><td><span class="chip c-navy">3rd Party</span></td><td>8 vehicles</td><td>KLA–NBI</td><td>10%</td><td>⭐ 4.8</td><td><span class="chip c-blue">Basic</span></td><td><span class="chip c-green">Active</span></td><td><div style="display:flex;gap:4px"><button class="btn b-outline" style="font-size:.5rem" onclick="nav('modules',null)">Modules</button><button class="btn b-ghost" style="font-size:.5rem" onclick="adminEditOperator(this)">Edit</button></div></td></tr><tr><td><div style="display:flex;align-items:center;gap:8px"><div class="sb-av" style="font-size:.5rem">PB</div><div><div class="td-p">Post Bus UG</div><div class="td-muted">postbus@gov.ug</div></div></div></td><td><span class="chip c-navy">3rd Party</span></td><td>22 vehicles</td><td>National</td><td>10%</td><td>⭐ 4.3</td><td><span class="chip c-gold">Premium</span></td><td><span class="chip c-green">Active</span></td><td><div style="display:flex;gap:4px"><button class="btn b-outline" style="font-size:.5rem" onclick="nav('modules',null)">Modules</button><button class="btn b-ghost" style="font-size:.5rem">Edit</button></div></td></tr></tbody></table></div></div></div>
+    <div class="view" id="v-trips"><div class="card"><div class="card-hd"><span class="card-title">Trip Approvals (12 pending)</span><div class="card-actions"><button class="btn b-green" onclick="adminBulkApprove()">✓ Bulk Approve</button><button class="btn b-outline">Filter</button></div></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Trip ID</th><th>Route</th><th>Operator</th><th>Departure</th><th>Vehicle</th><th>Seats</th><th>Price</th><th>Status</th><th>Actions</th></tr></thead><tbody><tr><td class="td-mono">T-003</td><td class="td-p">KLA → MBL</td><td>Link Express</td><td>Today 14:00</td><td>UCA 789H</td><td>18</td><td>UGX 30K</td><td><span class="chip c-amber">Pending</span></td><td><div style="display:flex;gap:4px"><button class="btn b-green" style="font-size:.5rem" onclick="resolveAlert(event)">✓ Approve</button><button class="btn b-red" style="font-size:.5rem;padding:6px 7px" onclick="resolveAlert(event)">✗</button></div></td></tr><tr><td class="td-mono">T-005</td><td class="td-p">KLA → KGL</td><td>Kampala Coach</td><td>Today 05:00</td><td>UEE 999K</td><td>45</td><td>UGX 120K</td><td><span class="chip c-amber">Pending</span></td><td><div style="display:flex;gap:4px"><button class="btn b-green" style="font-size:.5rem" onclick="resolveAlert(event)">✓ Approve</button><button class="btn b-red" style="font-size:.5rem;padding:6px 7px" onclick="resolveAlert(event)">✗</button></div></td></tr><tr><td class="td-mono">T-001</td><td class="td-p"><span class="chip c-gold" style="margin-right:4px">RL</span>KLA → NBI</td><td style="color:var(--g500);font-weight:700">Raylane Express</td><td>Today 07:30</td><td>UBA 001R</td><td>67</td><td>UGX 115K</td><td><span class="chip c-green">Auto-Approved</span></td><td><span style="font-size:.6rem;color:var(--muted)">is_raylane_fleet: true</span></td></tr></tbody></table></div></div></div>
+    <div class="view" id="v-bookings"><div class="card"><div class="card-hd"><span class="card-title">All Bookings</span><div class="card-actions"><input class="inp inp-sm" placeholder="Search ref, name, route..." style="width:200px" oninput="adminSearch(this.value)"><button class="btn b-outline" onclick="adminExport('bookings')">↓ Export CSV</button></div></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Reference</th><th>Passenger</th><th>Route</th><th>Seats</th><th>Amount</th><th>Paid</th><th>Balance Due</th><th>Booking Status</th><th>Time</th></tr></thead><tbody><tr><td class="td-mono">RL-A7B3C2</td><td class="td-p">Sarah M. · +256 77x</td><td>KLA→NBI</td><td>[14A]</td><td>UGX 115K</td><td style="color:var(--green);font-weight:600">UGX 23K</td><td style="color:var(--amber);font-weight:600">UGX 92K</td><td><span class="chip c-green">Confirmed</span></td><td class="td-muted">2 min ago</td></tr><tr><td class="td-mono">RL-C4D1E8</td><td class="td-p">James K.</td><td>KLA→MBL</td><td>[5B]</td><td>UGX 30K</td><td style="color:var(--red);font-weight:600">UGX 0</td><td style="color:var(--red);font-weight:600">UGX 30K</td><td><span class="chip c-red">Payment Failed</span></td><td class="td-muted">8 min ago</td></tr></tbody></table></div></div></div>
+    <div class="view" id="v-seats">
+      <div class="g2">
+        <div class="card"><div class="card-hd"><span class="card-title">Seat Map — Admin Override</span><select class="inp inp-sm" style="width:240px"><option>T-001 · RL KLA→NBI · 07:30</option><option>T-003 · KLA→MBL · 14:00</option></select></div><div style="padding:16px;text-align:center"><div style="background:var(--n800);color:var(--g400);font-family:'Sora',sans-serif;font-size:.625rem;font-weight:700;padding:5px 16px;border-radius:50px;display:inline-block;margin-bottom:12px">🚌 Front — Uganda RHD Layout</div><div class="seat-grid" id="seatGrid"></div><div style="display:flex;gap:12px;justify-content:center;margin-top:12px;flex-wrap:wrap"><div style="display:flex;align-items:center;gap:4px;font-size:.5625rem;color:var(--muted)"><div style="width:12px;height:10px;border-radius:3px;background:var(--surface);border:1.5px solid var(--border)"></div>Available</div><div style="display:flex;align-items:center;gap:4px;font-size:.5625rem;color:var(--muted)"><div style="width:12px;height:10px;border-radius:3px;background:var(--g500);border:1.5px solid var(--g400)"></div>Selected</div><div style="display:flex;align-items:center;gap:4px;font-size:.5625rem;color:var(--muted)"><div style="width:12px;height:10px;border-radius:3px;background:var(--bg);border:1.5px solid var(--border2)"></div>Sold</div><div style="display:flex;align-items:center;gap:4px;font-size:.5625rem;color:var(--muted)"><div style="width:12px;height:10px;border-radius:3px;background:var(--n800);border:1.5px solid var(--n700)"></div>Driver</div></div></div></div>
+        <div class="card"><div class="card-hd"><span class="card-title">Occupancy & Admin Controls</span></div><div style="padding:16px"><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px"><div style="background:var(--bg);border-radius:10px;padding:12px;text-align:center"><div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.375rem;color:var(--text)">60</div><div style="font-size:.625rem;color:var(--muted)">Booked</div></div><div style="background:var(--bg);border-radius:10px;padding:12px;text-align:center"><div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.375rem;color:var(--green)">7</div><div style="font-size:.625rem;color:var(--muted)">Available</div></div><div style="background:var(--bg);border-radius:10px;padding:12px;text-align:center"><div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.375rem;color:var(--text)">90%</div><div style="font-size:.625rem;color:var(--muted)">Occupancy</div></div><div style="background:var(--bg);border-radius:10px;padding:12px;text-align:center"><div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.375rem;color:var(--amber)">0</div><div style="font-size:.625rem;color:var(--muted)">Locked (Redis)</div></div></div><div class="occ-bar-wrap" style="margin-bottom:6px"><div class="occ-bar occ-high" style="width:90%"></div></div><div style="font-size:.625rem;color:var(--muted);margin-bottom:14px">Seat lock TTL: 5 min · Server-side Redis SETNX · Webhook-confirmed only</div><div style="display:flex;flex-direction:column;gap:7px"><button class="btn b-outline b-lg" style="justify-content:center">Release All Locked Seats</button><button class="btn b-gold b-lg" style="justify-content:center">Manually Assign Seat</button><button class="btn b-dark b-lg" style="justify-content:center">Re-sell Vacant Seats</button></div></div></div>
+      </div>
+    </div>
+    <div class="view" id="v-payments"><div class="card"><div class="card-hd"><span class="card-title">Payments & Transactions</span><div class="card-actions"><select class="inp inp-sm"><option>All Methods</option><option>MTN MoMo</option><option>Airtel Money</option><option>Bank Transfer</option></select><button class="btn b-outline" onclick="adminExport('data')">↓ Export</button></div></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Transaction ID</th><th>Booking</th><th>Passenger</th><th>Method</th><th>Amount</th><th>Webhook ✓</th><th>Status</th><th>Time</th></tr></thead><tbody><tr><td class="td-mono">TXN-MTN-0001</td><td class="td-mono">RL-A7B3C2</td><td class="td-p">Sarah M.</td><td>MTN MoMo</td><td>UGX 23,000</td><td><span class="chip c-green">Verified</span></td><td><span class="chip c-green">Success</span></td><td class="td-muted">2 min ago</td></tr><tr><td class="td-mono">TXN-AIR-0002</td><td class="td-mono">RL-C4D1E8</td><td class="td-p">James K.</td><td>Airtel Money</td><td>UGX 30,000</td><td><span class="chip c-red">Not received</span></td><td><span class="chip c-red">Failed · Retry 2</span></td><td class="td-muted">8 min ago</td></tr><tr><td class="td-mono">TXN-MTN-0003</td><td class="td-mono">RL-E9F2G1</td><td class="td-p">Alice B.</td><td>Bank Transfer</td><td>UGX 1,080,000</td><td><span class="chip c-green">Verified</span></td><td><span class="chip c-green">Success</span></td><td class="td-muted">15 min ago</td></tr></tbody></table></div></div></div>
+    <div class="view" id="v-parcels"><div class="kpi-grid" style="margin-bottom:14px"><div class="kpi"><div class="kpi-top"><span class="kpi-lbl">Parcels Today</span></div><div class="kpi-val">84</div><div class="kpi-trend kpi-up">↑ 12%</div></div><div class="kpi"><div class="kpi-top"><span class="kpi-lbl">In Transit</span></div><div class="kpi-val" style="color:var(--amber)">42</div><div class="kpi-trend kpi-neutral">Across network</div></div><div class="kpi"><div class="kpi-top"><span class="kpi-lbl">Delivered</span></div><div class="kpi-val" style="color:var(--green)">38</div><div class="kpi-trend kpi-up">95% on-time</div></div><div class="kpi"><div class="kpi-top"><span class="kpi-lbl">Revenue</span></div><div class="kpi-val kpi-val-sm">UGX 1.4M</div></div></div><div class="card"><div class="card-hd"><span class="card-title">Parcel Tracker</span></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Reference</th><th>Sender</th><th>Recipient</th><th>Route</th><th>Weight</th><th>Fee</th><th>Status</th></tr></thead><tbody><tr><td class="td-mono">RL-PAR-001</td><td class="td-p">John D.</td><td>Mary K.</td><td>KLA→GUL</td><td>3 kg</td><td>UGX 15K</td><td><span class="chip c-blue">In Transit</span></td></tr><tr><td class="td-mono">RL-PAR-002</td><td class="td-p">Sarah M.</td><td>David O.</td><td>KLA→NBI</td><td>1.5 kg</td><td>UGX 25K</td><td><span class="chip c-green">Delivered</span></td></tr></tbody></table></div></div></div>
+    <div class="view" id="v-analytics"><div class="kpi-grid" style="margin-bottom:14px"><div class="kpi"><div class="kpi-top"><span class="kpi-lbl">Top Route</span></div><div class="kpi-val" style="font-size:1rem">KLA→NBI</div><div class="kpi-trend kpi-up">↑ 23% demand</div></div><div class="kpi"><div class="kpi-top"><span class="kpi-lbl">Avg Occupancy</span></div><div class="kpi-val">84%</div><div class="kpi-trend kpi-up">↑ 6%</div></div><div class="kpi"><div class="kpi-top"><span class="kpi-lbl">RL Fleet vs 3rd Party</span></div><div class="kpi-val" style="color:var(--g500)">37%</div><div class="kpi-trend" style="color:var(--g500)">fleet share of revenue</div></div><div class="kpi"><div class="kpi-top"><span class="kpi-lbl">Repeat Passengers</span></div><div class="kpi-val">62%</div><div class="kpi-trend kpi-neutral">High loyalty</div></div></div><div class="card"><div class="card-hd"><span class="card-title">Route Performance</span></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Route</th><th>Daily Trips</th><th>Avg Occupancy</th><th>Revenue/Day</th><th>RL Fleet Share</th><th>Trend</th></tr></thead><tbody><tr><td class="td-p">Kampala → Nairobi</td><td>6</td><td><div style="display:flex;align-items:center;gap:6px"><div class="occ-bar-wrap" style="width:60px"><div class="occ-bar occ-high" style="width:91%"></div></div>91%</div></td><td style="color:var(--green);font-weight:600">UGX 7.2M</td><td><span class="chip c-gold">2/6 RL</span></td><td style="color:var(--green)">↑ 23%</td></tr><tr><td class="td-p">Kampala → Gulu</td><td>8</td><td><div style="display:flex;align-items:center;gap:6px"><div class="occ-bar-wrap" style="width:60px"><div class="occ-bar occ-high" style="width:78%"></div></div>78%</div></td><td style="color:var(--green);font-weight:600">UGX 3.6M</td><td><span class="chip c-gold">3/8 RL</span></td><td style="color:var(--green)">↑ 8%</td></tr></tbody></table></div></div></div>
+    <div class="view" id="v-tourist"><div class="kpi-grid" style="margin-bottom:14px"><div class="kpi"><div class="kpi-top"><span class="kpi-lbl">Tourist Bookings</span></div><div class="kpi-val">84</div><div class="kpi-trend kpi-up">↑ 34% this month</div></div><div class="kpi"><div class="kpi-top"><span class="kpi-lbl">Itineraries Generated</span></div><div class="kpi-val">312</div></div><div class="kpi"><div class="kpi-top"><span class="kpi-lbl">Avg Tourist Spend</span></div><div class="kpi-val kpi-val-sm">UGX 480K</div><div class="kpi-trend kpi-up">3.4× regular fare</div></div><div class="kpi"><div class="kpi-top"><span class="kpi-lbl">Active Destinations</span></div><div class="kpi-val">8</div></div></div><div class="card"><div class="card-hd"><span class="card-title">Destination Manager</span><div class="card-actions"><button class="btn b-dark">+ Add Destination</button><button class="btn b-gold">+ New Itinerary</button></div></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Destination</th><th>Category</th><th>Route</th><th>Drive Time</th><th>Tourist Trips</th><th>Status</th><th>Actions</th></tr></thead><tbody><tr><td class="td-p">Bwindi Forest</td><td><span class="chip c-green">Wildlife</span></td><td>KLA→Kabale</td><td>7h</td><td>28</td><td><span class="chip c-green">Active</span></td><td><button class="btn b-outline" style="font-size:.5rem">Edit</button></td></tr><tr><td class="td-p">Source of Nile, Jinja</td><td><span class="chip c-blue">Adventure</span></td><td>KLA→Jinja</td><td>2h</td><td>42</td><td><span class="chip c-green">Active</span></td><td><button class="btn b-outline" style="font-size:.5rem">Edit</button></td></tr><tr><td class="td-p">Murchison Falls NP</td><td><span class="chip c-amber">Nature</span></td><td>KLA→Gulu rd</td><td>4h</td><td>19</td><td><span class="chip c-green">Active</span></td><td><button class="btn b-outline" style="font-size:.5rem">Edit</button></td></tr></tbody></table></div></div></div>
+    <div class="view" id="v-fleet-financials"><div class="kpi-grid" style="margin-bottom:14px"><div class="kpi" style="border-top:3px solid var(--g500)"><div class="kpi-top"><span class="kpi-lbl">Fleet Monthly Revenue</span></div><div class="kpi-val kpi-val-sm" style="color:var(--green)">UGX 18.2M</div><div class="kpi-trend kpi-up">100% retained</div></div><div class="kpi" style="border-top:3px solid var(--red)"><div class="kpi-top"><span class="kpi-lbl">Fleet Expenses</span></div><div class="kpi-val kpi-val-sm" style="color:var(--red)">UGX 4.8M</div><div class="kpi-trend kpi-neutral">Fuel + wages</div></div><div class="kpi" style="border-top:3px solid var(--n800)"><div class="kpi-top"><span class="kpi-lbl">Fleet Net Profit</span></div><div class="kpi-val kpi-val-sm">UGX 13.4M</div><div class="kpi-trend kpi-up">↑ 22% vs last month</div></div><div class="kpi" style="border-top:3px solid var(--g500)"><div class="kpi-top"><span class="kpi-lbl">Commission Saved</span></div><div class="kpi-val kpi-val-sm" style="color:var(--g500)">UGX 1.82M</div><div class="kpi-trend" style="color:var(--g500)">vs 10% on 3rd party</div></div></div><div class="card"><div class="card-hd"><span class="card-title">Fleet P&L by Vehicle</span><button class="btn b-outline" onclick="adminExport('data')">↓ Export</button></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Vehicle</th><th>Type</th><th>Trips</th><th>Revenue</th><th>Fuel</th><th>Driver Wage</th><th>Net Profit</th><th>Margin</th></tr></thead><tbody><tr><td class="td-mono">UBA 001R</td><td>Coach 67</td><td>18</td><td style="color:var(--green);font-weight:600">UGX 8.1M</td><td style="color:var(--red)">UGX 1.2M</td><td style="color:var(--red)">UGX 900K</td><td style="font-weight:700">UGX 6.0M</td><td><span class="chip c-green">74%</span></td></tr><tr><td class="td-mono">UBB 002R</td><td>Coach 65</td><td>16</td><td style="color:var(--green);font-weight:600">UGX 7.8M</td><td style="color:var(--red)">UGX 1.1M</td><td style="color:var(--red)">UGX 900K</td><td style="font-weight:700">UGX 5.8M</td><td><span class="chip c-green">74%</span></td></tr><tr><td class="td-mono">UBD 004R</td><td>Taxi 14</td><td>32</td><td style="color:var(--green);font-weight:600">UGX 2.3M</td><td style="color:var(--red)">UGX 480K</td><td style="color:var(--red)">UGX 600K</td><td style="font-weight:700">UGX 1.22M</td><td><span class="chip c-green">53%</span></td></tr></tbody></table></div></div></div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /shell -->
+
+<script>
+// ═══ SIDEBAR ═══
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('col')}
+
+// ═══ NAVIGATION ═══
+const VIEWS={
+  dashboard:'Dashboard',alerts:'Smart Alert Centre',
+  'raylane-fleet':'Raylane Fleet Control','fleet-financials':'Fleet Financials',
+  operators:'All Operators',applications:'Operator Applications',modules:'Module Control',
+  trips:'Trip Approvals',bookings:'Bookings',seats:'Seat Manager',parcels:'Parcels',
+  financials:'Financials',payments:'Payments & Payouts',audit:'Audit Log',
+  tourist:'Tourist Experience Engine',analytics:'Analytics','settings':'Platform Settings'
+};
+function nav(id,el){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const v=document.getElementById('v-'+id);
+  if(v)v.classList.add('active');
+  if(el)el.classList.add('active');
+  document.getElementById('pageTitle').textContent=VIEWS[id]||id;
+  document.getElementById('notifPanel').classList.remove('open');
+  window.scrollTo && document.querySelector('.content')?.scrollTo(0,0);
+}
+
+// ═══ NOTIFICATIONS ═══
+function toggleNotif(){document.getElementById('notifPanel').classList.toggle('open')}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('#notifPanel')&&!e.target.closest('.tb-icon-btn'))
+    document.getElementById('notifPanel').classList.remove('open');
+});
+
+// ═══ ALERT ACTIONS ═══
+function resolveAlert(e){
+  const item=e.target?.closest?.('.alert-card');
+  if(item){
+    item.classList.add('resolved');
+    const badge=document.getElementById('alertBadge');
+    if(badge){const n=parseInt(badge.textContent||'0');if(n>0)badge.textContent=n-1;}
+  }
+}
+function markAllRead(){
+  document.querySelectorAll('.alert-card').forEach(a=>a.classList.add('resolved'));
+  const badge=document.getElementById('alertBadge');
+  if(badge)badge.textContent='0';
+}
+function filterAlerts(cat){
+  document.querySelectorAll('.alert-card').forEach(a=>{
+    a.style.display=(cat==='all'||a.dataset.cat===cat)?'flex':'none';
+  });
+  document.querySelectorAll('[id^="f-"]').forEach(b=>{b.style.borderColor='';b.style.color=''});
+  const btn=document.getElementById('f-'+cat);
+  if(btn){btn.style.borderColor='var(--n600)';btn.style.color='var(--n600)';}
+}
+
+// ═══ OPERATOR APPROVAL ═══
+function approveOperator(el){
+  const card=el.closest?.('.alert-card')||el.closest?.('[style*="border-bottom"]');
+  if(card)card.classList.add('resolved');
+  // In production: POST /api/admin/operators/:id/approve → creates auth user, sends welcome email
+  const toast=document.createElement('div');
+  toast.style.cssText='position:fixed;top:14px;right:14px;background:var(--green);color:#fff;font-family:Sora,sans-serif;font-weight:700;font-size:.8125rem;padding:12px 18px;border-radius:10px;z-index:9999;animation:fadeUp .3s ease';
+  toast.textContent='✓ Operator approved · Welcome email sent · Account created';
+  document.body.appendChild(toast);
+  setTimeout(()=>toast.remove(),3500);
+}
+
+// ═══ MODULE ACTIVATION ═══
+function activateModule(el,name){
+  const isOn=el.classList.contains('on');
+  const chip=el.previousElementSibling;
+  if(chip){chip.className='chip '+(isOn?'c-green':'c-gray');chip.textContent=isOn?'Active':'Inactive';}
+  // In production: PATCH /api/admin/operators/:id/modules → updates modules_enabled array
+  // Then: insert into audit_log
+  if(isOn){
+    const toast=document.createElement('div');
+    toast.style.cssText='position:fixed;top:14px;right:14px;background:var(--n800);color:#fff;font-family:Sora,sans-serif;font-weight:700;font-size:.8125rem;padding:12px 18px;border-radius:10px;z-index:9999;';
+    toast.textContent=`⭐ ${name} module activated · Operator portal updated`;
+    document.body.appendChild(toast);
+    setTimeout(()=>toast.remove(),3000);
+  }
+}
+
+// ═══ FINANCIAL TABS ═══
+function setFinTab(tab){
+  document.querySelectorAll('[id^="fin-tab"]').forEach(b=>{b.className='btn b-ghost';});
+  const btn=document.getElementById('fin-tab-'+tab);
+  if(btn)btn.className='btn';
+  btn.style.background='var(--surface)';btn.style.border='1px solid var(--border)';btn.style.color='var(--text)';
+}
+
+// ═══ SEAT MAP ═══
+(function(){
+  const g=document.getElementById('seatGrid');
+  if(!g)return;
+  const booked=[2,4,6,8,10,12,14,16,18,22,24,26,28,30,32,33,34,35,36,37,38,42,44,46,48,50,52,54,56,58,60];
+  for(let i=1;i<=67;i++){
+    const s=document.createElement('div');s.className='seat';
+    if(i===2){s.classList.add('s-driver');s.textContent='DRV'}// RHD — driver on right front
+    else if(booked.includes(i)){s.classList.add('s-sold');s.textContent=i}
+    else{s.classList.add('s-avail');s.textContent=i;s.onclick=()=>{
+      document.querySelectorAll('.s-sel').forEach(x=>x.className='seat s-avail');
+      s.className='seat s-sel';
+    }}
+    g.appendChild(s);
+  }
+})();
+
+// ═══════════════════════════════════════════════════════
+// ADMIN MODAL SYSTEM
+// ═══════════════════════════════════════════════════════
+const _ao = document.createElement('div');
+_ao.id='adminModal';
+_ao.style.cssText='display:none;position:fixed;inset:0;background:rgba(11,29,69,.55);backdrop-filter:blur(4px);z-index:600;align-items:center;justify-content:center;padding:20px;overflow-y:auto';
+_ao.innerHTML='<div id="adminModalBox" style="background:var(--surface);border-radius:18px;box-shadow:0 20px 60px rgba(11,29,69,.25);width:100%;max-width:520px;animation:fadeUp .22s ease;max-height:90vh;overflow-y:auto"></div>';
+_ao.onclick=(e)=>{if(e.target===_ao)closeAdminModal();};
+document.body.appendChild(_ao);
+
+function openAdminModal(html){
+  document.getElementById('adminModalBox').innerHTML=html;
+  _ao.style.display='flex';
+  document.body.style.overflow='hidden';
+}
+function closeAdminModal(){
+  _ao.style.display='none';
+  document.body.style.overflow='';
+}
+const _aHead=(title)=>`
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border)">
+    <div style="font-family:'Sora',sans-serif;font-size:.9375rem;font-weight:700;color:var(--n800)">${title}</div>
+    <button onclick="closeAdminModal()" style="background:var(--bg);border:none;border-radius:7px;width:28px;height:28px;cursor:pointer;font-size:1rem;color:var(--muted)">✕</button>
+  </div>`;
+
+const _inp = (lbl,type='text',ph='',val='') => `
+  <div style="margin-bottom:12px">
+    <label style="font-size:.8125rem;font-weight:600;color:var(--text2);display:block;margin-bottom:5px">${lbl}</label>
+    <input type="${type}" placeholder="${ph}" value="${val}" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:9px;padding:10px 13px;font-size:.875rem;outline:none;font-family:'DM Sans',sans-serif">
+  </div>`;
+
+const _sel = (lbl, opts) => `
+  <div style="margin-bottom:12px">
+    <label style="font-size:.8125rem;font-weight:600;color:var(--text2);display:block;margin-bottom:5px">${lbl}</label>
+    <select style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:9px;padding:10px 13px;font-size:.875rem;outline:none;appearance:none">
+      ${opts.map(o=>`<option>${o}</option>`).join('')}
+    </select>
+  </div>`;
+
+// ── Investigate Alert ──────────────────────────────
+function adminInvestigate(e){
+  const card=e.target.closest('.alert-card');
+  const title=card?.querySelector('.alert-title')?.textContent||'Alert';
+  openAdminModal(`
+    ${_aHead('🔍 Investigation — ' + title.slice(0,40)+'...')}
+    <div style="padding:20px">
+      <div style="background:var(--red-bg);border:1px solid var(--red-b);border-radius:10px;padding:12px 14px;margin-bottom:16px">
+        <div style="font-family:'Sora',sans-serif;font-size:.875rem;font-weight:700;color:var(--red);margin-bottom:4px">${title}</div>
+        <div style="font-size:.8125rem;color:var(--text2)">Passenger: Robert K. · Phone: +256 770 123 456 · MTN MoMo ref: TXN-0004</div>
+      </div>
+      ${_inp('Admin Note / Action Taken','text','Describe what you found or did...')}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:4px">
+        <button onclick="closeAdminModal();adminRefundDirect('+256770123456',500,'Robert K.')" style="background:var(--red);color:#fff;font-family:'Sora',sans-serif;font-weight:700;font-size:.875rem;padding:11px;border-radius:10px;border:none;cursor:pointer">↩ Issue Refund</button>
+        <button onclick="closeAdminModal();adminToast('✓ Investigation logged · Alert marked reviewed')" style="background:var(--n800);color:#fff;font-family:'Sora',sans-serif;font-weight:700;font-size:.875rem;padding:11px;border-radius:10px;border:none;cursor:pointer">✓ Mark Resolved</button>
+      </div>
+    </div>`);
+}
+
+// ── Refund via MoMo ────────────────────────────────
+function adminRefund(e){
+  const card=e.target.closest('.alert-card');
+  openAdminModal(`
+    ${_aHead('↩ Issue Refund via MTN MoMo')}
+    <div style="padding:20px">
+      <div style="background:var(--n50);border:1px solid var(--n100);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:.8125rem;color:var(--text2);line-height:1.55">
+        This triggers the MTN MoMo B2C Disbursement API to send money directly to the passenger's phone number that made the original payment. The transaction is logged in the payments table.
+      </div>
+      ${_inp('Refund to Phone (MoMo number)','tel','+256 7xx xxx xxx','+256 770 123 456')}
+      ${_inp('Amount (UGX)','number','e.g. 500','500')}
+      ${_inp('Booking Reference','text','RL-XXXXXX','RL-F1G8X3')}
+      <div style="margin-bottom:14px">
+        <label style="font-size:.8125rem;font-weight:600;color:var(--text2);display:block;margin-bottom:5px">Reason</label>
+        <textarea rows="2" placeholder="e.g. Payment overage, booking cancelled..." style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:9px;padding:10px 13px;font-size:.875rem;outline:none;resize:vertical;font-family:'DM Sans',sans-serif"></textarea>
+      </div>
+      <button onclick="closeAdminModal();adminRefundDirect('+256770123456',500,'Robert K.')" style="width:100%;background:var(--red);color:#fff;font-family:'Sora',sans-serif;font-weight:800;font-size:.9375rem;padding:12px;border-radius:11px;border:none;cursor:pointer">Send Refund via MTN MoMo B2C</button>
+    </div>`);
+}
+function adminRefundDirect(phone,amount,name){
+  resolveAlert({target:document.querySelector('.alert-card')});
+  adminToast(`✓ Refund of UGX ${amount.toLocaleString()} sent via MTN MoMo B2C to ${phone} (${name}) · Ref logged in payments table`);
+}
+
+// ── Contact Passengers ─────────────────────────────
+function adminContactPassengers(e){
+  openAdminModal(`
+    ${_aHead('📞 Contact Affected Passengers')}
+    <div style="padding:20px">
+      <div style="font-size:.8125rem;color:var(--text2);margin-bottom:14px;line-height:1.55">2 passengers affected by overbooking on T-002 Kampala → Gulu. Send them alternatives or refund offers via SMS.</div>
+      <div style="background:var(--bg);border-radius:10px;padding:12px;margin-bottom:14px">
+        <div style="font-size:.75rem;font-weight:700;color:var(--n800);margin-bottom:8px">Affected passengers:</div>
+        <div style="font-size:.8125rem;color:var(--text2)">1. Alice M. · +256 770 111 222 · Seat 44<br>2. James P. · +256 770 333 444 · Seat 45</div>
+      </div>
+      ${_sel('Action',[
+        'Offer alternative trip + move booking',
+        'Offer full refund via MoMo',
+        'Offer upgrade to Raylane Fleet vehicle',
+        'Send apology SMS only'
+      ])}
+      ${_sel('Alternative Trip (if applicable)',[
+        'T-006 · KLA→GUL · 12:00 · 28 seats free',
+        'T-008 · KLA→GUL · 15:00 · 45 seats free'
+      ])}
+      <div style="margin-bottom:14px">
+        <label style="font-size:.8125rem;font-weight:600;color:var(--text2);display:block;margin-bottom:5px">SMS Message Preview</label>
+        <div style="background:var(--n50);border-radius:9px;padding:10px 13px;font-size:.75rem;color:var(--n800);line-height:1.55">We apologise for the inconvenience. Your booking on T-002 has been moved to T-006 KLA→GUL departing 12:00. Same seat price. Reply CONFIRM or REFUND. - Raylane Express</div>
+      </div>
+      <button onclick="closeAdminModal();adminToast('✓ SMS sent to 2 passengers · Booking reassignment logged · Alert resolved')" style="width:100%;background:var(--n800);color:#fff;font-family:'Sora',sans-serif;font-weight:800;font-size:.9375rem;padding:12px;border-radius:11px;border:none;cursor:pointer">Send SMS to All Affected</button>
+    </div>`);
+}
+
+// ── Reject Operator ────────────────────────────────
+function adminRejectOperator(el, name){
+  openAdminModal(`
+    ${_aHead('✗ Reject Application — ' + name)}
+    <div style="padding:20px">
+      <div style="background:var(--red-bg);border:1px solid var(--red-b);border-radius:10px;padding:11px 14px;margin-bottom:16px;font-size:.8125rem;color:var(--red)">
+        Rejection reason will be sent to the operator via email and SMS. Specify exactly what is needed for approval.
+      </div>
+      <div style="margin-bottom:12px">
+        <label style="font-size:.8125rem;font-weight:600;color:var(--text2);display:block;margin-bottom:5px">Missing Requirements <span style="color:var(--red)">*</span></label>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <label style="display:flex;align-items:center;gap:7px;font-size:.8125rem;cursor:pointer"><input type="checkbox" checked style="accent-color:var(--red)"> Valid business registration certificate (URSB)</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:.8125rem;cursor:pointer"><input type="checkbox" style="accent-color:var(--red)"> Transport Operator License (UTODA)</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:.8125rem;cursor:pointer"><input type="checkbox" style="accent-color:var(--red)"> Fleet Insurance Certificate</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:.8125rem;cursor:pointer"><input type="checkbox" style="accent-color:var(--red)"> Clear photos of vehicles (exterior + interior)</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:.8125rem;cursor:pointer"><input type="checkbox" style="accent-color:var(--red)"> Driver licenses for all listed drivers</label>
+        </div>
+      </div>
+      <div style="margin-bottom:16px">
+        <label style="font-size:.8125rem;font-weight:600;color:var(--text2);display:block;margin-bottom:5px">Additional Rejection Notes</label>
+        <textarea rows="3" placeholder="Be specific — e.g. Business certificate expired Dec 2023. Please renew before reapplying." style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:9px;padding:10px 13px;font-size:.875rem;outline:none;resize:vertical;font-family:'DM Sans',sans-serif"></textarea>
+      </div>
+      <div style="margin-bottom:16px">
+        <label style="font-size:.8125rem;font-weight:600;color:var(--text2);display:block;margin-bottom:5px">Attach Reference Document (optional)</label>
+        <div style="border:2px dashed var(--border);border-radius:9px;padding:14px;text-align:center;cursor:pointer;background:var(--bg)">
+          <div style="font-size:.75rem;color:var(--muted)">Drop file here or click to browse · PDF, JPG, PNG</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:9px">
+        <button onclick="closeAdminModal();adminToast('✗ Application rejected · Rejection email + SMS sent to ${name} with specific requirements listed')" style="flex:1;background:var(--red);color:#fff;font-family:'Sora',sans-serif;font-weight:700;font-size:.875rem;padding:11px;border-radius:10px;border:none;cursor:pointer">Send Rejection with Requirements</button>
+        <button onclick="closeAdminModal()" style="background:var(--bg);border:1.5px solid var(--border);color:var(--text2);font-family:'Sora',sans-serif;font-weight:600;font-size:.875rem;padding:11px 18px;border-radius:10px;cursor:pointer">Cancel</button>
+      </div>
+    </div>`);
+}
+
+// ── Manual Onboard ─────────────────────────────────
+function adminManualOnboard(){
+  openAdminModal(`
+    ${_aHead('👤 Manual Operator Onboarding')}
+    <div style="padding:20px">
+      <div style="background:var(--amber-bg);border:1px solid var(--amber-b);border-radius:9px;padding:10px 13px;margin-bottom:16px;font-size:.75rem;color:var(--amber)">
+        Manual onboarding bypasses the apply.html form. Use for phone/in-person applications. All documents must still be uploaded.
+      </div>
+      ${_inp('Business Name','text','e.g. Pearl Transit Co.')}
+      ${_inp('Email Address','email','operator@business.com')}
+      ${_inp('Phone Number','tel','+256 7xx xxx xxx')}
+      ${_inp('Registration Number','text','e.g. UG-123456')}
+      ${_sel('Operator Type',['THIRD_PARTY — 10% commission','RAYLANE — 0% commission (internal only)'])}
+      ${_sel('Initial Modules',['Basic: Trips, Bookings, Seats, Parcels','Basic + Financials','Basic + Fleet & Drivers','Full Premium Bundle'])}
+      <div style="margin-bottom:14px">
+        <label style="font-size:.8125rem;font-weight:600;color:var(--text2);display:block;margin-bottom:5px">Upload Documents</label>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <div style="border:2px dashed var(--border);border-radius:8px;padding:10px;text-align:center;font-size:.75rem;color:var(--muted);cursor:pointer;background:var(--bg)">📄 Business Certificate (click to upload)</div>
+          <div style="border:2px dashed var(--border);border-radius:8px;padding:10px;text-align:center;font-size:.75rem;color:var(--muted);cursor:pointer;background:var(--bg)">📄 Operator License (click to upload)</div>
+        </div>
+      </div>
+      <button onclick="closeAdminModal();adminToast('✓ Operator manually onboarded · Login credentials sent to email · Audit log entry created')" style="width:100%;background:var(--n800);color:#fff;font-family:'Sora',sans-serif;font-weight:800;font-size:.9375rem;padding:12px;border-radius:11px;border:none;cursor:pointer">Create Operator Account</button>
+    </div>`);
+}
+
+// ── Add Admin User ─────────────────────────────────
+// (from settings panel — add user to Raylane or specific operator)
+function adminAddUserGlobal(){
+  openAdminModal(`
+    ${_aHead('👤 Add New User (Super Admin)')}
+    <div style="padding:20px">
+      ${_inp('Full Name','text','e.g. Alice Nakato')}
+      ${_inp('Email Address','email','user@company.com')}
+      ${_sel('Account Type',['Raylane Internal Staff','Assign to Operator'])}
+      <div id="opSelect" style="margin-bottom:12px">
+        <label style="font-size:.8125rem;font-weight:600;color:var(--text2);display:block;margin-bottom:5px">Operator (if assigning to operator)</label>
+        <select style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:9px;padding:10px 13px;font-size:.875rem;outline:none;appearance:none">
+          <option>Gateway Bus Ltd</option><option>Post Bus UG</option><option>Link Express</option><option>Kampala Coach</option>
+        </select>
+      </div>
+      ${_sel('Role',['Super Admin (Raylane only)','Finance — view only','Operations — trips & operators','Support — bookings & passengers','Finance Officer (Operator)','Loading Clerk (Operator)','Operations Staff (Operator)'])}
+      <div style="margin-bottom:14px">
+        <label style="font-size:.8125rem;font-weight:600;color:var(--text2);display:block;margin-bottom:8px">Modules to Grant</label>
+        <div style="display:flex;flex-wrap:wrap;gap:7px">
+          <label style="display:flex;align-items:center;gap:6px;font-size:.8125rem;cursor:pointer"><input type="checkbox" checked> Trips</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:.8125rem;cursor:pointer"><input type="checkbox" checked> Bookings</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:.8125rem;cursor:pointer"><input type="checkbox"> Financials</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:.8125rem;cursor:pointer"><input type="checkbox"> Fleet</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:.8125rem;cursor:pointer"><input type="checkbox"> Parcels</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:.8125rem;cursor:pointer"><input type="checkbox"> Analytics</label>
+        </div>
+        <div style="margin-top:8px;font-size:.6875rem;color:var(--muted);line-height:1.4">Users assigned to an operator can only access that operator's data. No cross-operator access is ever granted. Finance Officers cannot initiate payouts — payout approval must come from the Operator Admin.</div>
+      </div>
+      <button onclick="closeAdminModal();adminToast('✓ User account created · Login credentials emailed · Module access granted · Audit logged')" style="width:100%;background:var(--n800);color:#fff;font-family:'Sora',sans-serif;font-weight:800;font-size:.9375rem;padding:12px;border-radius:11px;border:none;cursor:pointer">Create User Account</button>
+    </div>`);
+}
+
+// ── Add Vehicle Modal ──────────────────────────────
+function adminAddVehicle(){
+  openAdminModal(`
+    ${_aHead('🚌 Add Raylane Fleet Vehicle')}
+    <div style="padding:20px">
+      ${_inp('Registration Plate','text','e.g. UBE 005R')}
+      ${_sel('Vehicle Type',['Taxi / Matatu (14 seats)','Minibus (22 seats)','Coach (55 seats)','Coach (65 seats)','Coach (67 seats)'])}
+      ${_inp('Make / Model / Year','text','e.g. 2023 Toyota Coaster')}
+      ${_sel('Assign Driver',['John Okello','Grace Nabifo','Peter Musisi','Alice Tendo','+ Register New Driver'])}
+      <div style="margin-bottom:14px">
+        <label style="font-size:.8125rem;font-weight:600;color:var(--text2);display:block;margin-bottom:5px">Ownership Type</label>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <label style="display:flex;align-items:flex-start;gap:8px;font-size:.8125rem;cursor:pointer">
+            <input type="radio" name="vown" value="raylane" checked style="margin-top:2px;accent-color:var(--n600)">
+            <div><div style="font-weight:600;color:var(--n800)">Raylane-owned vehicle</div><div style="color:var(--muted);font-size:.6875rem">Added immediately · operator_type: RAYLANE · 0% commission</div></div>
+          </label>
+          <label style="display:flex;align-items:flex-start;gap:8px;font-size:.8125rem;cursor:pointer">
+            <input type="radio" name="vown" value="partner" style="margin-top:2px;accent-color:var(--n600)">
+            <div><div style="font-weight:600;color:var(--n800)">Partner / new fleet vehicle (requires inspection)</div><div style="color:var(--amber);font-size:.6875rem">Added as Pending Inspection · Contact operator to bring vehicle · Activate after physical Raylane inspection</div></div>
+          </label>
+        </div>
+      </div>
+      ${_inp('Insurance Expiry Date','date','')}
+      ${_inp('Odometer Reading (km)','number','e.g. 12500')}
+      <button onclick="closeAdminModal();adminToast('✓ Vehicle UBE 005R added to Raylane Fleet · operator_type: RAYLANE · priority_score: 1 · Auto-approved for trips')" style="width:100%;background:var(--g500);color:var(--n800);font-family:'Sora',sans-serif;font-weight:800;font-size:.9375rem;padding:12px;border-radius:11px;border:none;cursor:pointer;box-shadow:0 4px 14px rgba(245,166,35,.28)">Add to Fleet</button>
+    </div>`);
+}
+function adminAddVehicleSubmit(){
+  closeAdminModal();
+  adminToast('✓ Vehicle added · Inspection pending · Operator notified to bring vehicle · Will go live after Raylane inspection approval');
+}
+function toggleInspection(el){
+  const note = document.getElementById('inspectionNote');
+  if(note) note.style.display = el.value==='partner_inspect'?'block':'none';
+}
+
+// ── Create Trip (Auto / Raylane) ───────────────────
+function adminCreateTrip(){
+  openAdminModal(`
+    ${_aHead('🚌 Create Raylane Fleet Trip (Auto-Approved)')}
+    <div style="padding:20px">
+      <div style="background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);border-radius:9px;padding:9px 12px;margin-bottom:16px;font-size:.6875rem;color:var(--g600)">
+        ⭐ Raylane Fleet trips are auto-approved and listed first in search. No admin review required.
+      </div>
+      ${_sel('From',['Kampala','Gulu','Mbale','Jinja','Mbarara','Fort Portal','Kabale'])}
+      ${_sel('To',['Nairobi, Kenya','Gulu','Mbale','Jinja','Mbarara','Kigali, Rwanda','Juba, S. Sudan','Mombasa','Fort Portal','Kabale'])}
+      ${_inp('Departure Date','date','')}
+      ${_inp('Departure Time','time','')}
+      ${_sel('Vehicle (Plate)',['UBA 001R — Coach 67','UBB 002R — Coach 65','UBC 003R — Minibus 22','UBD 004R — Taxi 14'])}
+      ${_sel('Driver',['John Okello','Grace Nabifo','Peter Musisi','Alice Tendo'])}
+      ${_inp('Ticket Price (UGX)','number','e.g. 115000')}
+      <div style="margin-bottom:14px">
+        <label style="font-size:.8125rem;font-weight:600;color:var(--text2);display:block;margin-bottom:5px">Amenities</label>
+        <div style="display:flex;flex-wrap:wrap;gap:7px">
+          <label style="display:flex;align-items:center;gap:5px;font-size:.8125rem;cursor:pointer"><input type="checkbox" checked> ❄️ AC</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:.8125rem;cursor:pointer"><input type="checkbox"> 📶 WiFi</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:.8125rem;cursor:pointer"><input type="checkbox"> 🔌 USB</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:.8125rem;cursor:pointer"><input type="checkbox"> 🍱 Meals</label>
+        </div>
+      </div>
+      <button onclick="closeAdminModal();adminToast('✓ Raylane Fleet trip created · Auto-approved · Live on raylane.com · priority_score: 1 · Listing at #1 in search')" style="width:100%;background:var(--g500);color:var(--n800);font-family:'Sora',sans-serif;font-weight:800;font-size:.9375rem;padding:12px;border-radius:11px;border:none;cursor:pointer;box-shadow:0 4px 14px rgba(245,166,35,.28)">Create Trip (Auto-Live)</button>
+    </div>`);
+}
+
+// ── Edit Vehicle ───────────────────────────────────
+function adminEditVehicle(btn){
+  const row = btn.closest('tr');
+  const plate = row?.cells[0]?.textContent||'UBA 001R';
+  openAdminModal(`
+    ${_aHead('✏️ Edit Vehicle — ' + plate)}
+    <div style="padding:20px">
+      ${_inp('Plate','text','',plate)}
+      ${_sel('Maintenance Status',['OK — Active','Scheduled Maintenance (date set)','In Maintenance — offline'])}
+      ${_sel('Assigned Driver',['John Okello','Grace Nabifo','Peter Musisi','Alice Tendo'])}
+      ${_inp('Insurance Expiry','date','')}
+      ${_inp('Odometer (km)','number','','')}
+      <button onclick="closeAdminModal();adminToast('✓ Vehicle '+plate+' updated · Changes logged in audit')" style="width:100%;background:var(--n800);color:#fff;font-family:'Sora',sans-serif;font-weight:700;font-size:.875rem;padding:11px;border-radius:10px;border:none;cursor:pointer;margin-top:4px">Save Changes</button>
+    </div>`);
+}
+
+// ── Edit Operator ──────────────────────────────────
+function adminEditOperator(btn){
+  openAdminModal(`
+    ${_aHead('✏️ Edit Operator — Gateway Bus Ltd')}
+    <div style="padding:20px">
+      ${_inp('Business Name','text','','Gateway Bus Ltd')}
+      ${_inp('Email','email','','gateway@bus.com')}
+      ${_inp('Phone','tel','','+256 700 111 222')}
+      ${_inp('Commission Rate (%)','number','10','10')}
+      ${_sel('Status',['Active','Suspended','Pending'])}
+      <div style="margin-bottom:14px">
+        <label style="font-size:.8125rem;font-weight:600;color:var(--text2);display:block;margin-bottom:5px">Notes (internal only)</label>
+        <textarea rows="2" placeholder="Internal admin notes..." style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:9px;padding:10px 13px;font-size:.875rem;outline:none;resize:vertical;font-family:'DM Sans',sans-serif"></textarea>
+      </div>
+      <button onclick="closeAdminModal();adminToast('✓ Operator updated · Changes logged in audit trail')" style="width:100%;background:var(--n800);color:#fff;font-family:'Sora',sans-serif;font-weight:700;font-size:.875rem;padding:11px;border-radius:10px;border:none;cursor:pointer">Save Changes</button>
+    </div>`);
+}
+
+// ── Suggest Alternative (overbooking) ─────────────
+function adminSuggestAlternative(e){
+  openAdminModal(`
+    ${_aHead('🔄 Suggest Alternative Trip')}
+    <div style="padding:20px">
+      <div style="font-size:.8125rem;color:var(--text2);margin-bottom:14px">T-002 Kampala → Gulu is overbooked. Select an alternative to offer the 2 affected passengers.</div>
+      ${_sel('Alternative Trip',['T-006 · KLA→GUL · 12:00 · 28 seats free · Same price','T-008 · KLA→GUL · 15:00 · 45 seats free · Same price','RL-T-009 · KLA→GUL · 14:00 · Raylane Fleet · Upgrade'])}
+      <div style="background:var(--n50);border-radius:9px;padding:10px 13px;margin-bottom:14px;font-size:.75rem;color:var(--n800);line-height:1.55">
+        SMS Preview: "Apologies — Trip T-002 is overbooked. We've moved your seat to T-006 KLA→GUL departing 12:00 at no extra charge. Same reference. - Raylane Express"
+      </div>
+      <button onclick="closeAdminModal();resolveAlert({target:document.querySelector('.alert-card.a-urgent:last-of-type')});adminToast('✓ Alternative offered · Both passengers SMS notified · Bookings reassigned')" style="width:100%;background:var(--n800);color:#fff;font-family:'Sora',sans-serif;font-weight:700;font-size:.875rem;padding:11px;border-radius:10px;border:none;cursor:pointer">Send Alternative & Reassign</button>
+    </div>`);
+}
+
+// ── Process Payouts ────────────────────────────────
+function adminProcessPayouts(e){
+  openAdminModal(`
+    ${_aHead('💸 Process All Pending Payouts')}
+    <div style="padding:20px">
+      <div style="background:var(--n50);border-radius:10px;padding:12px 14px;margin-bottom:16px">
+        <div style="font-family:'Sora',sans-serif;font-size:.875rem;font-weight:700;color:var(--n800);margin-bottom:8px">Payout Summary</div>
+        <div style="display:flex;justify-content:space-between;font-size:.8125rem;padding:5px 0;border-bottom:1px solid var(--border)"><span>Post Bus UG</span><span style="font-weight:700">UGX 2,100,000</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:.8125rem;padding:5px 0;border-bottom:1px solid var(--border)"><span>Safe Rider</span><span style="font-weight:700">UGX 980,000</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:.875rem;padding:8px 0;font-family:'Sora',sans-serif;font-weight:700"><span>Total</span><span style="color:var(--green)">UGX 3,080,000</span></div>
+      </div>
+      <div style="background:var(--amber-bg);border:1px solid var(--amber-b);border-radius:9px;padding:10px 13px;font-size:.75rem;color:var(--amber);margin-bottom:16px">
+        ⚠️ This triggers the MTN MoMo B2C API. Payouts are irreversible once processed. Each operator receives a payout SMS confirmation.
+      </div>
+      <button onclick="closeAdminModal();resolveAlert({target:document.querySelector('.alert-card.a-action:nth-child(3)')});adminToast('✓ UGX 3,080,000 disbursed via MTN MoMo B2C · Post Bus UG: UGX 2.1M · Safe Rider: UGX 980K · All operators notified via SMS')" style="width:100%;background:var(--green);color:#fff;font-family:'Sora',sans-serif;font-weight:800;font-size:.9375rem;padding:12px;border-radius:11px;border:none;cursor:pointer">Process All Payouts Now</button>
+    </div>`);
+}
+
+// ── Assign Vehicle (charter) ───────────────────────
+function adminAssignVehicle(e){
+  openAdminModal(`
+    ${_aHead('🚌 Assign Vehicle for Charter')}
+    <div style="padding:20px">
+      <div style="font-size:.8125rem;color:var(--text2);margin-bottom:14px">Charter: Alice B. × 24 · Kampala → Gulu · June 14</div>
+      ${_sel('Select Vehicle',['UBA 001R — Coach 67 (44 seats free)','UBB 002R — Coach 65 (42 seats free)','UBC 003R — Minibus 22 (available)'])}
+      ${_sel('Driver',['John Okello','Grace Nabifo','Peter Musisi'])}
+      ${_inp('Charter Price (UGX)','number','e.g. 1200000','1200000')}
+      ${_inp('Contact Alice at','tel','','+256 772 345 678')}
+      <button onclick="closeAdminModal();resolveAlert({target:document.querySelector('.alert-card.a-info')});adminToast('✓ Vehicle UBB 002R assigned for charter · Quote UGX 1,200,000 sent to Alice B. · Booking confirmed')" style="width:100%;background:var(--n800);color:#fff;font-family:'Sora',sans-serif;font-weight:700;font-size:.875rem;padding:11px;border-radius:10px;border:none;cursor:pointer;margin-top:4px">Assign & Send Quote</button>
+    </div>`);
+}
+
+// ── Request Docs ──────────────────────────────────
+function adminRequestDocs(btn){
+  openAdminModal(`
+    ${_aHead('📋 Request Missing Documents')}
+    <div style="padding:20px">
+      <div style="font-size:.8125rem;color:var(--text2);margin-bottom:14px">Send an automated email + SMS to Star Rider Uganda listing which documents are still required.</div>
+      <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:16px">
+        <label style="display:flex;align-items:center;gap:7px;font-size:.8125rem;cursor:pointer"><input type="checkbox" checked> Transport Operator License (UTODA)</label>
+        <label style="display:flex;align-items:center;gap:7px;font-size:.8125rem;cursor:pointer"><input type="checkbox"> Fleet Insurance Certificate</label>
+        <label style="display:flex;align-items:center;gap:7px;font-size:.8125rem;cursor:pointer"><input type="checkbox"> Vehicle photos (exterior + interior)</label>
+      </div>
+      <button onclick="closeAdminModal();adminToast('✓ Document request sent to Star Rider Uganda via email and SMS · Application status: Awaiting Documents')" style="width:100%;background:var(--n800);color:#fff;font-family:'Sora',sans-serif;font-weight:700;font-size:.875rem;padding:11px;border-radius:10px;border:none;cursor:pointer">Send Request</button>
+    </div>`);
+}
+
+// ── Pay Now (single operator) ─────────────────────
+function adminPayNow(btn, name, amount){
+  openAdminModal(`
+    ${_aHead('💸 Pay Now — ' + name)}
+    <div style="padding:20px">
+      ${_inp('Amount (UGX)','number','',amount)}
+      ${_inp('Payout Phone','tel','','+256 700 111 222')}
+      ${_sel('Method',['MTN MoMo B2C','Airtel Money Disbursement','Bank Transfer'])}
+      <button onclick="closeAdminModal();adminToast('✓ UGX ${amount.toLocaleString()} sent to ${name} via MTN MoMo B2C · Ref logged · Operator SMS sent')" style="width:100%;background:var(--green);color:#fff;font-family:'Sora',sans-serif;font-weight:700;font-size:.875rem;padding:11px;border-radius:10px;border:none;cursor:pointer;margin-top:4px">Confirm Payout</button>
+    </div>`);
+}
+
+// ── Fleet filter ───────────────────────────────────
+function filterFleet(status, btn){
+  document.querySelectorAll('[onclick^="filterFleet"]').forEach(b=>{b.className='btn b-outline';b.style.fontSize='.5rem';b.style.padding='3px 8px';});
+  btn.className='btn b-dark';btn.style.fontSize='.5rem';btn.style.padding='3px 8px';
+  // Filter fleet table rows
+  document.querySelectorAll('#v-raylane-fleet tbody tr').forEach(row=>{
+    const chipText = row.querySelector('.chip')?.textContent.toLowerCase()||'';
+    const show = status==='all'
+      || (status==='active' && (chipText.includes('loading')||chipText.includes('active')||chipText.includes('boarding')))
+      || (status==='maintenance' && chipText.includes('maint'))
+      || (status==='transit' && chipText.includes('departed'));
+    row.style.display=show?'':'none';
+  });
+}
+
+// ── Fleet Full Report ──────────────────────────────
+function adminFleetReport(){
+  openAdminModal(`
+    ${_aHead('📊 Full Fleet Report')}
+    <div style="padding:20px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+        <div style="background:var(--green-bg);border:1px solid var(--green-b);border-radius:10px;padding:12px;text-align:center"><div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.375rem;color:var(--green)">8</div><div style="font-size:.625rem;color:var(--muted);margin-top:2px">Active Today</div></div>
+        <div style="background:var(--amber-bg);border:1px solid var(--amber-b);border-radius:10px;padding:12px;text-align:center"><div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.375rem;color:var(--amber)">1</div><div style="font-size:.625rem;color:var(--muted);margin-top:2px">In Maintenance</div></div>
+        <div style="background:var(--blue-bg);border:1px solid var(--blue-b);border-radius:10px;padding:12px;text-align:center"><div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.375rem;color:var(--blue)">2</div><div style="font-size:.625rem;color:var(--muted);margin-top:2px">Standby</div></div>
+        <div style="background:var(--n50);border:1px solid var(--n100);border-radius:10px;padding:12px;text-align:center"><div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.375rem;color:var(--n800)">1</div><div style="font-size:.625rem;color:var(--muted);margin-top:2px">Pending Inspection</div></div>
+      </div>
+      <div style="font-family:'Sora',sans-serif;font-size:.875rem;font-weight:700;color:var(--n800);margin-bottom:8px">Insurance Expiry Alerts</div>
+      <div style="font-size:.8125rem;color:var(--text2);margin-bottom:4px">⚠️ UBC 003R — insurance expires in 14 days</div>
+      <div style="font-size:.8125rem;color:var(--text2);margin-bottom:16px">⚠️ UBF 006R — insurance expires in 22 days</div>
+      <div style="display:flex;gap:9px">
+        <button onclick="adminToast('✓ Fleet report exported as PDF')" style="flex:1;background:var(--n800);color:#fff;font-family:'Sora',sans-serif;font-weight:700;font-size:.875rem;padding:11px;border-radius:10px;border:none;cursor:pointer">↓ Export PDF</button>
+        <button onclick="adminExport('fleet')" style="flex:1;background:var(--surface);border:1.5px solid var(--border);color:var(--text2);font-family:'Sora',sans-serif;font-weight:600;font-size:.875rem;padding:11px;border-radius:10px;cursor:pointer">↓ Export CSV</button>
+      </div>
+    </div>`);
+}
+
+// ── Bulk Approve Trips ─────────────────────────────
+function adminBulkApprove(){
+  openAdminModal(`
+    ${_aHead('✓ Bulk Approve Trips')}
+    <div style="padding:20px">
+      <div style="font-size:.8125rem;color:var(--text2);margin-bottom:14px">Approve all 12 pending trips? Each operator will receive an SMS confirmation.</div>
+      <div style="background:var(--n50);border-radius:10px;padding:12px;margin-bottom:16px;font-size:.8125rem;color:var(--text2)">
+        T-003 KLA→MBL · T-005 KLA→KGL · T-007 KLA→GUL · T-009 MBL→KLA · T-011 GUL→KLA · ... and 7 more
+      </div>
+      <div style="background:var(--amber-bg);border:1px solid var(--amber-b);border-radius:9px;padding:10px 13px;font-size:.75rem;color:var(--amber);margin-bottom:16px">
+        ⚠️ Raylane Fleet trips are excluded (already auto-approved). This approves 10 third-party operator trips.
+      </div>
+      <div style="display:flex;gap:9px">
+        <button onclick="closeAdminModal();adminToast('✓ 10 third-party trips approved · All now live on raylane.com · Operators notified via SMS · Audit logged')" style="flex:1;background:var(--green);color:#fff;font-family:'Sora',sans-serif;font-weight:700;font-size:.875rem;padding:11px;border-radius:10px;border:none;cursor:pointer">✓ Approve All 10 Trips</button>
+        <button onclick="closeAdminModal()" style="background:var(--bg);border:1.5px solid var(--border);color:var(--text2);font-family:'Sora',sans-serif;font-weight:600;font-size:.875rem;padding:11px 18px;border-radius:10px;cursor:pointer">Review Each</button>
+      </div>
+    </div>`);
+}
+
+// ── Export ────────────────────────────────────────
+function adminExport(type){
+  const headers={
+    pl:'Date,Total Bookings,Total Revenue,RL Fleet Revenue,3rd Party Revenue,Commission,Payouts,Net Profit',
+    applications:'Business Name,Contact,Email,Phone,Fleet,Routes,Status,Submitted',
+    bookings:'Reference,Passenger,Phone,Route,Seats,Amount,Type,Payment,Status',
+    fleet:'Plate,Type,Driver,Status,Occupancy,Revenue,Margin',
+    data:'ID,Name,Date,Amount,Status'
+  };
+  const csv=(headers[type]||headers.data)+'
+';
+  const blob=new Blob([csv],{type:'text/csv'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`raylane-admin-${type}-${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();URL.revokeObjectURL(url);
+  adminToast(`✓ ${type} data exported as CSV`);
+}
+
+// ── Admin Search ──────────────────────────────────
+function adminSearch(q){
+  const tbl=document.querySelector('#v-bookings tbody')||document.querySelector('#v-operators tbody');
+  if(!tbl)return;
+  tbl.querySelectorAll('tr').forEach(row=>{
+    row.style.display=!q||row.textContent.toLowerCase().includes(q.toLowerCase())?'':'none';
+  });
+}
+
+// ── Toast ─────────────────────────────────────────
+function adminToast(msg){
+  const t=document.createElement('div');
+  t.style.cssText='position:fixed;top:14px;right:14px;background:var(--n800);color:#fff;font-family:Sora,sans-serif;font-weight:600;font-size:.8125rem;padding:14px 18px;border-radius:12px;z-index:9999;animation:fadeUp .3s ease;max-width:380px;line-height:1.5;box-shadow:0 8px 30px rgba(11,29,69,.22)';
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.style.opacity='0',4000);
+  setTimeout(()=>t.remove(),4400);
+}
+
+// ── Add User button in settings ───────────────────
+// Wire up the existing "+ Add Staff" button
+document.querySelectorAll('.btn-dark').forEach(btn=>{
+  if(btn.textContent.trim()==='+ Add Staff') btn.onclick=adminAddUserGlobal;
+});
+</script>
+</body>
+</html>
+</body>
+</html>
