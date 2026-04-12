@@ -1,7 +1,0 @@
-/admin/login   /admin-login.html     200
-/admin         /admin-pro.html       200
-/operator/login /operator-login.html 200
-/operator      /operator-pro.html    200
-/book          /book-pro.html        200
-/apply         /apply.html           200
-/*             /index.html           200
