@@ -244,7 +244,7 @@ nav{background:var(--n800);height:62px;display:flex;align-items:center;justify-c
         <select class="ss-sel" id="ssVehicle">
           <option value="any">Any</option>
           <option value="taxi">Taxi/Matatu</option>
-          <option value="minibus">Minibus</option>
+          
           <option value="coach">Coach</option>
         </select>
       </div>
@@ -260,9 +260,9 @@ nav{background:var(--n800);height:62px;display:flex;align-items:center;justify-c
 <div class="view active" id="v-results">
   <div class="filter-bar">
     <div style="font-size:.8125rem;color:var(--muted);font-weight:500;flex:1;min-width:120px" id="tripCount">Searching...</div>
-    <button class="fchip active" onclick="filterV(this,'any')">All</button>
+    <button class="fchip active" onclick="filterV(this,'any')">All Vehicles</button>
     <button class="fchip" onclick="filterV(this,'taxi')">🚕 Taxi</button>
-    <button class="fchip" onclick="filterV(this,'minibus')">🚐 Minibus</button>
+    
     <button class="fchip" onclick="filterV(this,'coach')">🚌 Coach</button>
     <div class="f-sep"></div>
     <button class="fchip" onclick="sortBy('price')">💰 Cheapest</button>
@@ -490,56 +490,61 @@ nav{background:var(--n800);height:62px;display:flex;align-items:center;justify-c
 // Priority: RAYLANE first (1), then rating, price
 // ═══════════════════════════════════════════════
 const DB = [
-  // KAMPALA ↔ NAIROBI
+  // KAMPALA → NAIROBI (all coaches 67 or taxi 14)
   {id:'kn-rl1',from:'Kampala',to:'Nairobi, Kenya',isRL:1,op:'Raylane Express',code:'RL',dep:'07:30',arr:'17:30',dur:'10h',price:115000,seats:14,total:67,vt:'coach',vn:'Coach 67',rating:5.0,am:['WiFi','AC','USB','Meals']},
-  {id:'kn-gw1',from:'Kampala',to:'Nairobi, Kenya',isRL:0,op:'Gateway Bus',code:'GB',dep:'08:00',arr:'18:00',dur:'10h',price:120000,seats:12,total:50,vt:'coach',vn:'Coach 50',rating:4.8,am:['WiFi','AC','USB','Meals']},
-  {id:'kn-sr1',from:'Kampala',to:'Nairobi, Kenya',isRL:0,op:'Safe Rider',code:'SR',dep:'14:00',arr:'00:30',dur:'10.5h',price:130000,seats:6,total:50,vt:'coach',vn:'Coach 50',rating:4.9,am:['WiFi','AC','USB','Meals']},
-  {id:'kn-kc1',from:'Kampala',to:'Nairobi, Kenya',isRL:0,op:'Kampala Coach',code:'KC',dep:'09:30',arr:'20:00',dur:'10.5h',price:110000,seats:4,total:45,vt:'coach',vn:'Coach 45',rating:4.6,am:['AC','USB']},
-  {id:'kn-le1',from:'Kampala',to:'Nairobi, Kenya',isRL:0,op:'Link Express',code:'LE',dep:'06:00',arr:'16:00',dur:'10h',price:95000,seats:18,total:22,vt:'minibus',vn:'Minibus 22',rating:4.4,am:['AC']},
+  {id:'kn-gw1',from:'Kampala',to:'Nairobi, Kenya',isRL:0,op:'Gateway Bus',code:'GB',dep:'08:00',arr:'18:00',dur:'10h',price:120000,seats:12,total:67,vt:'coach',vn:'Coach 67',rating:4.8,am:['WiFi','AC','USB','Meals']},
+  {id:'kn-sr1',from:'Kampala',to:'Nairobi, Kenya',isRL:0,op:'Safe Rider',code:'SR',dep:'14:00',arr:'00:30',dur:'10.5h',price:130000,seats:6,total:67,vt:'coach',vn:'Coach 67',rating:4.9,am:['WiFi','AC','USB','Meals']},
+  {id:'kn-kc1',from:'Kampala',to:'Nairobi, Kenya',isRL:0,op:'Kampala Coach',code:'KC',dep:'09:30',arr:'20:00',dur:'10.5h',price:110000,seats:4,total:67,vt:'coach',vn:'Coach 67',rating:4.6,am:['AC','USB']},
   {id:'kn-tx1',from:'Kampala',to:'Nairobi, Kenya',isRL:0,op:'Jinja Rider',code:'JR',dep:'05:30',arr:'15:30',dur:'10h',price:85000,seats:7,total:14,vt:'taxi',vn:'Taxi 14',rating:4.1,am:[]},
-  // KAMPALA ↔ GULU
+  // KAMPALA → GULU
   {id:'kg-rl1',from:'Kampala',to:'Gulu',isRL:1,op:'Raylane Express',code:'RL',dep:'07:00',arr:'12:00',dur:'5h',price:45000,seats:22,total:67,vt:'coach',vn:'Coach 67',rating:5.0,am:['AC','USB']},
-  {id:'kg-rl2',from:'Kampala',to:'Gulu',isRL:1,op:'Raylane Express',code:'RL',dep:'13:00',arr:'18:00',dur:'5h',price:45000,seats:10,total:22,vt:'minibus',vn:'Minibus 22',rating:5.0,am:['AC']},
-  {id:'kg-nc1',from:'Kampala',to:'Gulu',isRL:0,op:'Northern Coach',code:'NC',dep:'08:00',arr:'13:00',dur:'5h',price:40000,seats:18,total:50,vt:'coach',vn:'Coach 50',rating:4.5,am:['AC']},
+  {id:'kg-rl2',from:'Kampala',to:'Gulu',isRL:1,op:'Raylane Express',code:'RL',dep:'13:00',arr:'18:00',dur:'5h',price:45000,seats:14,total:67,vt:'coach',vn:'Coach 67',rating:5.0,am:['AC']},
+  {id:'kg-nc1',from:'Kampala',to:'Gulu',isRL:0,op:'Northern Coach',code:'NC',dep:'08:00',arr:'13:00',dur:'5h',price:40000,seats:18,total:67,vt:'coach',vn:'Coach 67',rating:4.5,am:['AC']},
   {id:'kg-tx1',from:'Kampala',to:'Gulu',isRL:0,op:'Gulu Express',code:'GE',dep:'09:00',arr:'14:00',dur:'5h',price:32000,seats:7,total:14,vt:'taxi',vn:'Taxi 14',rating:4.2,am:[]},
-  // KAMPALA ↔ MBALE
-  {id:'km-rl1',from:'Kampala',to:'Mbale',isRL:1,op:'Raylane Express',code:'RL',dep:'08:30',arr:'12:30',dur:'4h',price:30000,seats:14,total:22,vt:'minibus',vn:'Minibus 22',rating:5.0,am:['AC','USB']},
-  {id:'km-le1',from:'Kampala',to:'Mbale',isRL:0,op:'Link Express',code:'LE',dep:'07:00',arr:'11:00',dur:'4h',price:25000,seats:8,total:22,vt:'minibus',vn:'Minibus 22',rating:4.4,am:['AC']},
+  // KAMPALA → MBALE
+  {id:'km-rl1',from:'Kampala',to:'Mbale',isRL:1,op:'Raylane Express',code:'RL',dep:'08:30',arr:'12:30',dur:'4h',price:30000,seats:14,total:67,vt:'coach',vn:'Coach 67',rating:5.0,am:['AC','USB']},
+  {id:'km-le1',from:'Kampala',to:'Mbale',isRL:0,op:'Link Express',code:'LE',dep:'07:00',arr:'11:00',dur:'4h',price:25000,seats:18,total:67,vt:'coach',vn:'Coach 67',rating:4.4,am:['AC']},
   {id:'km-tx1',from:'Kampala',to:'Mbale',isRL:0,op:'Eastern Taxis',code:'ET',dep:'06:00',arr:'10:30',dur:'4.5h',price:20000,seats:4,total:14,vt:'taxi',vn:'Taxi 14',rating:4.1,am:[]},
-  {id:'km-tx2',from:'Kampala',to:'Mbale',isRL:0,op:'Mbale Fast',code:'MF',dep:'14:00',arr:'18:30',dur:'4.5h',price:20000,seats:9,total:14,vt:'taxi',vn:'Taxi 14',rating:4.0,am:[]},
-  // KAMPALA ↔ JINJA
-  {id:'kj-rl1',from:'Kampala',to:'Jinja',isRL:1,op:'Raylane Express',code:'RL',dep:'09:00',arr:'11:00',dur:'2h',price:15000,seats:12,total:22,vt:'minibus',vn:'Minibus 22',rating:5.0,am:['AC']},
+  {id:'km-tx2',from:'Kampala',to:'Mbale',isRL:0,op:'Mbale Fast',code:'MF',dep:'14:00',arr:'18:30',dur:'4.5h',price:18000,seats:9,total:14,vt:'taxi',vn:'Taxi 14',rating:4.0,am:[]},
+  // KAMPALA → JINJA
+  {id:'kj-rl1',from:'Kampala',to:'Jinja',isRL:1,op:'Raylane Express',code:'RL',dep:'09:00',arr:'11:00',dur:'2h',price:15000,seats:12,total:67,vt:'coach',vn:'Coach 67',rating:5.0,am:['AC']},
   {id:'kj-tx1',from:'Kampala',to:'Jinja',isRL:0,op:'Jinja Taxis',code:'JT',dep:'07:00',arr:'09:00',dur:'2h',price:10000,seats:8,total:14,vt:'taxi',vn:'Taxi 14',rating:4.3,am:[]},
   {id:'kj-tx2',from:'Kampala',to:'Jinja',isRL:0,op:'Source Express',code:'SE',dep:'11:00',arr:'13:00',dur:'2h',price:10000,seats:6,total:14,vt:'taxi',vn:'Taxi 14',rating:4.2,am:[]},
   {id:'kj-tx3',from:'Kampala',to:'Jinja',isRL:0,op:'Nile Shuttle',code:'NS',dep:'15:00',arr:'17:00',dur:'2h',price:10000,seats:5,total:14,vt:'taxi',vn:'Taxi 14',rating:4.0,am:[]},
-  // KAMPALA ↔ MBARARA
-  {id:'kmb-rl1',from:'Kampala',to:'Mbarara',isRL:1,op:'Raylane Express',code:'RL',dep:'08:00',arr:'11:00',dur:'3h',price:28000,seats:18,total:22,vt:'minibus',vn:'Minibus 22',rating:5.0,am:['AC','USB']},
+  // KAMPALA → MBARARA
+  {id:'kmb-rl1',from:'Kampala',to:'Mbarara',isRL:1,op:'Raylane Express',code:'RL',dep:'08:00',arr:'11:00',dur:'3h',price:28000,seats:18,total:67,vt:'coach',vn:'Coach 67',rating:5.0,am:['AC','USB']},
   {id:'kmb-rl2',from:'Kampala',to:'Mbarara',isRL:1,op:'Raylane Express',code:'RL',dep:'15:00',arr:'18:00',dur:'3h',price:28000,seats:8,total:14,vt:'taxi',vn:'Taxi 14',rating:5.0,am:[]},
-  {id:'kmb-gw1',from:'Kampala',to:'Mbarara',isRL:0,op:'Gateway Bus',code:'GB',dep:'07:00',arr:'10:30',dur:'3.5h',price:25000,seats:30,total:50,vt:'coach',vn:'Coach 50',rating:4.8,am:['AC','USB']},
+  {id:'kmb-gw1',from:'Kampala',to:'Mbarara',isRL:0,op:'Gateway Bus',code:'GB',dep:'07:00',arr:'10:30',dur:'3.5h',price:25000,seats:30,total:67,vt:'coach',vn:'Coach 67',rating:4.8,am:['AC','USB']},
   {id:'kmb-tx1',from:'Kampala',to:'Mbarara',isRL:0,op:'SW Taxis',code:'ST',dep:'06:30',arr:'09:30',dur:'3h',price:18000,seats:5,total:14,vt:'taxi',vn:'Taxi 14',rating:4.3,am:[]},
-  // KAMPALA ↔ KIGALI
+  // KAMPALA → KIGALI
   {id:'kkg-rl1',from:'Kampala',to:'Kigali, Rwanda',isRL:1,op:'Raylane Express',code:'RL',dep:'06:00',arr:'15:00',dur:'9h',price:120000,seats:8,total:67,vt:'coach',vn:'Coach 67',rating:5.0,am:['WiFi','AC','USB','Meals']},
-  {id:'kkg-kx1',from:'Kampala',to:'Kigali, Rwanda',isRL:0,op:'Kigali Express',code:'KX',dep:'07:00',arr:'16:00',dur:'9h',price:115000,seats:20,total:50,vt:'coach',vn:'Coach 50',rating:4.7,am:['AC','USB']},
+  {id:'kkg-kx1',from:'Kampala',to:'Kigali, Rwanda',isRL:0,op:'Kigali Express',code:'KX',dep:'07:00',arr:'16:00',dur:'9h',price:115000,seats:20,total:67,vt:'coach',vn:'Coach 67',rating:4.7,am:['AC','USB']},
   {id:'kkg-tx1',from:'Kampala',to:'Kigali, Rwanda',isRL:0,op:'Rwanda Shuttle',code:'RS',dep:'08:00',arr:'18:00',dur:'10h',price:90000,seats:5,total:14,vt:'taxi',vn:'Taxi 14',rating:4.1,am:[]},
-  // KAMPALA ↔ FORT PORTAL
-  {id:'kfp-rl1',from:'Kampala',to:'Fort Portal',isRL:1,op:'Raylane Express',code:'RL',dep:'08:00',arr:'13:00',dur:'5h',price:40000,seats:16,total:22,vt:'minibus',vn:'Minibus 22',rating:5.0,am:['AC']},
+  // KAMPALA → FORT PORTAL
+  {id:'kfp-rl1',from:'Kampala',to:'Fort Portal',isRL:1,op:'Raylane Express',code:'RL',dep:'08:00',arr:'13:00',dur:'5h',price:40000,seats:16,total:67,vt:'coach',vn:'Coach 67',rating:5.0,am:['AC']},
   {id:'kfp-tx1',from:'Kampala',to:'Fort Portal',isRL:0,op:'Western Taxis',code:'WT',dep:'07:30',arr:'12:30',dur:'5h',price:32000,seats:8,total:14,vt:'taxi',vn:'Taxi 14',rating:4.2,am:[]},
-  // KAMPALA ↔ KABALE
+  // KAMPALA → KABALE
   {id:'kkb-rl1',from:'Kampala',to:'Kabale',isRL:1,op:'Raylane Express',code:'RL',dep:'07:00',arr:'14:00',dur:'7h',price:55000,seats:12,total:67,vt:'coach',vn:'Coach 67',rating:5.0,am:['WiFi','AC','USB']},
-  {id:'kkb-kc1',from:'Kampala',to:'Kabale',isRL:0,op:'Kampala Coach',code:'KC',dep:'08:00',arr:'15:00',dur:'7h',price:50000,seats:20,total:45,vt:'coach',vn:'Coach 45',rating:4.6,am:['AC','USB']},
-  // MBARARA → KAMPALA
-  {id:'mbk-rl1',from:'Mbarara',to:'Kampala',isRL:1,op:'Raylane Express',code:'RL',dep:'06:00',arr:'09:00',dur:'3h',price:28000,seats:14,total:22,vt:'minibus',vn:'Minibus 22',rating:5.0,am:['AC']},
-  {id:'mbk-tx1',from:'Mbarara',to:'Kampala',isRL:0,op:'SW Taxis',code:'ST',dep:'07:00',arr:'10:00',dur:'3h',price:18000,seats:6,total:14,vt:'taxi',vn:'Taxi 14',rating:4.3,am:[]},
-  // GULU → KAMPALA
-  {id:'gk-rl1',from:'Gulu',to:'Kampala',isRL:1,op:'Raylane Express',code:'RL',dep:'07:00',arr:'12:00',dur:'5h',price:45000,seats:18,total:67,vt:'coach',vn:'Coach 67',rating:5.0,am:['AC','USB']},
-  {id:'gk-nc1',from:'Gulu',to:'Kampala',isRL:0,op:'Northern Coach',code:'NC',dep:'08:00',arr:'13:00',dur:'5h',price:38000,seats:20,total:50,vt:'coach',vn:'Coach 50',rating:4.5,am:['AC']},
-  {id:'gk-tx1',from:'Gulu',to:'Kampala',isRL:0,op:'Gulu Express',code:'GE',dep:'06:00',arr:'11:00',dur:'5h',price:28000,seats:5,total:14,vt:'taxi',vn:'Taxi 14',rating:4.2,am:[]},
+  {id:'kkb-kc1',from:'Kampala',to:'Kabale',isRL:0,op:'Kampala Coach',code:'KC',dep:'08:00',arr:'15:00',dur:'7h',price:50000,seats:20,total:67,vt:'coach',vn:'Coach 67',rating:4.6,am:['AC','USB']},
+  // KAMPALA → SOROTI
+  {id:'ks-rl1',from:'Kampala',to:'Soroti',isRL:1,op:'Raylane Express',code:'RL',dep:'07:30',arr:'12:30',dur:'5h',price:35000,seats:18,total:67,vt:'coach',vn:'Coach 67',rating:5.0,am:['AC']},
+  {id:'ks-tx1',from:'Kampala',to:'Soroti',isRL:0,op:'Eastern Taxis',code:'ET',dep:'06:00',arr:'11:00',dur:'5h',price:28000,seats:8,total:14,vt:'taxi',vn:'Taxi 14',rating:4.1,am:[]},
+  // KAMPALA → LIRA
+  {id:'kl-rl1',from:'Kampala',to:'Lira',isRL:1,op:'Raylane Express',code:'RL',dep:'07:00',arr:'12:30',dur:'5.5h',price:38000,seats:20,total:67,vt:'coach',vn:'Coach 67',rating:5.0,am:['AC']},
+  {id:'kl-tx1',from:'Kampala',to:'Lira',isRL:0,op:'Northern Taxis',code:'NT',dep:'06:00',arr:'11:30',dur:'5.5h',price:30000,seats:6,total:14,vt:'taxi',vn:'Taxi 14',rating:4.2,am:[]},
+  // KAMPALA → MASAKA
+  {id:'kmas-rl1',from:'Kampala',to:'Masaka',isRL:1,op:'Raylane Express',code:'RL',dep:'09:00',arr:'11:30',dur:'2.5h',price:20000,seats:20,total:67,vt:'coach',vn:'Coach 67',rating:5.0,am:['AC']},
+  {id:'kmas-tx1',from:'Kampala',to:'Masaka',isRL:0,op:'Masaka Express',code:'ME',dep:'07:30',arr:'10:00',dur:'2.5h',price:15000,seats:7,total:14,vt:'taxi',vn:'Taxi 14',rating:4.3,am:[]},
   // KAMPALA → JUBA
   {id:'kjb-rl1',from:'Kampala',to:'Juba, S. Sudan',isRL:1,op:'Raylane Express',code:'RL',dep:'05:00',arr:'17:00',dur:'12h',price:200000,seats:22,total:67,vt:'coach',vn:'Coach 67',rating:5.0,am:['WiFi','AC','USB','Meals']},
-  {id:'kjb-nc1',from:'Kampala',to:'Juba, S. Sudan',isRL:0,op:'Sudan Express',code:'SX',dep:'06:00',arr:'18:00',dur:'12h',price:180000,seats:14,total:50,vt:'coach',vn:'Coach 50',rating:4.4,am:['AC']},
-  // MBALE → KAMPALA
-  {id:'mblek-rl1',from:'Mbale',to:'Kampala',isRL:1,op:'Raylane Express',code:'RL',dep:'06:00',arr:'10:00',dur:'4h',price:30000,seats:14,total:22,vt:'minibus',vn:'Minibus 22',rating:5.0,am:['AC']},
-  {id:'mblek-tx1',from:'Mbale',to:'Kampala',isRL:0,op:'Eastern Taxis',code:'ET',dep:'07:00',arr:'11:00',dur:'4h',price:20000,seats:8,total:14,vt:'taxi',vn:'Taxi 14',rating:4.1,am:[]},
+  {id:'kjb-nc1',from:'Kampala',to:'Juba, S. Sudan',isRL:0,op:'Sudan Express',code:'SX',dep:'06:00',arr:'18:00',dur:'12h',price:180000,seats:14,total:67,vt:'coach',vn:'Coach 67',rating:4.4,am:['AC']},
+  // RETURN ROUTES
+  {id:'gk-rl1',from:'Gulu',to:'Kampala',isRL:1,op:'Raylane Express',code:'RL',dep:'07:00',arr:'12:00',dur:'5h',price:45000,seats:18,total:67,vt:'coach',vn:'Coach 67',rating:5.0,am:['AC','USB']},
+  {id:'gk-tx1',from:'Gulu',to:'Kampala',isRL:0,op:'Gulu Express',code:'GE',dep:'06:00',arr:'11:00',dur:'5h',price:28000,seats:5,total:14,vt:'taxi',vn:'Taxi 14',rating:4.2,am:[]},
+  {id:'mbk-rl1',from:'Mbarara',to:'Kampala',isRL:1,op:'Raylane Express',code:'RL',dep:'06:00',arr:'09:00',dur:'3h',price:28000,seats:14,total:67,vt:'coach',vn:'Coach 67',rating:5.0,am:['AC']},
+  {id:'mbk-tx1',from:'Mbarara',to:'Kampala',isRL:0,op:'SW Taxis',code:'ST',dep:'07:00',arr:'10:00',dur:'3h',price:18000,seats:6,total:14,vt:'taxi',vn:'Taxi 14',rating:4.3,am:[]},
+  {id:'mblek-rl1',from:'Mbale',to:'Kampala',isRL:1,op:'Raylane Express',code:'RL',dep:'06:00',arr:'10:00',dur:'4h',price:30000,seats:14,total:67,vt:'coach',vn:'Coach 67',rating:5.0,am:['AC']},
+  {id:'nbi-rl1',from:'Nairobi, Kenya',to:'Kampala',isRL:1,op:'Raylane Express',code:'RL',dep:'07:00',arr:'17:00',dur:'10h',price:115000,seats:14,total:67,vt:'coach',vn:'Coach 67',rating:5.0,am:['WiFi','AC','USB','Meals']},
 ];
 
 // State
@@ -727,43 +732,226 @@ function pickTrip(e, id, btn) {
 }
 
 // ─── SEATS ───
-const SOLD=[2,4,6,8,10,12,16,18,22,24,26,28,30,32,34,36,38];
-const LOCKED=[20,40];
+// ── SEAT STATE ─────────────────────────────────────
+// Multi-seat: up to 4 seats
+let selSeats = []; // array of selected seat numbers
+const SOLD_BASE = [2,5,8,11,14,17,20,23,26,29,32,35,38,41,44,47,50,53];
+const LOCKED_BASE = [15,30,55];
+const MAX_SEATS = 4;
+
 function buildSeats() {
   const g = document.getElementById('seatGrid'); g.innerHTML='';
-  const cols = selTrip.vt==='taxi'?4:4;
-  g.style.gridTemplateColumns=`repeat(${cols},1fr)`;
-  g.style.maxWidth = cols*44+(cols-1)*6+'px';
+  selSeats = []; // reset on new trip
+  document.getElementById('btnToDetails').disabled = true;
+
+  if(!selTrip) return;
+  const vt = selTrip.vt;
+
   document.getElementById('sVehicleLabel').textContent = selTrip.vn;
-  document.getElementById('layoutLabel').textContent =
-    selTrip.vt==='taxi' ? '🚕 Taxi / Matatu — 14 Seats'
-    : selTrip.vt==='minibus' ? '🚐 Minibus Layout'
-    : '🚌 Coach — Right-Hand Drive';
-  const sold = SOLD.filter(n=>n<=selTrip.total);
-  const locked = LOCKED.filter(n=>n<=selTrip.total);
-  for(let i=1;i<=selTrip.total;i++){
-    const s=document.createElement('div'); s.className='seat';
-    if(i===2){s.classList.add('s-drv');s.textContent='DRV'}
-    else if(sold.includes(i)){s.classList.add('s-s');s.textContent=i}
-    else if(locked.includes(i)){s.classList.add('s-lk');s.textContent=i}
-    else{s.classList.add('s-a');s.textContent=i;s.onclick=()=>pickSeat(s,i)}
-    g.appendChild(s);
+
+  if(vt === 'taxi') {
+    buildTaxiLayout(g);
+  } else {
+    buildCoach67Layout(g);
   }
 }
-function pickSeat(el,num) {
-  if(timerInt) clearInterval(timerInt);
-  document.querySelectorAll('.seat:not(.s-drv):not(.s-s):not(.s-lk)').forEach(s=>{s.className='seat s-a';s.onclick=()=>pickSeat(s,parseInt(s.textContent));});
-  el.className='seat s-sel'; selSeat=num;
-  const ds = SP.date?new Date(SP.date+'T00:00:00').toLocaleDateString('en-UG',{weekday:'short',month:'short',day:'numeric'}):'Today';
-  setV('s2Route',`${selTrip.from} → ${selTrip.to}`); setV('s2Date',ds); setV('s2Op',selTrip.op); setV('s2Veh',selTrip.vn);
-  setV('s2Seat',`Seat ${num}`); setV('s2Price',ugx(selTrip.price)); setV('s2Total',ugx(selTrip.price));
-  setV('tktSeat',`Seat ${num}`); setV('s4Seat',`Seat ${num}`); setV('s3Seat',`Seat ${num}`);
-  document.getElementById('btnToDetails').disabled=false;
-  document.getElementById('seatMsg').style.display='block';
-  document.getElementById('seatMsg').textContent=`✓ Seat ${num} locked via Redis SETNX · Complete payment within 5 minutes`;
-  document.getElementById('timerExpired').style.display='none';
-  startTimer();
+
+// ── COACH 67 LAYOUT ────────────────────────────────
+// Seat 1: front left alongside driver
+// Rows 2–13 (12 rows): 5 per row — 2 on left (window+aisle), 3 on right (aisle+mid+window)
+// Row 14 (last): 6 seats across full width (no aisle)
+// Total: 1 + 12×5 + 6 = 67
+function buildCoach67Layout(g) {
+  document.getElementById('layoutLabel').textContent = '🚌 Coach 67 — Right-Hand Drive · Row Layout';
+  g.style.maxWidth = '360px';
+  g.innerHTML = '';
+
+  const sold = SOLD_BASE.filter(n=>n<=67);
+  const locked = LOCKED_BASE.filter(n=>n<=67);
+
+  // Front row: [DRIVER] [empty] [Seat 1]
+  const frontRow = document.createElement('div');
+  frontRow.style.cssText = 'display:flex;gap:6px;margin-bottom:6px;align-items:center';
+  frontRow.innerHTML = '<div class="seat s-drv" style="width:38px;height:34px">DRV</div><div style="width:38px;height:34px"></div>';
+  const seat1 = makeSeat(1, sold, locked);
+  frontRow.appendChild(seat1);
+  g.appendChild(frontRow);
+
+  // Separator
+  const sep = document.createElement('div');
+  sep.style.cssText = 'height:1px;background:var(--border);margin:4px 0;';
+  g.appendChild(sep);
+
+  // 12 rows of 5: 2 left | aisle | 3 right
+  let seatNum = 2;
+  for(let row=0;row<12;row++){
+    const rowDiv = document.createElement('div');
+    rowDiv.style.cssText = 'display:flex;gap:6px;margin-bottom:5px;align-items:center';
+    // Left side: 2 seats
+    [seatNum, seatNum+1].forEach(n=>{
+      rowDiv.appendChild(makeSeat(n, sold, locked));
+      seatNum++;
+    });
+    // Aisle gap
+    const aisle = document.createElement('div');
+    aisle.style.cssText = 'width:16px;height:34px;display:flex;align-items:center;justify-content:center';
+    aisle.innerHTML = '<div style="width:2px;height:20px;background:var(--border);border-radius:1px"></div>';
+    rowDiv.appendChild(aisle);
+    // Right side: 3 seats
+    [seatNum, seatNum+1, seatNum+2].forEach(n=>{
+      rowDiv.appendChild(makeSeat(n, sold, locked));
+      seatNum++;
+    });
+    g.appendChild(rowDiv);
+  }
+
+  // Last row (row 13): 6 seats full width, no aisle
+  const lastSep = document.createElement('div');
+  lastSep.style.cssText = 'height:1px;background:var(--border);margin:4px 0;';
+  g.appendChild(lastSep);
+  const lastRow = document.createElement('div');
+  lastRow.style.cssText = 'display:flex;gap:6px;margin-bottom:5px';
+  for(let n=seatNum;n<=67;n++){
+    lastRow.appendChild(makeSeat(n, sold, locked));
+  }
+  g.appendChild(lastRow);
+
+  // Legend
+  addSeatLegend(g);
 }
+
+// ── TAXI 14 LAYOUT ─────────────────────────────────
+// Front: DRIVER + 2 passengers (3 across front)
+// Rows 1-4: 3 passengers each
+// Total: 2 front + 12 back = 14 passenger seats
+function buildTaxiLayout(g) {
+  document.getElementById('layoutLabel').textContent = '🚕 Taxi / Matatu 14 — Right-Hand Drive';
+  g.style.maxWidth = '200px';
+  g.innerHTML = '';
+
+  const sold = [3,5,8,10,12].filter(n=>n<=14);
+  const locked = [7].filter(n=>n<=14);
+
+  // Front row: DRIVER | P1 | P2
+  const frontRow = document.createElement('div');
+  frontRow.style.cssText = 'display:flex;gap:6px;margin-bottom:8px;align-items:center';
+  frontRow.innerHTML = '<div class="seat s-drv" style="width:38px;height:34px">DRV</div>';
+  [1,2].forEach(n=>frontRow.appendChild(makeSeat(n, sold, locked)));
+  g.appendChild(frontRow);
+
+  const sep = document.createElement('div');
+  sep.style.cssText = 'height:1px;background:var(--border);margin:4px 0';
+  g.appendChild(sep);
+
+  // 4 rows of 3
+  let sn = 3;
+  for(let row=0;row<4;row++){
+    const rowDiv = document.createElement('div');
+    rowDiv.style.cssText = 'display:flex;gap:6px;margin-bottom:5px';
+    [sn, sn+1, sn+2].forEach(n=>rowDiv.appendChild(makeSeat(n, sold, locked)));
+    sn += 3;
+    g.appendChild(rowDiv);
+  }
+
+  addSeatLegend(g);
+}
+
+function makeSeat(num, sold, locked) {
+  const s = document.createElement('div');
+  s.className = 'seat';
+  s.style.cssText = 'width:38px;height:34px;border-radius:7px;border:2px solid;display:flex;align-items:center;justify-content:center;font-size:.45rem;font-weight:800;cursor:pointer;font-family:Sora,sans-serif;transition:all .15s;flex-shrink:0';
+  s.textContent = num;
+  if(sold.includes(num)){
+    s.className='seat s-s'; s.style.cursor='not-allowed';
+    s.style.background='var(--bg)';s.style.borderColor='var(--border)';s.style.color='var(--muted)';
+  } else if(locked.includes(num)){
+    s.className='seat s-lk'; s.style.cursor='not-allowed';
+    s.style.background='var(--amber-bg)';s.style.borderColor='var(--amber-b)';s.style.color='var(--amber)';
+    s.title='Locked by another user';
+  } else {
+    s.className='seat s-a';
+    s.style.background='var(--surface)';s.style.borderColor='var(--border)';s.style.color='var(--muted)';
+    s.onclick=()=>toggleSeat(s, num);
+    s.onmouseenter=()=>{if(!selSeats.includes(num))s.style.borderColor='var(--g500)';};
+    s.onmouseleave=()=>{if(!selSeats.includes(num)){s.style.background='var(--surface)';s.style.borderColor='var(--border)';s.style.color='var(--muted)';}};
+  }
+  return s;
+}
+
+function addSeatLegend(g) {
+  const leg = document.createElement('div');
+  leg.style.cssText = 'display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-top:12px';
+  const items = [
+    ['var(--surface)','var(--border)','var(--muted)','Available'],
+    ['var(--g500)','var(--g400)','var(--n800)','Selected'],
+    ['var(--bg)','var(--border)','var(--muted)','Booked'],
+    ['var(--amber-bg)','var(--amber-b)','var(--amber)','Locked'],
+    ['var(--n800)','var(--n700)','var(--g400)','Driver'],
+  ];
+  items.forEach(([bg,bc,tc,label])=>{
+    const d=document.createElement('div');
+    d.style.cssText='display:flex;align-items:center;gap:3px;font-size:.45rem;color:var(--muted)';
+    d.innerHTML=`<div style="width:11px;height:9px;border-radius:2px;background:${bg};border:1.5px solid ${bc}"></div>${label}`;
+    leg.appendChild(d);
+  });
+  g.appendChild(leg);
+}
+
+// ── MULTI-SEAT TOGGLE ──────────────────────────────
+function toggleSeat(el, num) {
+  if(selSeats.includes(num)){
+    // Deselect
+    selSeats = selSeats.filter(s=>s!==num);
+    el.style.background='var(--surface)';el.style.borderColor='var(--border)';el.style.color='var(--muted)';
+  } else {
+    if(selSeats.length >= MAX_SEATS){
+      showSeatMsg(`Maximum ${MAX_SEATS} seats per booking. Deselect a seat first.`, true);
+      return;
+    }
+    selSeats.push(num);
+    el.style.background='var(--g500)';el.style.borderColor='var(--g400)';el.style.color='var(--n800)';
+  }
+
+  updateSeatSummary();
+}
+
+function updateSeatSummary(){
+  const count = selSeats.length;
+  const sorted = [...selSeats].sort((a,b)=>a-b);
+  const price = selTrip?.price || 0;
+  const total = price * count;
+  const deposit = Math.floor(total * .2);
+
+  setV('s2Seat', count > 0 ? `Seats ${sorted.join(', ')}` : '— not selected');
+  setV('s2Total', count > 0 ? ugx(total) : '—');
+  setV('s4Seat', count > 0 ? `Seats ${sorted.join(', ')}` : '—');
+  setV('s3Seat', count > 0 ? `Seats ${sorted.join(', ')}` : '—');
+  setV('tktSeat', count > 0 ? `Seats ${sorted.join(', ')}` : '—');
+  setV('s2Price', ugx(price) + (count > 1 ? ` × ${count}` : ''));
+
+  document.getElementById('btnToDetails').disabled = count === 0;
+
+  if(count > 0){
+    if(timerInt) clearInterval(timerInt);
+    showSeatMsg(`✓ ${count} seat${count>1?'s':''} selected: ${sorted.join(', ')} · ${selSeats.length < MAX_SEATS ? `Select up to ${MAX_SEATS-count} more or continue` : 'Maximum reached'} · Complete payment within 5 minutes`, false);
+    startTimer();
+  } else {
+    document.getElementById('seatMsg').style.display='none';
+    clearInterval(timerInt);
+    document.getElementById('timerDisplay').textContent='⏱ 5:00';
+    document.getElementById('timerDisplay').className='timer-bdg';
+  }
+}
+
+function showSeatMsg(msg, isError){
+  const el = document.getElementById('seatMsg');
+  el.style.display='block';
+  el.style.background=isError?'var(--red-bg)':'var(--n50)';
+  el.style.borderColor=isError?'var(--red-b)':'var(--n100)';
+  el.style.color=isError?'var(--red)':'var(--n600)';
+  el.textContent=msg;
+}
+
 function startTimer(){
   timerSecs=300;
   const b=document.getElementById('timerDisplay');
@@ -775,12 +963,21 @@ function startTimer(){
     if(timerSecs<=0){clearInterval(timerInt);b.textContent='⏱ Expired';document.getElementById('seatMsg').style.display='none';document.getElementById('timerExpired').style.display='block';document.getElementById('btnToDetails').disabled=true;selSeat=null;}
   },1000);
 }
-function resetSeats(){selSeat=null;clearInterval(timerInt);document.getElementById('seatMsg').style.display='none';document.getElementById('timerExpired').style.display='none';document.getElementById('timerDisplay').className='timer-bdg';document.getElementById('timerDisplay').textContent='⏱ 5:00';document.getElementById('btnToDetails').disabled=true;buildSeats();}
+function resetSeats(){
+  selSeats=[];
+  clearInterval(timerInt);
+  document.getElementById('seatMsg').style.display='none';
+  document.getElementById('timerExpired').style.display='none';
+  document.getElementById('timerDisplay').className='timer-bdg';
+  document.getElementById('timerDisplay').textContent='⏱ 5:00';
+  document.getElementById('btnToDetails').disabled=true;
+  buildSeats();
+}
 
 // ─── DETAILS STEP ───
 function setupDetails(){
   if(!selTrip) return;
-  const p=selTrip.price, dep=Math.floor(p*.2), bal=p-dep;
+  const count = selSeats.length || 1; const p=selTrip.price*count, dep=Math.floor(p*.2), bal=p-dep;
   const ds=SP.date?new Date(SP.date+'T00:00:00').toLocaleDateString('en-UG',{weekday:'short',month:'short',day:'numeric'}):'Today';
   setV('s3Route',`${selTrip.from} → ${selTrip.to}`); setV('s3Fare',ugx(p)); setV('s3PayNow',ugx(p));
 
@@ -807,7 +1004,8 @@ function valDetails(){const n=document.getElementById('paxName').value.trim().le
 function updateAdv(){
   if(!selTrip) return;
   isAdv = daysOut>=3 && (document.getElementById('advToggle')?.checked||false);
-  const p=selTrip.price, dep=Math.floor(p*.2), bal=p-dep, pay=isAdv?dep:p;
+  const count = selSeats.length || 1;
+    const p=selTrip.price*count, dep=Math.floor(p*.2), bal=p-dep, pay=isAdv?dep:p;
   setV('s3Dep',ugx(dep)); setV('s3Bal',ugx(bal)); setV('s3PayNow',ugx(pay));
   setV('s4Amount',ugx(pay)); setV('s4BtnAmt',ugx(pay));
   document.getElementById('s3AdvRow').style.display=isAdv?'flex':'none';
