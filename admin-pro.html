@@ -497,7 +497,7 @@ button,select,input,textarea{font-family:'DM Sans',sans-serif}
   <div class="notif-panel" id="notifPanel">
     <div class="notif-hd">
       <span style="font-family:'Sora',sans-serif;font-size:.8125rem;font-weight:700;color:var(--text)">Notifications</span>
-      <button class="b-ghost">Mark all read</button>
+      <button class="b-ghost" onclick="markAllRead()">Mark all read</button>
     </div>
     <div class="notif-item"><span class="notif-dot" style="background:var(--red)"></span><div><div class="notif-txt"><strong>Payment mismatch</strong> — Booking RL-F1G8 · UGX 500 gap</div><div class="notif-time">2 min ago</div></div></div>
     <div class="notif-item"><span class="notif-dot" style="background:var(--amber)"></span><div><div class="notif-txt"><strong>Trip pending approval</strong> — Gateway Bus · KLA→NBI 08:00</div><div class="notif-time">14 min ago</div></div></div>
@@ -518,7 +518,7 @@ button,select,input,textarea{font-family:'DM Sans',sans-serif}
       <div class="supa-banner">
         <span class="supa-dot"></span>
         <span class="supa-txt"><strong>Supabase Realtime</strong> connected — seat availability, alerts and bookings update live · PostgreSQL with RLS · Edge Functions active</span>
-        <button class="btn b-outline" style="font-size:.6rem;padding:4px 8px;flex-shrink:0;background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.6)">DB Status ✓</button>
+        <button class="btn b-outline" style="font-size:.6rem;padding:4px 8px;flex-shrink:0;background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.6)" onclick="toast('Database: Healthy · Supabase connected · RLS active · 99.9% uptime')">DB Status ✓</button>
       </div>
 
       <!-- KPI row -->
@@ -572,7 +572,7 @@ button,select,input,textarea{font-family:'DM Sans',sans-serif}
           <div class="pipe-num">4</div>
           <div class="pipe-sub">UGX 8.2M due</div>
           <div class="pipe-detail">Auto-schedule: tonight 23:59</div>
-          <div class="pipe-detail" style="margin-top:6px"><button class="btn b-gold" style="width:100%;justify-content:center;font-size:.5625rem">Process Now</button></div>
+          <div class="pipe-detail" style="margin-top:6px"><button class="btn b-gold" style="width:100%;justify-content:center;font-size:.5625rem" onclick="adminProcessPayouts(event)">Process Now</button></div>
         </div>
       </div>
 
@@ -612,7 +612,7 @@ button,select,input,textarea{font-family:'DM Sans',sans-serif}
             <div class="card-hd">
               <span class="card-title">Recent Bookings</span>
               <div class="card-actions">
-                <button class="btn b-outline">Filter</button>
+                <button class="btn b-outline" onclick="adminFilterPayouts()">Filter</button>
                 <button class="card-action-link" onclick="nav('bookings',null)">View All →</button>
               </div>
             </div>
@@ -620,11 +620,11 @@ button,select,input,textarea{font-family:'DM Sans',sans-serif}
               <table class="tbl">
                 <thead><tr><th>Reference</th><th>Passenger</th><th>Route</th><th>Operator</th><th>Amount</th><th>Type</th><th>Status</th><th></th></tr></thead>
                 <tbody>
-                  <tr><td class="td-mono">RL-A7B3C2</td><td class="td-p">Sarah M. <span class="td-muted">+256 77x</span></td><td>KLA→NBI</td><td><span class="chip c-gold">RL Fleet</span></td><td class="td-p">UGX 115K</td><td><span class="chip c-blue">Advance</span></td><td><span class="chip c-green">Confirmed</span></td><td><button class="btn b-outline" style="padding:3px 7px;font-size:.5rem">View</button></td></tr>
-                  <tr><td class="td-mono">RL-C4D1E8</td><td class="td-p">James K.</td><td>KLA→MBL</td><td><span class="chip c-navy">3rd Party</span></td><td class="td-p">UGX 30K</td><td><span class="chip c-gray">Standard</span></td><td><span class="chip c-amber">Pending Pay</span></td><td><button class="btn b-gold" style="padding:3px 7px;font-size:.5rem">Verify</button></td></tr>
+                  <tr><td class="td-mono">RL-A7B3C2</td><td class="td-p">Sarah M. <span class="td-muted">+256 77x</span></td><td>KLA→NBI</td><td><span class="chip c-gold">RL Fleet</span></td><td class="td-p">UGX 115K</td><td><span class="chip c-blue">Advance</span></td><td><span class="chip c-green">Confirmed</span></td><td><button class="btn b-outline" style="padding:3px 7px;font-size:.5rem" onclick="adminViewBooking(this)">View</button></td></tr>
+                  <tr><td class="td-mono">RL-C4D1E8</td><td class="td-p">James K.</td><td>KLA→MBL</td><td><span class="chip c-navy">3rd Party</span></td><td class="td-p">UGX 30K</td><td><span class="chip c-gray">Standard</span></td><td><span class="chip c-amber">Pending Pay</span></td><td><button class="btn b-gold" style="padding:3px 7px;font-size:.5rem" onclick="adminVerifyPayment(this)">Verify</button></td></tr>
                   <tr><td class="td-mono">RL-E9F2G1</td><td class="td-p">Alice B. ×24</td><td>GUL→KLA</td><td><span class="chip c-navy">3rd Party</span></td><td class="td-p">UGX 1.08M</td><td><span class="chip c-purple">Group</span></td><td><span class="chip c-green">Confirmed</span></td><td></td></tr>
                   <tr><td class="td-mono">RL-H3I5J7</td><td class="td-p">David O.</td><td>KLA→JIN</td><td><span class="chip c-gold">RL Fleet</span></td><td class="td-p">UGX 15K</td><td><span class="chip c-gray">Standard</span></td><td><span class="chip c-green">Confirmed</span></td><td></td></tr>
-                  <tr><td class="td-mono">RL-K2L4M6</td><td class="td-p">Mary N.</td><td>MBA→KLA</td><td><span class="chip c-navy">3rd Party</span></td><td class="td-p">UGX 25K</td><td><span class="chip c-gray">Standard</span></td><td><span class="chip c-red">Cancelled</span></td><td><button class="btn b-outline" style="padding:3px 7px;font-size:.5rem">Refund</button></td></tr>
+                  <tr><td class="td-mono">RL-K2L4M6</td><td class="td-p">Mary N.</td><td>MBA→KLA</td><td><span class="chip c-navy">3rd Party</span></td><td class="td-p">UGX 25K</td><td><span class="chip c-gray">Standard</span></td><td><span class="chip c-red">Cancelled</span></td><td><button class="btn b-outline" style="padding:3px 7px;font-size:.5rem" onclick="adminRefund(event)">Refund</button></td></tr>
                 </tbody>
               </table>
             </div>
@@ -710,10 +710,10 @@ button,select,input,textarea{font-family:'DM Sans',sans-serif}
             <table class="tbl">
               <thead><tr><th>Plate</th><th>Type / Seats</th><th>Driver</th><th>Status</th><th>Occupancy</th><th>Today Revenue</th><th>Actions</th></tr></thead>
               <tbody>
-                <tr><td class="td-mono">UBA 001R</td><td class="td-p">Coach 67</td><td>John Okello</td><td><span class="chip c-green">Loading</span></td><td><div class="occ-bar-wrap" style="width:80px"><div class="occ-bar occ-high" style="width:90%"></div></div><span style="font-size:.625rem;font-weight:700;margin-left:4px">60/67</span></td><td style="font-weight:600;color:var(--green)">UGX 804K</td><td><div style="display:flex;gap:4px"><button class="btn b-gold" style="font-size:.5rem;padding:3px 7px" onclick="alert('Dispatch sent!')">Dispatch</button><button class="btn b-outline" style="font-size:.5rem;padding:3px 7px" onclick="adminEditVehicle(this)">Edit</button></div></td></tr>
-                <tr><td class="td-mono">UBB 002R</td><td class="td-p">Coach 65</td><td>Grace Nabifo</td><td><span class="chip c-green">Active</span></td><td><div class="occ-bar-wrap" style="width:80px"><div class="occ-bar occ-high" style="width:77%"></div></div><span style="font-size:.625rem;font-weight:700;margin-left:4px">50/65</span></td><td style="font-weight:600;color:var(--green)">UGX 780K</td><td><div style="display:flex;gap:4px"><button class="btn b-outline" style="font-size:.5rem;padding:3px 7px" onclick="alert('Delay alert sent to all passengers!')">⏱ Delay</button><button class="btn b-outline" style="font-size:.5rem;padding:3px 7px">Edit</button></div></td></tr>
-                <tr><td class="td-mono">UBC 003R</td><td class="td-p">Minibus 22</td><td>Peter Musisi</td><td><span class="chip c-amber">Maintenance</span></td><td><div class="occ-bar-wrap" style="width:80px"><div class="occ-bar occ-low" style="width:0%"></div></div><span style="font-size:.625rem;color:var(--muted);margin-left:4px">0/22</span></td><td style="color:var(--muted)">—</td><td><button class="btn b-outline" style="font-size:.5rem;padding:3px 7px">Schedule</button></td></tr>
-                <tr><td class="td-mono">UBD 004R</td><td class="td-p">Taxi 14</td><td>Alice Tendo</td><td><span class="chip c-green">Active</span></td><td><div class="occ-bar-wrap" style="width:80px"><div class="occ-bar occ-mid" style="width:71%"></div></div><span style="font-size:.625rem;font-weight:700;margin-left:4px">10/14</span></td><td style="font-weight:600;color:var(--green)">UGX 280K</td><td><button class="btn b-outline" style="font-size:.5rem;padding:3px 7px">Edit</button></td></tr>
+                <tr><td class="td-mono">UBA 001R</td><td class="td-p">Coach 67</td><td>John Okello</td><td><span class="chip c-green">Loading</span></td><td><div class="occ-bar-wrap" style="width:80px"><div class="occ-bar occ-high" style="width:90%"></div></div><span style="font-size:.625rem;font-weight:700;margin-left:4px">60/67</span></td><td style="font-weight:600;color:var(--green)">UGX 804K</td><td><div style="display:flex;gap:4px"><button class="btn b-gold" style="font-size:.5rem;padding:3px 7px" onclick="adminDispatch(this)">Dispatch</button><button class="btn b-outline" style="font-size:.5rem;padding:3px 7px" onclick="adminEditVehicle(this)">Edit</button></div></td></tr>
+                <tr><td class="td-mono">UBB 002R</td><td class="td-p">Coach 65</td><td>Grace Nabifo</td><td><span class="chip c-green">Active</span></td><td><div class="occ-bar-wrap" style="width:80px"><div class="occ-bar occ-high" style="width:77%"></div></div><span style="font-size:.625rem;font-weight:700;margin-left:4px">50/65</span></td><td style="font-weight:600;color:var(--green)">UGX 780K</td><td><div style="display:flex;gap:4px"><button class="btn b-outline" style="font-size:.5rem;padding:3px 7px" onclick="adminDelayAlert(this)">⏱ Delay</button><button class="btn b-outline" style="font-size:.5rem;padding:3px 7px" onclick="adminEditVehicle(this)">Edit</button></div></td></tr>
+                <tr><td class="td-mono">UBC 003R</td><td class="td-p">Minibus 22</td><td>Peter Musisi</td><td><span class="chip c-amber">Maintenance</span></td><td><div class="occ-bar-wrap" style="width:80px"><div class="occ-bar occ-low" style="width:0%"></div></div><span style="font-size:.625rem;color:var(--muted);margin-left:4px">0/22</span></td><td style="color:var(--muted)">—</td><td><button class="btn b-outline" style="font-size:.5rem;padding:3px 7px" onclick="toast('Maintenance scheduled. Driver and admin notified.')">Schedule</button></td></tr>
+                <tr><td class="td-mono">UBD 004R</td><td class="td-p">Taxi 14</td><td>Alice Tendo</td><td><span class="chip c-green">Active</span></td><td><div class="occ-bar-wrap" style="width:80px"><div class="occ-bar occ-mid" style="width:71%"></div></div><span style="font-size:.625rem;font-weight:700;margin-left:4px">10/14</span></td><td style="font-weight:600;color:var(--green)">UGX 280K</td><td><button class="btn b-outline" style="font-size:.5rem;padding:3px 7px" onclick="adminEditVehicle(this)">Edit</button></td></tr>
               </tbody>
             </table>
           </div>
@@ -779,7 +779,7 @@ button,select,input,textarea{font-family:'DM Sans',sans-serif}
                 <td><span class="chip c-blue">Boarding</span></td><td style="font-family:'Sora',sans-serif;font-weight:700;color:var(--green)">ETD 09:00 (1h 22m)</td><td style="font-family:'Sora',sans-serif;font-weight:600;color:var(--muted)">ETA 11:00 JIN</td>
                 <td><div style="display:flex;align-items:center;gap:6px"><div class="occ-bar-wrap" style="width:70px"><div class="occ-bar occ-mid" style="width:71%"></div></div><span style="font-size:.625rem;font-weight:800">10/14</span></div></td>
                 <td style="font-weight:600;color:var(--green)">UGX 150K</td>
-                <td><div style="display:flex;gap:5px"><button class="btn b-gold" style="font-size:.5rem">Fill Seats</button></div></td>
+                <td><div style="display:flex;gap:5px"><button class="btn b-gold" style="font-size:.5rem" onclick="adminResellSeats()">Fill Seats</button></div></td>
               </tr>
             </tbody>
           </table>
@@ -800,14 +800,14 @@ button,select,input,textarea{font-family:'DM Sans',sans-serif}
       <div class="g3" style="margin-bottom:14px">
         <div>
           <div class="card">
-            <div class="card-hd"><span class="card-title">Active Applications</span><div class="card-actions"><select class="inp inp-sm"><option>All Status</option><option>Pending</option><option>Under Review</option><option>Approved</option><option>Rejected</option></select></div></div>
+            <div class="card-hd"><span class="card-title">Active Applications</span><div class="card-actions"><select class="inp inp-sm" onchange="adminFilterApps(this.value)"><option value="all">All Status</option><option value="pending">Pending</option><option value="review">Under Review</option><option value="approved">Approved</option><option value="rejected">Rejected</option></select></div></div>
             <div class="tbl-wrap">
               <table class="tbl">
                 <thead><tr><th>Business Name</th><th>Fleet</th><th>Routes</th><th>Submitted</th><th>Docs</th><th>Status</th><th>Actions</th></tr></thead>
                 <tbody>
-                  <tr><td class="td-p">Nexus Transport Ltd</td><td>12 vehicles</td><td>Int'l</td><td class="td-muted">2 hrs ago</td><td><span class="chip c-green">Complete</span></td><td><span class="chip c-amber">Pending</span></td><td><div style="display:flex;gap:4px"><button class="btn b-green" onclick="approveOperator(this)">✓ Approve</button><button class="btn b-outline" onclick="nav('applications',null)">Review Docs</button><button class="btn b-red" style="padding:6px 7px" onclick="resolveAlert(event)">✗</button></div></td></tr>
-                  <tr><td class="td-p">Star Rider Uganda</td><td>3 vehicles</td><td>Local</td><td class="td-muted">5 hrs ago</td><td><span class="chip c-red">Missing cert</span></td><td><span class="chip c-blue">Awaiting Docs</span></td><td><div style="display:flex;gap:4px"><button class="btn b-outline" onclick="adminRequestDocs(this)">Request Docs</button><button class="btn b-red" style="padding:6px 7px" onclick="resolveAlert(event)">✗</button></div></td></tr>
-                  <tr><td class="td-p">Pearl Transit Co.</td><td>6 vehicles</td><td>KLA–KIS</td><td class="td-muted">1 day ago</td><td><span class="chip c-green">Complete</span></td><td><span class="chip c-green">Approved</span></td><td><div style="display:flex;gap:4px"><button class="btn b-outline" style="font-size:.5rem">View</button></div></td></tr>
+                  <tr><td class="td-p">Nexus Transport Ltd</td><td>12 vehicles</td><td>Int'l</td><td class="td-muted">2 hrs ago</td><td><span class="chip c-green">Complete</span></td><td><span class="chip c-amber">Pending</span></td><td><div style="display:flex;gap:4px"><button class="btn b-green" onclick="approveOperator(this)">✓ Approve</button><button class="btn b-outline" onclick="nav('applications',null)">Review Docs</button><button class="btn b-red" style="padding:6px 7px" onclick="adminRejectOperator(this,'this operator')">✗</button></div></td></tr>
+                  <tr><td class="td-p">Star Rider Uganda</td><td>3 vehicles</td><td>Local</td><td class="td-muted">5 hrs ago</td><td><span class="chip c-red">Missing cert</span></td><td><span class="chip c-blue">Awaiting Docs</span></td><td><div style="display:flex;gap:4px"><button class="btn b-outline" onclick="adminRequestDocs(this)">Request Docs</button><button class="btn b-red" style="padding:6px 7px" onclick="adminRejectOperator(this,'this operator')">✗</button></div></td></tr>
+                  <tr><td class="td-p">Pearl Transit Co.</td><td>6 vehicles</td><td>KLA–KIS</td><td class="td-muted">1 day ago</td><td><span class="chip c-green">Complete</span></td><td><span class="chip c-green">Approved</span></td><td><div style="display:flex;gap:4px"><button class="btn b-outline" style="font-size:.5rem" onclick="adminViewApplication(this)">View</button></div></td></tr>
                 </tbody>
               </table>
             </div>
@@ -921,7 +921,7 @@ button,select,input,textarea{font-family:'DM Sans',sans-serif}
         </div>
         <div style="display:flex;gap:7px">
           <button class="btn b-dark b-lg" onclick="adminExport('pl')">↓ Export P&L</button>
-          <button class="btn b-outline b-lg">Generate Report</button>
+          <button class="btn b-outline b-lg" onclick="adminExport('pl')">Generate Report</button>
         </div>
       </div>
 
@@ -979,7 +979,7 @@ button,select,input,textarea{font-family:'DM Sans',sans-serif}
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
         <div style="display:flex;gap:6px;flex-wrap:wrap">
           <button class="btn b-dark" onclick="markAllRead()">✓ Mark All Read</button>
-          <button class="btn b-outline">Archive Resolved</button>
+          <button class="btn b-outline" onclick="markAllRead()">Archive Resolved</button>
         </div>
         <div style="display:flex;gap:5px;flex-wrap:wrap">
           <button class="btn b-outline" id="f-all" onclick="filterAlerts('all')" style="border-color:var(--n600);color:var(--n600)">All (7)</button>
@@ -1050,7 +1050,7 @@ button,select,input,textarea{font-family:'DM Sans',sans-serif}
     <div class="view" id="v-settings">
       <div class="g2">
         <div class="card">
-          <div class="card-hd"><span class="card-title">Platform Configuration</span><button class="btn b-gold">Save All</button></div>
+          <div class="card-hd"><span class="card-title">Platform Configuration</span><button class="btn b-gold" onclick="toast('All platform settings saved and applied.')">Save All</button></div>
           <div style="padding:4px 0">
             <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-bottom:1px solid var(--border2)"><div><div style="font-size:.875rem;font-weight:600;color:var(--text)">Commission Rate (%)</div><div style="font-size:.6875rem;color:var(--muted)">Applied to all third-party bookings</div></div><input class="inp inp-sm" type="number" value="10" min="0" max="50" style="width:80px"></div>
             <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-bottom:1px solid var(--border2)"><div><div style="font-size:.875rem;font-weight:600;color:var(--text)">Raylane Fleet Commission</div><div style="font-size:.6875rem;color:var(--muted)">Always 0% — retained 100%</div></div><span style="font-family:'Sora',sans-serif;font-weight:800;color:var(--green)">0%</span></div>
@@ -1074,7 +1074,7 @@ button,select,input,textarea{font-family:'DM Sans',sans-serif}
             </div>
           </div>
           <div class="card">
-            <div class="card-hd"><span class="card-title">Admin Roles</span><button class="btn b-dark">+ Add Staff</button></div>
+            <div class="card-hd"><span class="card-title">Admin Roles</span><button class="btn b-dark" onclick="adminAddUserGlobal()">+ Add Staff</button></div>
             <div style="padding:4px 0">
               <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 18px;border-bottom:1px solid var(--border2)"><div style="display:flex;align-items:center;gap:8px"><div class="sb-av">RA</div><div><div style="font-size:.8125rem;font-weight:600;color:var(--text)">Raylane Admin</div><div style="font-size:.625rem;color:var(--muted)">super@raylane.com</div></div></div><span class="chip c-red">SUPER_ADMIN</span></div>
               <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 18px;border-bottom:1px solid var(--border2)"><div style="display:flex;align-items:center;gap:8px"><div class="sb-av">FS</div><div><div style="font-size:.8125rem;font-weight:600;color:var(--text)">Finance Staff</div><div style="font-size:.625rem;color:var(--muted)">finance@raylane.com</div></div></div><span class="chip c-purple">FINANCE</span></div>
@@ -1086,19 +1086,19 @@ button,select,input,textarea{font-family:'DM Sans',sans-serif}
     </div>
 
     <!-- Placeholder views for remaining modules -->
-    <div class="view" id="v-operators"><div class="card"><div class="card-hd"><span class="card-title">All Operators (120 active)</span><div class="card-actions"><input class="inp inp-sm" placeholder="Search operators..." style="width:180px"><button class="btn b-dark" onclick="adminManualOnboard()">+ Manual Onboard</button></div></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Operator</th><th>Type</th><th>Fleet</th><th>Routes</th><th>Commission</th><th>Rating</th><th>Modules</th><th>Status</th><th>Actions</th></tr></thead><tbody><tr><td><div style="display:flex;align-items:center;gap:8px"><div class="sb-av" style="font-size:.5rem">RL</div><div><div class="td-p">Raylane Express</div><div class="td-muted">super@raylane.com</div></div></div></td><td><span class="chip c-gold">RAYLANE</span></td><td>12 vehicles</td><td>All routes</td><td style="color:var(--green);font-weight:700">0%</td><td>⭐ 5.0</td><td><span class="chip c-green">All</span></td><td><span class="chip c-green">Active</span></td><td></td></tr><tr><td><div style="display:flex;align-items:center;gap:8px"><div class="sb-av" style="font-size:.5rem">GB</div><div><div class="td-p">Gateway Bus Ltd</div><div class="td-muted">gateway@bus.com</div></div></div></td><td><span class="chip c-navy">3rd Party</span></td><td>8 vehicles</td><td>KLA–NBI</td><td>10%</td><td>⭐ 4.8</td><td><span class="chip c-blue">Basic</span></td><td><span class="chip c-green">Active</span></td><td><div style="display:flex;gap:4px"><button class="btn b-outline" style="font-size:.5rem" onclick="nav('modules',null)">Modules</button><button class="btn b-ghost" style="font-size:.5rem" onclick="adminEditOperator(this)">Edit</button></div></td></tr><tr><td><div style="display:flex;align-items:center;gap:8px"><div class="sb-av" style="font-size:.5rem">PB</div><div><div class="td-p">Post Bus UG</div><div class="td-muted">postbus@gov.ug</div></div></div></td><td><span class="chip c-navy">3rd Party</span></td><td>22 vehicles</td><td>National</td><td>10%</td><td>⭐ 4.3</td><td><span class="chip c-gold">Premium</span></td><td><span class="chip c-green">Active</span></td><td><div style="display:flex;gap:4px"><button class="btn b-outline" style="font-size:.5rem" onclick="nav('modules',null)">Modules</button><button class="btn b-ghost" style="font-size:.5rem">Edit</button></div></td></tr></tbody></table></div></div></div>
-    <div class="view" id="v-trips"><div class="card"><div class="card-hd"><span class="card-title">Trip Approvals (12 pending)</span><div class="card-actions"><button class="btn b-green" onclick="adminBulkApprove()">✓ Bulk Approve</button><button class="btn b-outline">Filter</button></div></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Trip ID</th><th>Route</th><th>Operator</th><th>Departure</th><th>Vehicle</th><th>Seats</th><th>Price</th><th>Status</th><th>Actions</th></tr></thead><tbody><tr><td class="td-mono">T-003</td><td class="td-p">KLA → MBL</td><td>Link Express</td><td>Today 14:00</td><td>UCA 789H</td><td>18</td><td>UGX 30K</td><td><span class="chip c-amber">Pending</span></td><td><div style="display:flex;gap:4px"><button class="btn b-green" style="font-size:.5rem" onclick="resolveAlert(event)">✓ Approve</button><button class="btn b-red" style="font-size:.5rem;padding:6px 7px" onclick="resolveAlert(event)">✗</button></div></td></tr><tr><td class="td-mono">T-005</td><td class="td-p">KLA → KGL</td><td>Kampala Coach</td><td>Today 05:00</td><td>UEE 999K</td><td>45</td><td>UGX 120K</td><td><span class="chip c-amber">Pending</span></td><td><div style="display:flex;gap:4px"><button class="btn b-green" style="font-size:.5rem" onclick="resolveAlert(event)">✓ Approve</button><button class="btn b-red" style="font-size:.5rem;padding:6px 7px" onclick="resolveAlert(event)">✗</button></div></td></tr><tr><td class="td-mono">T-001</td><td class="td-p"><span class="chip c-gold" style="margin-right:4px">RL</span>KLA → NBI</td><td style="color:var(--g500);font-weight:700">Raylane Express</td><td>Today 07:30</td><td>UBA 001R</td><td>67</td><td>UGX 115K</td><td><span class="chip c-green">Auto-Approved</span></td><td><span style="font-size:.6rem;color:var(--muted)">is_raylane_fleet: true</span></td></tr></tbody></table></div></div></div>
+    <div class="view" id="v-operators"><div class="card"><div class="card-hd"><span class="card-title">All Operators (120 active)</span><div class="card-actions"><input class="inp inp-sm" placeholder="Search operators..." style="width:180px" oninput="adminSearch(this.value)"><button class="btn b-dark" onclick="adminManualOnboard()">+ Manual Onboard</button></div></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Operator</th><th>Type</th><th>Fleet</th><th>Routes</th><th>Commission</th><th>Rating</th><th>Modules</th><th>Status</th><th>Actions</th></tr></thead><tbody><tr><td><div style="display:flex;align-items:center;gap:8px"><div class="sb-av" style="font-size:.5rem">RL</div><div><div class="td-p">Raylane Express</div><div class="td-muted">super@raylane.com</div></div></div></td><td><span class="chip c-gold">RAYLANE</span></td><td>12 vehicles</td><td>All routes</td><td style="color:var(--green);font-weight:700">0%</td><td>⭐ 5.0</td><td><span class="chip c-green">All</span></td><td><span class="chip c-green">Active</span></td><td></td></tr><tr><td><div style="display:flex;align-items:center;gap:8px"><div class="sb-av" style="font-size:.5rem">GB</div><div><div class="td-p">Gateway Bus Ltd</div><div class="td-muted">gateway@bus.com</div></div></div></td><td><span class="chip c-navy">3rd Party</span></td><td>8 vehicles</td><td>KLA–NBI</td><td>10%</td><td>⭐ 4.8</td><td><span class="chip c-blue">Basic</span></td><td><span class="chip c-green">Active</span></td><td><div style="display:flex;gap:4px"><button class="btn b-outline" style="font-size:.5rem" onclick="nav('modules',null)">Modules</button><button class="btn b-ghost" style="font-size:.5rem" onclick="adminEditOperator(this)">Edit</button></div></td></tr><tr><td><div style="display:flex;align-items:center;gap:8px"><div class="sb-av" style="font-size:.5rem">PB</div><div><div class="td-p">Post Bus UG</div><div class="td-muted">postbus@gov.ug</div></div></div></td><td><span class="chip c-navy">3rd Party</span></td><td>22 vehicles</td><td>National</td><td>10%</td><td>⭐ 4.3</td><td><span class="chip c-gold">Premium</span></td><td><span class="chip c-green">Active</span></td><td><div style="display:flex;gap:4px"><button class="btn b-outline" style="font-size:.5rem" onclick="nav('modules',null)">Modules</button><button class="btn b-ghost" style="font-size:.5rem" onclick="adminEditOperator(this)">Edit</button></div></td></tr></tbody></table></div></div></div>
+    <div class="view" id="v-trips"><div class="card"><div class="card-hd"><span class="card-title">Trip Approvals (12 pending)</span><div class="card-actions"><button class="btn b-green" onclick="adminBulkApprove()">✓ Bulk Approve</button><button class="btn b-outline" onclick="adminFilterPayouts()">Filter</button></div></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Trip ID</th><th>Route</th><th>Operator</th><th>Departure</th><th>Vehicle</th><th>Seats</th><th>Price</th><th>Status</th><th>Actions</th></tr></thead><tbody><tr><td class="td-mono">T-003</td><td class="td-p">KLA → MBL</td><td>Link Express</td><td>Today 14:00</td><td>UCA 789H</td><td>18</td><td>UGX 30K</td><td><span class="chip c-amber">Pending</span></td><td><div style="display:flex;gap:4px"><button class="btn b-green" style="font-size:.5rem" onclick="approveTrip(this)">✓ Approve</button><button class="btn b-red" style="font-size:.5rem;padding:6px 7px" onclick="rejectTrip(this)">✗</button></div></td></tr><tr><td class="td-mono">T-005</td><td class="td-p">KLA → KGL</td><td>Kampala Coach</td><td>Today 05:00</td><td>UEE 999K</td><td>45</td><td>UGX 120K</td><td><span class="chip c-amber">Pending</span></td><td><div style="display:flex;gap:4px"><button class="btn b-green" style="font-size:.5rem" onclick="approveTrip(this)">✓ Approve</button><button class="btn b-red" style="font-size:.5rem;padding:6px 7px" onclick="rejectTrip(this)">✗</button></div></td></tr><tr><td class="td-mono">T-001</td><td class="td-p"><span class="chip c-gold" style="margin-right:4px">RL</span>KLA → NBI</td><td style="color:var(--g500);font-weight:700">Raylane Express</td><td>Today 07:30</td><td>UBA 001R</td><td>67</td><td>UGX 115K</td><td><span class="chip c-green">Auto-Approved</span></td><td><span style="font-size:.6rem;color:var(--muted)">is_raylane_fleet: true</span></td></tr></tbody></table></div></div></div>
     <div class="view" id="v-bookings"><div class="card"><div class="card-hd"><span class="card-title">All Bookings</span><div class="card-actions"><input class="inp inp-sm" placeholder="Search ref, name, route..." style="width:200px" oninput="adminSearch(this.value)"><button class="btn b-outline" onclick="adminExport('bookings')">↓ Export CSV</button></div></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Reference</th><th>Passenger</th><th>Route</th><th>Seats</th><th>Amount</th><th>Paid</th><th>Balance Due</th><th>Booking Status</th><th>Time</th></tr></thead><tbody><tr><td class="td-mono">RL-A7B3C2</td><td class="td-p">Sarah M. · +256 77x</td><td>KLA→NBI</td><td>[14A]</td><td>UGX 115K</td><td style="color:var(--green);font-weight:600">UGX 23K</td><td style="color:var(--amber);font-weight:600">UGX 92K</td><td><span class="chip c-green">Confirmed</span></td><td class="td-muted">2 min ago</td></tr><tr><td class="td-mono">RL-C4D1E8</td><td class="td-p">James K.</td><td>KLA→MBL</td><td>[5B]</td><td>UGX 30K</td><td style="color:var(--red);font-weight:600">UGX 0</td><td style="color:var(--red);font-weight:600">UGX 30K</td><td><span class="chip c-red">Payment Failed</span></td><td class="td-muted">8 min ago</td></tr></tbody></table></div></div></div>
     <div class="view" id="v-seats">
       <div class="g2">
         <div class="card"><div class="card-hd"><span class="card-title">Seat Map — Admin Override</span><select class="inp inp-sm" style="width:240px"><option>T-001 · RL KLA→NBI · 07:30</option><option>T-003 · KLA→MBL · 14:00</option></select></div><div style="padding:16px;text-align:center"><div style="background:var(--n800);color:var(--g400);font-family:'Sora',sans-serif;font-size:.625rem;font-weight:700;padding:5px 16px;border-radius:50px;display:inline-block;margin-bottom:12px">🚌 Front — Uganda RHD Layout</div><div class="seat-grid" id="seatGrid"></div><div style="display:flex;gap:12px;justify-content:center;margin-top:12px;flex-wrap:wrap"><div style="display:flex;align-items:center;gap:4px;font-size:.5625rem;color:var(--muted)"><div style="width:12px;height:10px;border-radius:3px;background:var(--surface);border:1.5px solid var(--border)"></div>Available</div><div style="display:flex;align-items:center;gap:4px;font-size:.5625rem;color:var(--muted)"><div style="width:12px;height:10px;border-radius:3px;background:var(--g500);border:1.5px solid var(--g400)"></div>Selected</div><div style="display:flex;align-items:center;gap:4px;font-size:.5625rem;color:var(--muted)"><div style="width:12px;height:10px;border-radius:3px;background:var(--bg);border:1.5px solid var(--border2)"></div>Sold</div><div style="display:flex;align-items:center;gap:4px;font-size:.5625rem;color:var(--muted)"><div style="width:12px;height:10px;border-radius:3px;background:var(--n800);border:1.5px solid var(--n700)"></div>Driver</div></div></div></div>
-        <div class="card"><div class="card-hd"><span class="card-title">Occupancy & Admin Controls</span></div><div style="padding:16px"><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px"><div style="background:var(--bg);border-radius:10px;padding:12px;text-align:center"><div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.375rem;color:var(--text)">60</div><div style="font-size:.625rem;color:var(--muted)">Booked</div></div><div style="background:var(--bg);border-radius:10px;padding:12px;text-align:center"><div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.375rem;color:var(--green)">7</div><div style="font-size:.625rem;color:var(--muted)">Available</div></div><div style="background:var(--bg);border-radius:10px;padding:12px;text-align:center"><div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.375rem;color:var(--text)">90%</div><div style="font-size:.625rem;color:var(--muted)">Occupancy</div></div><div style="background:var(--bg);border-radius:10px;padding:12px;text-align:center"><div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.375rem;color:var(--amber)">0</div><div style="font-size:.625rem;color:var(--muted)">Locked (Redis)</div></div></div><div class="occ-bar-wrap" style="margin-bottom:6px"><div class="occ-bar occ-high" style="width:90%"></div></div><div style="font-size:.625rem;color:var(--muted);margin-bottom:14px">Seat lock TTL: 5 min · Server-side Redis SETNX · Webhook-confirmed only</div><div style="display:flex;flex-direction:column;gap:7px"><button class="btn b-outline b-lg" style="justify-content:center">Release All Locked Seats</button><button class="btn b-gold b-lg" style="justify-content:center">Manually Assign Seat</button><button class="btn b-dark b-lg" style="justify-content:center">Re-sell Vacant Seats</button></div></div></div>
+        <div class="card"><div class="card-hd"><span class="card-title">Occupancy & Admin Controls</span></div><div style="padding:16px"><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px"><div style="background:var(--bg);border-radius:10px;padding:12px;text-align:center"><div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.375rem;color:var(--text)">60</div><div style="font-size:.625rem;color:var(--muted)">Booked</div></div><div style="background:var(--bg);border-radius:10px;padding:12px;text-align:center"><div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.375rem;color:var(--green)">7</div><div style="font-size:.625rem;color:var(--muted)">Available</div></div><div style="background:var(--bg);border-radius:10px;padding:12px;text-align:center"><div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.375rem;color:var(--text)">90%</div><div style="font-size:.625rem;color:var(--muted)">Occupancy</div></div><div style="background:var(--bg);border-radius:10px;padding:12px;text-align:center"><div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.375rem;color:var(--amber)">0</div><div style="font-size:.625rem;color:var(--muted)">Locked (Redis)</div></div></div><div class="occ-bar-wrap" style="margin-bottom:6px"><div class="occ-bar occ-high" style="width:90%"></div></div><div style="font-size:.625rem;color:var(--muted);margin-bottom:14px">Seat lock TTL: 5 min · Server-side Redis SETNX · Webhook-confirmed only</div><div style="display:flex;flex-direction:column;gap:7px"><button class="btn b-outline b-lg" style="justify-content:center" onclick="adminReleaseSeats()">Release All Locked Seats</button><button class="btn b-gold b-lg" style="justify-content:center" onclick="adminManualSeat()">Manually Assign Seat</button><button class="btn b-dark b-lg" style="justify-content:center" onclick="adminResellSeats()">Re-sell Vacant Seats</button></div></div></div>
       </div>
     </div>
     <div class="view" id="v-payments"><div class="card"><div class="card-hd"><span class="card-title">Payments & Transactions</span><div class="card-actions"><select class="inp inp-sm"><option>All Methods</option><option>MTN MoMo</option><option>Airtel Money</option><option>Bank Transfer</option></select><button class="btn b-outline" onclick="adminExport('data')">↓ Export</button></div></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Transaction ID</th><th>Booking</th><th>Passenger</th><th>Method</th><th>Amount</th><th>Webhook ✓</th><th>Status</th><th>Time</th></tr></thead><tbody><tr><td class="td-mono">TXN-MTN-0001</td><td class="td-mono">RL-A7B3C2</td><td class="td-p">Sarah M.</td><td>MTN MoMo</td><td>UGX 23,000</td><td><span class="chip c-green">Verified</span></td><td><span class="chip c-green">Success</span></td><td class="td-muted">2 min ago</td></tr><tr><td class="td-mono">TXN-AIR-0002</td><td class="td-mono">RL-C4D1E8</td><td class="td-p">James K.</td><td>Airtel Money</td><td>UGX 30,000</td><td><span class="chip c-red">Not received</span></td><td><span class="chip c-red">Failed · Retry 2</span></td><td class="td-muted">8 min ago</td></tr><tr><td class="td-mono">TXN-MTN-0003</td><td class="td-mono">RL-E9F2G1</td><td class="td-p">Alice B.</td><td>Bank Transfer</td><td>UGX 1,080,000</td><td><span class="chip c-green">Verified</span></td><td><span class="chip c-green">Success</span></td><td class="td-muted">15 min ago</td></tr></tbody></table></div></div></div>
     <div class="view" id="v-parcels"><div class="kpi-grid" style="margin-bottom:14px"><div class="kpi"><div class="kpi-top"><span class="kpi-lbl">Parcels Today</span></div><div class="kpi-val">84</div><div class="kpi-trend kpi-up">↑ 12%</div></div><div class="kpi"><div class="kpi-top"><span class="kpi-lbl">In Transit</span></div><div class="kpi-val" style="color:var(--amber)">42</div><div class="kpi-trend kpi-neutral">Across network</div></div><div class="kpi"><div class="kpi-top"><span class="kpi-lbl">Delivered</span></div><div class="kpi-val" style="color:var(--green)">38</div><div class="kpi-trend kpi-up">95% on-time</div></div><div class="kpi"><div class="kpi-top"><span class="kpi-lbl">Revenue</span></div><div class="kpi-val kpi-val-sm">UGX 1.4M</div></div></div><div class="card"><div class="card-hd"><span class="card-title">Parcel Tracker</span></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Reference</th><th>Sender</th><th>Recipient</th><th>Route</th><th>Weight</th><th>Fee</th><th>Status</th></tr></thead><tbody><tr><td class="td-mono">RL-PAR-001</td><td class="td-p">John D.</td><td>Mary K.</td><td>KLA→GUL</td><td>3 kg</td><td>UGX 15K</td><td><span class="chip c-blue">In Transit</span></td></tr><tr><td class="td-mono">RL-PAR-002</td><td class="td-p">Sarah M.</td><td>David O.</td><td>KLA→NBI</td><td>1.5 kg</td><td>UGX 25K</td><td><span class="chip c-green">Delivered</span></td></tr></tbody></table></div></div></div>
     <div class="view" id="v-analytics"><div class="kpi-grid" style="margin-bottom:14px"><div class="kpi"><div class="kpi-top"><span class="kpi-lbl">Top Route</span></div><div class="kpi-val" style="font-size:1rem">KLA→NBI</div><div class="kpi-trend kpi-up">↑ 23% demand</div></div><div class="kpi"><div class="kpi-top"><span class="kpi-lbl">Avg Occupancy</span></div><div class="kpi-val">84%</div><div class="kpi-trend kpi-up">↑ 6%</div></div><div class="kpi"><div class="kpi-top"><span class="kpi-lbl">RL Fleet vs 3rd Party</span></div><div class="kpi-val" style="color:var(--g500)">37%</div><div class="kpi-trend" style="color:var(--g500)">fleet share of revenue</div></div><div class="kpi"><div class="kpi-top"><span class="kpi-lbl">Repeat Passengers</span></div><div class="kpi-val">62%</div><div class="kpi-trend kpi-neutral">High loyalty</div></div></div><div class="card"><div class="card-hd"><span class="card-title">Route Performance</span></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Route</th><th>Daily Trips</th><th>Avg Occupancy</th><th>Revenue/Day</th><th>RL Fleet Share</th><th>Trend</th></tr></thead><tbody><tr><td class="td-p">Kampala → Nairobi</td><td>6</td><td><div style="display:flex;align-items:center;gap:6px"><div class="occ-bar-wrap" style="width:60px"><div class="occ-bar occ-high" style="width:91%"></div></div>91%</div></td><td style="color:var(--green);font-weight:600">UGX 7.2M</td><td><span class="chip c-gold">2/6 RL</span></td><td style="color:var(--green)">↑ 23%</td></tr><tr><td class="td-p">Kampala → Gulu</td><td>8</td><td><div style="display:flex;align-items:center;gap:6px"><div class="occ-bar-wrap" style="width:60px"><div class="occ-bar occ-high" style="width:78%"></div></div>78%</div></td><td style="color:var(--green);font-weight:600">UGX 3.6M</td><td><span class="chip c-gold">3/8 RL</span></td><td style="color:var(--green)">↑ 8%</td></tr></tbody></table></div></div></div>
-    <div class="view" id="v-tourist"><div class="kpi-grid" style="margin-bottom:14px"><div class="kpi"><div class="kpi-top"><span class="kpi-lbl">Tourist Bookings</span></div><div class="kpi-val">84</div><div class="kpi-trend kpi-up">↑ 34% this month</div></div><div class="kpi"><div class="kpi-top"><span class="kpi-lbl">Itineraries Generated</span></div><div class="kpi-val">312</div></div><div class="kpi"><div class="kpi-top"><span class="kpi-lbl">Avg Tourist Spend</span></div><div class="kpi-val kpi-val-sm">UGX 480K</div><div class="kpi-trend kpi-up">3.4× regular fare</div></div><div class="kpi"><div class="kpi-top"><span class="kpi-lbl">Active Destinations</span></div><div class="kpi-val">8</div></div></div><div class="card"><div class="card-hd"><span class="card-title">Destination Manager</span><div class="card-actions"><button class="btn b-dark">+ Add Destination</button><button class="btn b-gold">+ New Itinerary</button></div></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Destination</th><th>Category</th><th>Route</th><th>Drive Time</th><th>Tourist Trips</th><th>Status</th><th>Actions</th></tr></thead><tbody><tr><td class="td-p">Bwindi Forest</td><td><span class="chip c-green">Wildlife</span></td><td>KLA→Kabale</td><td>7h</td><td>28</td><td><span class="chip c-green">Active</span></td><td><button class="btn b-outline" style="font-size:.5rem">Edit</button></td></tr><tr><td class="td-p">Source of Nile, Jinja</td><td><span class="chip c-blue">Adventure</span></td><td>KLA→Jinja</td><td>2h</td><td>42</td><td><span class="chip c-green">Active</span></td><td><button class="btn b-outline" style="font-size:.5rem">Edit</button></td></tr><tr><td class="td-p">Murchison Falls NP</td><td><span class="chip c-amber">Nature</span></td><td>KLA→Gulu rd</td><td>4h</td><td>19</td><td><span class="chip c-green">Active</span></td><td><button class="btn b-outline" style="font-size:.5rem">Edit</button></td></tr></tbody></table></div></div></div>
+    <div class="view" id="v-tourist"><div class="kpi-grid" style="margin-bottom:14px"><div class="kpi"><div class="kpi-top"><span class="kpi-lbl">Tourist Bookings</span></div><div class="kpi-val">84</div><div class="kpi-trend kpi-up">↑ 34% this month</div></div><div class="kpi"><div class="kpi-top"><span class="kpi-lbl">Itineraries Generated</span></div><div class="kpi-val">312</div></div><div class="kpi"><div class="kpi-top"><span class="kpi-lbl">Avg Tourist Spend</span></div><div class="kpi-val kpi-val-sm">UGX 480K</div><div class="kpi-trend kpi-up">3.4× regular fare</div></div><div class="kpi"><div class="kpi-top"><span class="kpi-lbl">Active Destinations</span></div><div class="kpi-val">8</div></div></div><div class="card"><div class="card-hd"><span class="card-title">Destination Manager</span><div class="card-actions"><button class="btn b-dark" onclick="adminAddDestination()">+ Add Destination</button><button class="btn b-gold" onclick="adminNewItinerary()">+ New Itinerary</button></div></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Destination</th><th>Category</th><th>Route</th><th>Drive Time</th><th>Tourist Trips</th><th>Status</th><th>Actions</th></tr></thead><tbody><tr><td class="td-p">Bwindi Forest</td><td><span class="chip c-green">Wildlife</span></td><td>KLA→Kabale</td><td>7h</td><td>28</td><td><span class="chip c-green">Active</span></td><td><button class="btn b-outline" style="font-size:.5rem" onclick="adminEditDestination(this,\'Bwindi Forest\')">Edit</button></td></tr><tr><td class="td-p">Source of Nile, Jinja</td><td><span class="chip c-blue">Adventure</span></td><td>KLA→Jinja</td><td>2h</td><td>42</td><td><span class="chip c-green">Active</span></td><td><button class="btn b-outline" style="font-size:.5rem" onclick="adminEditDestination(this,\'Source of Nile, Jinja\')">Edit</button></td></tr><tr><td class="td-p">Murchison Falls NP</td><td><span class="chip c-amber">Nature</span></td><td>KLA→Gulu rd</td><td>4h</td><td>19</td><td><span class="chip c-green">Active</span></td><td><button class="btn b-outline" style="font-size:.5rem" onclick="adminEditDestination(this,\'Murchison Falls NP\')">Edit</button></td></tr></tbody></table></div></div></div>
     <div class="view" id="v-fleet-financials"><div class="kpi-grid" style="margin-bottom:14px"><div class="kpi" style="border-top:3px solid var(--g500)"><div class="kpi-top"><span class="kpi-lbl">Fleet Monthly Revenue</span></div><div class="kpi-val kpi-val-sm" style="color:var(--green)">UGX 18.2M</div><div class="kpi-trend kpi-up">100% retained</div></div><div class="kpi" style="border-top:3px solid var(--red)"><div class="kpi-top"><span class="kpi-lbl">Fleet Expenses</span></div><div class="kpi-val kpi-val-sm" style="color:var(--red)">UGX 4.8M</div><div class="kpi-trend kpi-neutral">Fuel + wages</div></div><div class="kpi" style="border-top:3px solid var(--n800)"><div class="kpi-top"><span class="kpi-lbl">Fleet Net Profit</span></div><div class="kpi-val kpi-val-sm">UGX 13.4M</div><div class="kpi-trend kpi-up">↑ 22% vs last month</div></div><div class="kpi" style="border-top:3px solid var(--g500)"><div class="kpi-top"><span class="kpi-lbl">Commission Saved</span></div><div class="kpi-val kpi-val-sm" style="color:var(--g500)">UGX 1.82M</div><div class="kpi-trend" style="color:var(--g500)">vs 10% on 3rd party</div></div></div><div class="card"><div class="card-hd"><span class="card-title">Fleet P&L by Vehicle</span><button class="btn b-outline" onclick="adminExport('fleet')">↓ Export</button></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Vehicle</th><th>Type</th><th>Trips</th><th>Revenue</th><th>Fuel</th><th>Driver Wage</th><th>Net Profit</th><th>Margin</th></tr></thead><tbody><tr><td class="td-mono">UBA 001R</td><td>Coach 67</td><td>18</td><td style="color:var(--green);font-weight:600">UGX 8.1M</td><td style="color:var(--red)">UGX 1.2M</td><td style="color:var(--red)">UGX 900K</td><td style="font-weight:700">UGX 6.0M</td><td><span class="chip c-green">74%</span></td></tr><tr><td class="td-mono">UBB 002R</td><td>Coach 65</td><td>16</td><td style="color:var(--green);font-weight:600">UGX 7.8M</td><td style="color:var(--red)">UGX 1.1M</td><td style="color:var(--red)">UGX 900K</td><td style="font-weight:700">UGX 5.8M</td><td><span class="chip c-green">74%</span></td></tr><tr><td class="td-mono">UBD 004R</td><td>Taxi 14</td><td>32</td><td style="color:var(--green);font-weight:600">UGX 2.3M</td><td style="color:var(--red)">UGX 480K</td><td style="color:var(--red)">UGX 600K</td><td style="font-weight:700">UGX 1.22M</td><td><span class="chip c-green">53%</span></td></tr></tbody></table></div></div></div>
 
   </div><!-- /content -->
@@ -1152,9 +1152,9 @@ button,select,input,textarea{font-family:'DM Sans',sans-serif}
         <div class="card-hd"><span class="card-title">Marketplace Vendors</span><button class="btn b-dark" onclick="toast('Vendor onboarding link sent.')">+ Onboard Vendor</button></div>
         <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Vendor</th><th>Category</th><th>Coverage</th><th>Subscription</th><th>Operators Using</th><th>Avg Saving</th><th>Status</th><th></th></tr></thead>
         <tbody>
-          <tr><td class="td-p">Total Uganda (Preferred)</td><td><span class="chip c-blue">Fuel</span></td><td>12 stations, KLA</td><td style="font-weight:700;color:var(--green)">UGX 300K/mo</td><td>28</td><td style="color:var(--green)">−1.5%</td><td><span class="chip c-green">Featured</span></td><td><button class="btn b-ghost" style="font-size:.5rem">Manage</button></td></tr>
-          <tr><td class="td-p">Ntinda Auto</td><td><span class="chip c-amber">Repairs</span></td><td>Industrial Area</td><td style="font-weight:700">UGX 150K/mo</td><td>11</td><td style="color:var(--green)">−12%</td><td><span class="chip c-green">Active</span></td><td><button class="btn b-ghost" style="font-size:.5rem">Manage</button></td></tr>
-          <tr><td class="td-p">Clean Wheels Uganda</td><td><span class="chip c-gray">Washing</span></td><td>3 locations</td><td style="font-weight:700">UGX 100K/mo</td><td>19</td><td style="color:var(--green)">−16%</td><td><span class="chip c-green">Active</span></td><td><button class="btn b-ghost" style="font-size:.5rem">Manage</button></td></tr>
+          <tr><td class="td-p">Total Uganda (Preferred)</td><td><span class="chip c-blue">Fuel</span></td><td>12 stations, KLA</td><td style="font-weight:700;color:var(--green)">UGX 300K/mo</td><td>28</td><td style="color:var(--green)">−1.5%</td><td><span class="chip c-green">Featured</span></td><td><button class="btn b-ghost" style="font-size:.5rem" onclick="adminManageVendor(this)">Manage</button></td></tr>
+          <tr><td class="td-p">Ntinda Auto</td><td><span class="chip c-amber">Repairs</span></td><td>Industrial Area</td><td style="font-weight:700">UGX 150K/mo</td><td>11</td><td style="color:var(--green)">−12%</td><td><span class="chip c-green">Active</span></td><td><button class="btn b-ghost" style="font-size:.5rem" onclick="adminManageVendor(this)">Manage</button></td></tr>
+          <tr><td class="td-p">Clean Wheels Uganda</td><td><span class="chip c-gray">Washing</span></td><td>3 locations</td><td style="font-weight:700">UGX 100K/mo</td><td>19</td><td style="color:var(--green)">−16%</td><td><span class="chip c-green">Active</span></td><td><button class="btn b-ghost" style="font-size:.5rem" onclick="adminManageVendor(this)">Manage</button></td></tr>
           <tr><td class="td-p">Tororo Tyre Hub</td><td><span class="chip c-red">Tyres</span></td><td>Eastern Uganda</td><td style="font-weight:700">UGX 200K/mo</td><td>4</td><td style="color:var(--green)">−8%</td><td><span class="chip c-amber">Pending review</span></td><td><button class="btn b-green" style="font-size:.5rem" onclick="toast('Tororo Tyre Hub approved and active on marketplace.')">Approve</button></td></tr>
         </tbody></table></div>
       </div>
@@ -1172,9 +1172,9 @@ button,select,input,textarea{font-family:'DM Sans',sans-serif}
         <div class="card">
           <div class="card-hd"><span class="card-title">Report Catalogue</span><button class="btn b-dark" onclick="toast('New report added to catalogue.')">+ Add Report</button></div>
           <div style="display:flex;flex-direction:column;gap:0">
-            <div style="padding:13px 16px;border-bottom:1px solid var(--border2)"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:.875rem;font-weight:700;color:var(--text)">Route Demand & Pricing Trends Q1 2026</span><span style="font-family:'Sora',sans-serif;font-weight:800;font-size:.875rem;color:var(--n800)">UGX 1.5M</span></div><div style="font-size:.6875rem;color:var(--muted)">Demand by route, avg fares, peak days, occupancy rates. 42 pages.</div><div style="display:flex;gap:7px;margin-top:7px"><span class="chip c-green">3 sold</span><button class="btn b-ghost" style="font-size:.5rem">Preview</button><button class="btn b-dark" style="font-size:.5rem" onclick="toast('Report enquiry link sent to buyer.')">Sell</button></div></div>
-            <div style="padding:13px 16px;border-bottom:1px solid var(--border2)"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:.875rem;font-weight:700;color:var(--text)">Kampala Urban Transport: Passenger OD Matrix</span><span style="font-family:'Sora',sans-serif;font-weight:800;font-size:.875rem;color:var(--n800)">UGX 2M</span></div><div style="font-size:.6875rem;color:var(--muted)">Origin-destination flows, travel times, modal split by corridor.</div><div style="display:flex;gap:7px;margin-top:7px"><span class="chip c-amber">1 sold</span><button class="btn b-ghost" style="font-size:.5rem">Preview</button><button class="btn b-dark" style="font-size:.5rem" onclick="toast('Report enquiry link sent.')">Sell</button></div></div>
-            <div style="padding:13px 16px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:.875rem;font-weight:700;color:var(--text)">PSV Insurance Penetration Study 2025</span><span style="font-family:'Sora',sans-serif;font-weight:800;font-size:.875rem;color:var(--n800)">UGX 800K</span></div><div style="font-size:.6875rem;color:var(--muted)">Coverage gaps, at-risk vehicles, compliance rates by route.</div><div style="display:flex;gap:7px;margin-top:7px"><span class="chip c-blue">New</span><button class="btn b-ghost" style="font-size:.5rem">Preview</button><button class="btn b-dark" style="font-size:.5rem" onclick="toast('Report pushed to catalogue.')">Publish</button></div></div>
+            <div style="padding:13px 16px;border-bottom:1px solid var(--border2)"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:.875rem;font-weight:700;color:var(--text)">Route Demand & Pricing Trends Q1 2026</span><span style="font-family:'Sora',sans-serif;font-weight:800;font-size:.875rem;color:var(--n800)">UGX 1.5M</span></div><div style="font-size:.6875rem;color:var(--muted)">Demand by route, avg fares, peak days, occupancy rates. 42 pages.</div><div style="display:flex;gap:7px;margin-top:7px"><span class="chip c-green">3 sold</span><button class="btn b-ghost" style="font-size:.5rem" onclick="adminPreviewReport(this)">Preview</button><button class="btn b-dark" style="font-size:.5rem" onclick="toast('Report enquiry link sent to buyer.')">Sell</button></div></div>
+            <div style="padding:13px 16px;border-bottom:1px solid var(--border2)"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:.875rem;font-weight:700;color:var(--text)">Kampala Urban Transport: Passenger OD Matrix</span><span style="font-family:'Sora',sans-serif;font-weight:800;font-size:.875rem;color:var(--n800)">UGX 2M</span></div><div style="font-size:.6875rem;color:var(--muted)">Origin-destination flows, travel times, modal split by corridor.</div><div style="display:flex;gap:7px;margin-top:7px"><span class="chip c-amber">1 sold</span><button class="btn b-ghost" style="font-size:.5rem" onclick="adminPreviewReport(this)">Preview</button><button class="btn b-dark" style="font-size:.5rem" onclick="toast('Report enquiry link sent.')">Sell</button></div></div>
+            <div style="padding:13px 16px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:.875rem;font-weight:700;color:var(--text)">PSV Insurance Penetration Study 2025</span><span style="font-family:'Sora',sans-serif;font-weight:800;font-size:.875rem;color:var(--n800)">UGX 800K</span></div><div style="font-size:.6875rem;color:var(--muted)">Coverage gaps, at-risk vehicles, compliance rates by route.</div><div style="display:flex;gap:7px;margin-top:7px"><span class="chip c-blue">New</span><button class="btn b-ghost" style="font-size:.5rem" onclick="adminPreviewReport(this)">Preview</button><button class="btn b-dark" style="font-size:.5rem" onclick="toast('Report pushed to catalogue.')">Publish</button></div></div>
           </div>
         </div>
         <div class="card">
@@ -1240,6 +1240,7 @@ button,select,input,textarea{font-family:'DM Sans',sans-serif}
 </div><!-- /shell -->
 
 <script>
+
 /* ================================================================
    RAYLANE EXPRESS — SUPER ADMIN v3 (zero template literals)
    All strings use single-quote concatenation only.
@@ -1297,23 +1298,49 @@ document.addEventListener('click', function(e) {
 
 // ── ALERTS ────────────────────────────────────────────────────────
 function resolveAlert(e) {
+  // ONLY dismisses alert cards - does NOT touch table rows
   if (!e) return;
   var card = e.target ? e.target.closest('.alert-card') : null;
   if (card) {
-    card.classList.add('resolved');
+    card.style.opacity = '0.4';
+    card.style.pointerEvents = 'none';
     var b = document.getElementById('alertBadge');
     if (b) { var n = parseInt(b.textContent||'0'); if (n>0) b.textContent = n-1; }
-    return;
   }
-  var row = e.target ? e.target.closest('tr') : null;
-  if (row) {
-    var cells = row.querySelectorAll('td');
-    var last = cells[cells.length-1];
-    var sec = cells[cells.length-2];
-    if (sec) sec.innerHTML = '<span class="chip c-green">Approved</span>';
-    if (last) last.innerHTML = '<span style="font-size:.5rem;color:var(--green);font-weight:700">Live</span>';
-    toast('Trip approved and live on raylane.com');
-  }
+}
+
+// Approve a trip row (green button in trips table)
+function approveTrip(btn) {
+  var row = btn.closest('tr');
+  if (!row) return;
+  var cells = row.querySelectorAll('td');
+  var statusCell = cells[cells.length-2];
+  var actionCell = cells[cells.length-1];
+  if (statusCell) statusCell.innerHTML = '<span class="chip c-green">Approved</span>';
+  if (actionCell) actionCell.innerHTML = '<span style="font-size:.5rem;color:var(--green);font-weight:700">✓ Live</span>';
+  toast('Trip approved and live on raylane.com. Operator notified via SMS.');
+}
+
+// Reject a trip row (red button in trips table) 
+function rejectTrip(btn) {
+  var row = btn.closest('tr');
+  var tripId = row ? row.cells[0].textContent.trim() : 'Trip';
+  modal(
+    mh('Reject Trip — ' + tripId),
+    '<div style="padding:20px">' +
+    mt('Reason for rejection (sent to operator via SMS)', 'e.g. Vehicle not verified, departure time conflict...') +
+    '<div style="display:flex;gap:9px">' +
+    '<button class="op-save-btn" data-msg="Trip rejected. Operator notified with reason via SMS." style="flex:1;background:var(--red);color:#fff;font-family:Sora,sans-serif;font-weight:700;font-size:.875rem;padding:11px;border-radius:10px;border:none;cursor:pointer">Reject & Notify</button>' +
+    '<button onclick="closeModal()" style="background:var(--bg);border:1.5px solid var(--border);color:var(--text2);font-family:Sora,sans-serif;font-weight:600;padding:11px 18px;border-radius:10px;cursor:pointer">Cancel</button>' +
+    '</div></div>'
+  );
+  document.addEventListener('click', function handler(e) {
+    var btn2 = e.target.closest('.op-save-btn');
+    if (btn2) {
+      if (row) { var ac = row.cells[row.cells.length-2]; if (ac) ac.innerHTML = '<span class="chip c-red">Rejected</span>'; }
+      document.removeEventListener('click', handler);
+    }
+  }, {once: false});
 }
 function markAllRead() {
   document.querySelectorAll('.alert-card').forEach(function(a){ a.classList.add('resolved'); });
@@ -1796,6 +1823,315 @@ function adminFleetReport() {
     g.appendChild(s);
   }
 })();
+
+
+// ── DELEGATION for adm-save-btn and doc buttons ──────────────────
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('.adm-save-btn');
+  if (btn) { closeModal(); toast(btn.dataset.msg || 'Saved.'); return; }
+  var vBtn = e.target.closest('.doc-view-btn');
+  if (vBtn) { toast('Document opened in document viewer.'); return; }
+  var rBtn = e.target.closest('.doc-req-btn');
+  if (rBtn) { closeModal(); adminRequestDocs(rBtn); return; }
+});
+
+// ── APPROVE OPERATOR (from application table) ─────────────────────
+function adminViewApplication(btn) {
+  var row = btn ? btn.closest('tr') : null;
+  var name = (row && row.cells[0]) ? row.cells[0].textContent.trim() : 'Operator';
+  var body = document.createElement('div');
+  body.style.padding = '20px';
+  // Info grid
+  var grid = document.createElement('div');
+  grid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px';
+  [['Business', name], ['Fleet', '12 vehicles'], ['Contact', 'James Mubiru'], ['Routes', 'International']].forEach(function(pair) {
+    var cell = document.createElement('div');
+    cell.style.cssText = 'background:var(--bg);border-radius:9px;padding:10px';
+    cell.innerHTML = '<div style="font-size:.5625rem;color:var(--muted);margin-bottom:3px">' + pair[0] + '</div><div style="font-size:.875rem;font-weight:700">' + pair[1] + '</div>';
+    grid.appendChild(cell);
+  });
+  body.appendChild(grid);
+  // Documents
+  var docLbl = document.createElement('div');
+  docLbl.style.cssText = 'font-size:.8125rem;font-weight:600;color:var(--text2);margin-bottom:8px';
+  docLbl.textContent = 'Submitted Documents';
+  body.appendChild(docLbl);
+  var docs = [
+    {label: 'Business Certificate (URSB)', ok: true},
+    {label: 'UTODA License', ok: true},
+    {label: 'Fleet Insurance', ok: false}
+  ];
+  docs.forEach(function(doc) {
+    var row2 = document.createElement('div');
+    row2.style.cssText = 'display:flex;justify-content:space-between;align-items:center;border-radius:8px;padding:9px 12px;margin-bottom:6px;background:' + (doc.ok ? 'var(--green-bg)' : 'var(--red-bg)') + ';border:1px solid ' + (doc.ok ? 'var(--green-b)' : 'var(--red-b)');
+    var span = document.createElement('span');
+    span.style.cssText = 'font-size:.8125rem;color:' + (doc.ok ? 'var(--green)' : 'var(--red)');
+    span.textContent = (doc.ok ? '\u2713 ' : '\u2717 ') + doc.label + (doc.ok ? '' : ' \u2014 Missing');
+    var docBtn = document.createElement('button');
+    docBtn.style.cssText = 'font-size:.5rem;background:' + (doc.ok ? 'var(--green)' : 'var(--red)') + ';color:#fff;border:none;border-radius:5px;padding:3px 8px;cursor:pointer';
+    docBtn.textContent = doc.ok ? 'View' : 'Request';
+    docBtn.onclick = function() { doc.ok ? toast('Document opened.') : adminRequestDocs(docBtn); };
+    row2.appendChild(span); row2.appendChild(docBtn);
+    body.appendChild(row2);
+  });
+  // Action buttons
+  var btns = document.createElement('div');
+  btns.style.cssText = 'display:flex;gap:9px;margin-top:14px';
+  var apBtn = document.createElement('button');
+  apBtn.style.cssText = 'flex:1;background:var(--green);color:#fff;font-family:Sora,sans-serif;font-weight:700;font-size:.875rem;padding:11px;border-radius:10px;border:none;cursor:pointer';
+  apBtn.textContent = 'Approve Operator';
+  apBtn.onclick = function() { closeModal(); toast('Operator approved. Credentials sent via SMS.'); };
+  var rjBtn = document.createElement('button');
+  rjBtn.style.cssText = 'flex:1;background:var(--red);color:#fff;font-family:Sora,sans-serif;font-weight:700;font-size:.875rem;padding:11px;border-radius:10px;border:none;cursor:pointer';
+  rjBtn.textContent = 'Reject';
+  rjBtn.onclick = function() { closeModal(); adminRejectOperator(null, name); };
+  btns.appendChild(apBtn); btns.appendChild(rjBtn);
+  body.appendChild(btns);
+  // Open modal with DOM node
+  buildModalDOM();
+  document.getElementById('adminModalBox').innerHTML = mh('Application \u2014 ' + name);
+  document.getElementById('adminModalBox').appendChild(body);
+  _adminModal.style.display = 'flex';
+  _adminModal.style.pointerEvents = 'all';
+  document.body.style.overflow = 'hidden';
+}
+
+
+function adminVerifyDoc(btn) {
+  btn.textContent = 'Verified ✓';
+  btn.style.background = 'var(--green)';
+  btn.style.color = '#fff';
+  btn.onclick = null;
+  toast('Document marked as verified. Audit logged.');
+}
+
+// ── SEAT MANAGEMENT ─────────────────────────────────────────────
+function adminReleaseSeats() {
+  modal(
+    mh('Release All Locked Seats'),
+    '<div style="padding:20px">' +
+    minfo('This releases all Redis seat locks that have been held for more than 5 minutes. Passengers who locked these seats will need to re-select.', 'warn') +
+    '<div style="background:var(--bg);border-radius:9px;padding:12px;margin-bottom:14px;font-size:.8125rem;color:var(--text2)">Currently locked: <strong>3 seats</strong> on T-002 (2 min left), <strong>1 seat</strong> on T-003 (expired)</div>' +
+    '<div style="display:flex;gap:9px">' +
+    '<button class="adm-save-btn" data-msg="All expired seat locks released. Seats available for booking again." style="flex:1;background:var(--n800);color:#fff;font-family:Sora,sans-serif;font-weight:700;font-size:.875rem;padding:11px;border-radius:10px;border:none;cursor:pointer">Release Expired Locks</button>' +
+    '<button onclick="closeModal()" style="background:var(--bg);border:1.5px solid var(--border);color:var(--text2);font-family:Sora,sans-serif;font-weight:600;padding:11px 18px;border-radius:10px;cursor:pointer">Cancel</button>' +
+    '</div></div>'
+  );
+}
+
+function adminManualSeat() {
+  modal(
+    mh('Manually Assign Seat'),
+    '<div style="padding:20px">' +
+    minfo('Use this to assign a specific seat to a walk-in passenger or correct a booking error. Bypasses the online lock system.') +
+    ms('Select Trip', ['T-001 KLA→NBI 08:00 — 12 seats free', 'T-003 KLA→GUL 07:00 — 22 seats free', 'T-005 KLA→MBL 14:00 — 6 seats free']) +
+    mi('Seat Number', 'number', 'e.g. 14', '') +
+    mi('Passenger Name', 'text', 'Full name') +
+    mi('Passenger Phone', 'tel', '+256 7xx xxx xxx') +
+    ms('Payment Status', ['Cash Paid at Stage', 'MoMo — Paid Separately', 'Corporate Account', 'Complimentary']) +
+    '<button class="adm-save-btn" data-msg="Seat manually assigned. Booking created in system. SMS sent to passenger." style="width:100%;background:var(--n800);color:#fff;font-family:Sora,sans-serif;font-weight:700;font-size:.875rem;padding:11px;border-radius:10px;border:none;cursor:pointer;margin-top:4px">Assign Seat</button>' +
+    '</div>'
+  );
+}
+
+function adminResellSeats() {
+  modal(
+    mh('Re-sell Vacant Seats'),
+    '<div style="padding:20px">' +
+    '<div style="font-size:.8125rem;color:var(--text2);margin-bottom:14px;line-height:1.55">Promote available seats to passengers who previously searched this route but did not book. Sends targeted SMS to 340 passengers.</div>' +
+    ms('Select Trip', ['T-001 KLA→NBI 08:00 — 12 seats free (departs in 2h)', 'T-003 KLA→GUL 07:00 — 22 seats free (departs in 4h)']) +
+    '<div style="margin-bottom:14px"><label style="font-size:.8125rem;font-weight:600;color:var(--text2);display:block;margin-bottom:5px">Promotion Channels</label><div style="display:flex;flex-direction:column;gap:7px;font-size:.8125rem"><label style="display:flex;align-items:center;gap:7px;cursor:pointer"><input type="checkbox" checked style="accent-color:var(--n600)"> SMS to interested passengers on this route</label><label style="display:flex;align-items:center;gap:7px;cursor:pointer"><input type="checkbox" checked style="accent-color:var(--n600)"> Mark as "Leaving Soon" on raylane.com</label><label style="display:flex;align-items:center;gap:7px;cursor:pointer"><input type="checkbox" style="accent-color:var(--n600)"> Apply 10% last-minute discount</label></div></div>' +
+    '<button class="adm-save-btn" data-msg="Promotion active. 340 passengers SMS notified. Trip highlighted on website as Leaving Soon." style="width:100%;background:var(--g500);color:var(--n800);font-family:Sora,sans-serif;font-weight:800;font-size:.9375rem;padding:12px;border-radius:11px;border:none;cursor:pointer;box-shadow:0 4px 14px rgba(245,166,35,.28)">Promote Now</button>' +
+    '</div>'
+  );
+}
+
+// ── TOURIST ENGINE ───────────────────────────────────────────────
+function adminAddDestination() {
+  modal(
+    mh('Add Tourist Destination'),
+    '<div style="padding:20px">' +
+    mi('Destination Name', 'text', 'e.g. Sipi Falls, Mbale') +
+    ms('Category', ['Wildlife', 'Adventure', 'Scenic', 'Nature', 'Cultural', 'Beach / Lake']) +
+    mi('Nearest Route City (From)', 'text', 'e.g. Mbale') +
+    mi('Drive Time from Kampala (hours)', 'number', 'e.g. 5.5') +
+    mt('Description (shown to passengers)', 'What makes this destination special...') +
+    mi('Image URL', 'url', 'https://...') +
+    '<div style="margin-bottom:14px"><label style="font-size:.8125rem;font-weight:600;color:var(--text2);display:block;margin-bottom:5px">Travel Tips (one per line)</label><textarea class="inp" rows="3" style="resize:vertical" placeholder="Bring hiking boots&#10;Best visited during dry season&#10;Gorilla permits required"></textarea></div>' +
+    '<button class="adm-save-btn" data-msg="Destination added to tourist engine. Visible to passengers on raylane.com/plan" style="width:100%;background:var(--n800);color:#fff;font-family:Sora,sans-serif;font-weight:700;font-size:.875rem;padding:11px;border-radius:10px;border:none;cursor:pointer;margin-top:4px">Add Destination</button>' +
+    '</div>'
+  );
+}
+
+function adminNewItinerary() {
+  modal(
+    mh('Create Itinerary Template'),
+    '<div style="padding:20px">' +
+    mi('Itinerary Name', 'text', 'e.g. 5-Day Uganda Wildlife Safari') +
+    mi('Duration (days)', 'number', 'e.g. 5') +
+    '<div style="margin-bottom:12px"><label style="font-size:.8125rem;font-weight:600;color:var(--text2);display:block;margin-bottom:5px">Destinations (one per line)</label><textarea class="inp" rows="3" style="resize:vertical" placeholder="Bwindi Forest&#10;Queen Elizabeth NP&#10;Kibale Forest"></textarea></div>' +
+    mi('Estimated Budget (UGX)', 'number', 'e.g. 1500000') +
+    mt('Description', 'Overview of the itinerary for passengers...') +
+    '<button class="adm-save-btn" data-msg="Itinerary template created. Available to passengers in the trip planner." style="width:100%;background:var(--g500);color:var(--n800);font-family:Sora,sans-serif;font-weight:700;font-size:.875rem;padding:11px;border-radius:10px;border:none;cursor:pointer;box-shadow:0 4px 12px rgba(245,166,35,.28);margin-top:4px">Create Itinerary</button>' +
+    '</div>'
+  );
+}
+
+// ── APPLICATION FILTER ────────────────────────────────────────────
+function adminFilterApps(status) {
+  var rows = document.querySelectorAll('#v-applications tbody tr');
+  rows.forEach(function(row) {
+    if (status === 'all') { row.style.display = ''; return; }
+    var chip = row.querySelector('.chip');
+    var chipText = chip ? chip.textContent.toLowerCase() : '';
+    var show = (status === 'pending' && chipText.includes('pending')) ||
+               (status === 'review' && chipText.includes('review')) ||
+               (status === 'approved' && chipText.includes('approved')) ||
+               (status === 'rejected' && chipText.includes('rejected'));
+    row.style.display = show ? '' : 'none';
+  });
+}
+
+function adminFilterPayouts() {
+  modal(
+    mh('Filter Payouts'),
+    '<div style="padding:20px">' +
+    ms('Operator', ['All Operators','Post Bus UG','Safe Rider','Gateway Bus','Link Express']) +
+    ms('Status', ['All','Pending','Processing','Completed','Failed']) +
+    ms('Date Range', ['This Month','Last Month','Last 3 Months','Custom']) +
+    '<button class="adm-save-btn" data-msg="Payouts filtered." style="width:100%;background:var(--n800);color:#fff;font-family:Sora,sans-serif;font-weight:700;font-size:.875rem;padding:11px;border-radius:10px;border:none;cursor:pointer;margin-top:4px">Apply Filter</button>' +
+    '</div>'
+  );
+}
+
+
+// ── BOOKING VIEW (dashboard) ──────────────────────────────────
+function adminViewBooking(btn) {
+  var row = btn.closest('tr');
+  var ref = row ? row.cells[0].textContent.trim() : 'REF';
+  var pax = row ? row.cells[1].textContent.trim() : 'Passenger';
+  modal(
+    mh('Booking — ' + ref),
+    '<div style="padding:20px">' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">' +
+    '<div style="background:var(--bg);border-radius:9px;padding:10px"><div style="font-size:.5625rem;color:var(--muted);margin-bottom:3px">Reference</div><div style="font-family:monospace;font-weight:700">' + ref + '</div></div>' +
+    '<div style="background:var(--bg);border-radius:9px;padding:10px"><div style="font-size:.5625rem;color:var(--muted);margin-bottom:3px">Passenger</div><div style="font-weight:700">' + pax.split('·')[0].trim() + '</div></div>' +
+    '</div>' +
+    '<div style="display:flex;gap:9px">' +
+    '<button class="adm-save-btn" data-msg="Booking details sent to admin email." style="flex:1;background:var(--n800);color:#fff;font-family:Sora,sans-serif;font-weight:700;font-size:.875rem;padding:11px;border-radius:10px;border:none;cursor:pointer">Export Booking</button>' +
+    '<button onclick="adminContactPassengers(event)" style="flex:1;background:var(--surface);border:1.5px solid var(--border);color:var(--text2);font-family:Sora,sans-serif;font-weight:600;font-size:.875rem;padding:11px;border-radius:10px;cursor:pointer">Contact Passenger</button>' +
+    '</div></div>'
+  );
+}
+
+// ── VERIFY PAYMENT ────────────────────────────────────────────
+function adminVerifyPayment(btn) {
+  var row = btn.closest('tr');
+  modal(
+    mh('Verify Payment'),
+    '<div style="padding:20px">' +
+    minfo('This will manually mark the payment as verified and confirm the booking. Use only after confirming receipt via your MoMo dashboard.', 'warn') +
+    mi('Transaction Reference', 'text', 'MTN/Airtel ref number') +
+    mi('Amount Received (UGX)', 'number', '') +
+    '<div style="display:flex;gap:9px">' +
+    '<button class="adm-save-btn" data-msg="Payment verified. Booking confirmed. Passenger SMS sent." style="flex:1;background:var(--green);color:#fff;font-family:Sora,sans-serif;font-weight:700;font-size:.875rem;padding:11px;border-radius:10px;border:none;cursor:pointer">Mark Verified & Confirm</button>' +
+    '<button onclick="closeModal()" style="flex:1;background:var(--bg);border:1.5px solid var(--border);color:var(--text2);font-family:Sora,sans-serif;font-weight:600;font-size:.875rem;padding:11px;border-radius:10px;cursor:pointer">Cancel</button>' +
+    '</div></div>'
+  );
+}
+
+// ── DISPATCH (fleet live ops) ─────────────────────────────────
+function adminDispatch(btn) {
+  var row = btn.closest('tr');
+  var plate = row ? row.cells[0].textContent.trim() : 'Vehicle';
+  modal(
+    mh('Dispatch — ' + plate),
+    '<div style="padding:20px">' +
+    '<div style="background:var(--green-bg);border:1px solid var(--green-b);border-radius:10px;padding:12px;margin-bottom:14px;font-size:.8125rem;color:var(--green)">Dispatch sends a push notification to the driver app and updates the departure board on raylane.com.</div>' +
+    mi('Actual Departure Time', 'time') +
+    mi('Driver Note (optional)', 'text', 'e.g. Depart from Stage 3, Gate A') +
+    '<button class="adm-save-btn" data-msg="Dispatch confirmed. Driver notified. Passenger departure board updated." style="width:100%;background:var(--n800);color:#fff;font-family:Sora,sans-serif;font-weight:700;font-size:.875rem;padding:11px;border-radius:10px;border:none;cursor:pointer;margin-top:4px">Confirm Dispatch</button>' +
+    '</div>'
+  );
+}
+
+// ── DELAY ALERT (fleet) ───────────────────────────────────────
+function adminDelayAlert(btn) {
+  var row = btn.closest('tr');
+  var route = row ? (row.cells[1] ? row.cells[1].textContent.trim() : 'route') : 'route';
+  modal(
+    mh('Send Delay Alert — ' + route),
+    '<div style="padding:20px">' +
+    ms('Delay Duration', ['15 minutes', '30 minutes', '45 minutes', '1 hour', 'More than 1 hour']) +
+    mt('Reason (included in SMS to passengers)', 'e.g. Heavy traffic on Kampala-Jinja road, police checkpoint...') +
+    '<div style="background:var(--n50);border-radius:9px;padding:10px;margin-bottom:14px;font-size:.75rem;color:var(--n800)">SMS Preview: "Your Raylane trip to [destination] is delayed by 30 minutes. New departure: [time]. We apologise for the inconvenience. - Raylane Express"</div>' +
+    '<button class="adm-save-btn" data-msg="Delay alert sent to all passengers on this trip via SMS." style="width:100%;background:var(--amber);color:#fff;font-family:Sora,sans-serif;font-weight:700;font-size:.875rem;padding:11px;border-radius:10px;border:none;cursor:pointer">Send Delay Alert</button>' +
+    '</div>'
+  );
+}
+
+// ── EDIT DESTINATION ──────────────────────────────────────────
+function adminEditDestination(btn, name) {
+  modal(
+    mh('Edit Destination — ' + name),
+    '<div style="padding:20px">' +
+    mi('Destination Name', 'text', '', name) +
+    ms('Category', ['Wildlife', 'Adventure', 'Scenic', 'Nature', 'Cultural', 'Beach / Lake']) +
+    ms('Status', ['Active', 'Draft', 'Seasonal (Oct-Mar only)']) +
+    mi('Drive Time from Kampala (hrs)', 'number', '') +
+    mt('Description', 'What makes this destination special...') +
+    '<button class="adm-save-btn" data-msg="Destination updated. Changes live on raylane.com tourist planner." style="width:100%;background:var(--n800);color:#fff;font-family:Sora,sans-serif;font-weight:700;font-size:.875rem;padding:11px;border-radius:10px;border:none;cursor:pointer;margin-top:4px">Save Changes</button>' +
+    '</div>'
+  );
+}
+
+// ── MANAGE VENDOR (marketplace) ────────────────────────────────
+function adminManageVendor(btn) {
+  var row = btn.closest('tr');
+  var name = row ? row.cells[0].textContent.trim() : 'Vendor';
+  modal(
+    mh('Manage Vendor — ' + name),
+    '<div style="padding:20px">' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">' +
+    '<div style="background:var(--bg);border-radius:9px;padding:10px"><div style="font-size:.5625rem;color:var(--muted);margin-bottom:3px">Monthly Revenue</div><div style="font-weight:700;color:var(--green)">UGX 300,000</div></div>' +
+    '<div style="background:var(--bg);border-radius:9px;padding:10px"><div style="font-size:.5625rem;color:var(--muted);margin-bottom:3px">Operators Using</div><div style="font-weight:700">28</div></div>' +
+    '</div>' +
+    ms('Status', ['Featured (top of list)', 'Active', 'Suspended', 'Remove from marketplace']) +
+    mi('Monthly Subscription (UGX)', 'number', '', '300000') +
+    mt('Admin Notes', 'Internal notes about this vendor...') +
+    '<div style="display:flex;gap:9px">' +
+    '<button class="adm-save-btn" data-msg="Vendor updated in marketplace." style="flex:1;background:var(--n800);color:#fff;font-family:Sora,sans-serif;font-weight:700;font-size:.875rem;padding:11px;border-radius:10px;border:none;cursor:pointer">Save Changes</button>' +
+    '<button class="adm-save-btn" data-msg="Invoice sent to vendor for next billing period." style="flex:1;background:var(--surface);border:1.5px solid var(--border);color:var(--text2);font-family:Sora,sans-serif;font-weight:600;font-size:.875rem;padding:11px;border-radius:10px;cursor:pointer">Send Invoice</button>' +
+    '</div></div>'
+  );
+}
+
+// ── PREVIEW REPORT ────────────────────────────────────────────
+function adminPreviewReport(btn) {
+  var row = btn.closest('div[style*="padding:13px"]') || btn.closest('div');
+  var title = 'Data Report';
+  if (row) {
+    var h = row.querySelector('span[style*="font-weight:700"]');
+    if (h) title = h.textContent.trim();
+  }
+  modal(
+    mh('Preview — ' + title.substring(0, 40)),
+    '<div style="padding:20px">' +
+    '<div style="background:var(--bg);border-radius:12px;padding:20px;margin-bottom:16px">' +
+    '<div style="font-size:.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px">Executive Summary</div>' +
+    '<div style="font-size:.875rem;color:var(--text2);line-height:1.7">This report covers 42 pages of route demand data, pricing trends, and occupancy analysis across all Raylane Express routes. Data collected from ' +
+    '<strong>2,400,000+ trip data points</strong> over the reporting period. Suitable for KCCA urban planning, insurer risk modelling, and NGO logistics.</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px">' +
+    '<div style="text-align:center"><div style="font-family:Sora,sans-serif;font-weight:800;font-size:1.125rem;color:var(--n800)">42</div><div style="font-size:.5625rem;color:var(--muted)">Pages</div></div>' +
+    '<div style="text-align:center"><div style="font-family:Sora,sans-serif;font-weight:800;font-size:1.125rem;color:var(--n800)">12</div><div style="font-size:.5625rem;color:var(--muted)">Routes covered</div></div>' +
+    '<div style="text-align:center"><div style="font-family:Sora,sans-serif;font-weight:800;font-size:1.125rem;color:var(--n800)">Q1 2026</div><div style="font-size:.5625rem;color:var(--muted)">Reporting period</div></div>' +
+    '</div></div>' +
+    '<div style="display:flex;gap:9px">' +
+    '<button class="adm-save-btn" data-msg="Sample report PDF sent to your admin email." style="flex:1;background:var(--n800);color:#fff;font-family:Sora,sans-serif;font-weight:700;font-size:.875rem;padding:11px;border-radius:10px;border:none;cursor:pointer">Download Sample</button>' +
+    '<button class="adm-save-btn" data-msg="Report enquiry link sent to potential buyer." style="flex:1;background:var(--g500);color:var(--n800);font-family:Sora,sans-serif;font-weight:700;font-size:.875rem;padding:11px;border-radius:10px;border:none;cursor:pointer">Send to Buyer</button>' +
+    '</div></div>'
+  );
+}
 </script>
 </body>
 </html>
