@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login — Raylane Express</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --n900:#040B1C;--n800:#0B1D45;--n700:#132359;--n600:#1E3A8A;--n50:#EEF1FB;
+  --g500:#F5A623;--g400:#FBBF24;
+  --surface:#fff;--border:#E8EAEF;--bg:#F2F4F8;
+  --text:#0F172A;--text2:#475569;--muted:#94A3B8;
+  --green:#16A34A;--red:#DC2626;--red-bg:#FEF2F2;--red-b:#FECACA;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;min-height:100vh;display:grid;grid-template-columns:1fr 1fr;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:'Sora',sans-serif}
+
+/* LEFT — dark brand panel */
+.brand-panel{background:var(--n900);display:flex;flex-direction:column;justify-content:space-between;padding:48px;position:relative;overflow:hidden}
+.brand-panel::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:50px 50px;pointer-events:none}
+.bp-top{position:relative;z-index:1}
+.bp-logo{display:flex;align-items:center;gap:10px;margin-bottom:56px}
+.bp-logo-ic{width:44px;height:44px;background:var(--g500);border-radius:11px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(245,166,35,.3)}
+.bp-logo-ic svg{width:23px;height:23px}
+.bp-logo-txt{font-family:'Sora',sans-serif;font-size:1.125rem;font-weight:800;color:#fff}
+.bp-logo-txt em{color:var(--g500);font-style:normal}
+.bp-tag{display:inline-flex;align-items:center;gap:7px;background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.25);color:#FCA5A5;font-family:'Sora',sans-serif;font-size:.5625rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:5px 12px;border-radius:50px;margin-bottom:20px}
+.bp-dot{width:6px;height:6px;background:#EF4444;border-radius:50%;animation:pulse 2s ease infinite;flex-shrink:0}
+.bp-h{font-family:'Sora',sans-serif;font-size:2rem;font-weight:800;color:#fff;line-height:1.12;margin-bottom:14px}
+.bp-sub{font-size:.9375rem;color:rgba(255,255,255,.5);line-height:1.65;max-width:340px}
+/* Role cards */
+.roles{display:flex;flex-direction:column;gap:10px;margin-top:36px;position:relative;z-index:1}
+.role-card{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:13px 16px;transition:border-color .2s}
+.role-card:hover{border-color:rgba(245,166,35,.25)}
+.rc-ic{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.875rem;flex-shrink:0}
+.rc-name{font-family:'Sora',sans-serif;font-size:.875rem;font-weight:700;color:#fff}
+.rc-desc{font-size:.6875rem;color:rgba(255,255,255,.4);margin-top:2px}
+.rc-badge{margin-left:auto;font-size:.5rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:4px;flex-shrink:0}
+.rc-badge.red{background:rgba(220,38,38,.2);color:#FCA5A5}
+.rc-badge.purple{background:rgba(124,58,237,.2);color:#C4B5FD}
+.rc-badge.blue{background:rgba(37,99,235,.2);color:#93C5FD}
+.rc-badge.gray{background:rgba(255,255,255,.08);color:rgba(255,255,255,.4)}
+.bp-footer{position:relative;z-index:1;font-size:.6875rem;color:rgba(255,255,255,.25)}
+
+/* RIGHT — form panel */
+.form-panel{background:var(--surface);display:flex;align-items:center;justify-content:center;padding:48px}
+.form-inner{width:100%;max-width:380px}
+.form-eyebrow{font-family:'Sora',sans-serif;font-size:.5625rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--g500);margin-bottom:10px}
+.form-h{font-family:'Sora',sans-serif;font-size:1.75rem;font-weight:800;color:var(--text);margin-bottom:6px}
+.form-sub{font-size:.9375rem;color:var(--muted);margin-bottom:32px}
+
+/* SUPABASE NOTICE */
+.supa-notice{background:linear-gradient(135deg,#0a0a1a,#0f2040);border:1px solid rgba(59,130,246,.2);border-radius:11px;padding:12px 14px;margin-bottom:24px;display:flex;align-items:center;gap:9px}
+.supa-dot{width:7px;height:7px;background:#3ECF8E;border-radius:50%;animation:pulse 2s ease infinite;flex-shrink:0}
+.supa-txt{font-size:.75rem;color:rgba(255,255,255,.6)}
+.supa-txt strong{color:#3ECF8E}
+
+/* FORM FIELDS */
+.fgroup{margin-bottom:16px;position:relative}
+.flabel{display:block;font-size:.8125rem;font-weight:600;color:var(--text2);margin-bottom:6px}
+.finput{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;font-size:.9375rem;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;transition:all .2s}
+.finput:focus{border-color:var(--n600);background:var(--surface);box-shadow:0 0 0 3px rgba(30,58,138,.08)}
+.finput.err{border-color:var(--red);background:var(--red-bg)}
+.ferr-msg{font-size:.6875rem;color:var(--red);font-weight:600;margin-top:4px;display:none}
+.finput.err ~ .ferr-msg{display:block}
+.fpassword-wrap{position:relative}
+.fpassword-wrap .finput{padding-right:44px}
+.show-pw{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);font-size:.75rem;font-weight:600;transition:color .2s}
+.show-pw:hover{color:var(--text)}
+
+/* ROLE SELECTOR */
+.role-select{margin-bottom:20px}
+.role-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.role-opt{border:1.5px solid var(--border);border-radius:9px;padding:10px 11px;cursor:pointer;transition:all .2s;background:var(--bg);text-align:left}
+.role-opt:hover{border-color:var(--n200)}
+.role-opt.active{border-color:var(--n600);background:var(--n50)}
+.ro-name{font-family:'Sora',sans-serif;font-size:.75rem;font-weight:700;color:var(--n800)}
+.ro-desc{font-size:.5625rem;color:var(--muted);margin-top:2px}
+
+/* ERROR BANNER */
+.err-banner{background:var(--red-bg);border:1px solid var(--red-b);border-radius:10px;padding:12px 14px;margin-bottom:18px;font-size:.8125rem;color:var(--red);font-weight:600;display:none;align-items:center;gap:8px}
+.err-banner.show{display:flex}
+
+/* SUBMIT BUTTON */
+.btn-submit{width:100%;background:var(--n800);color:#fff;font-family:'Sora',sans-serif;font-weight:800;font-size:.9375rem;padding:13px;border-radius:11px;border:none;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px}
+.btn-submit:hover{background:var(--n700);transform:translateY(-1px)}
+.btn-submit:active{transform:scale(.98)}
+
+/* 2FA SCREEN */
+.twofa-screen{display:none;text-align:center}
+.twofa-ic{width:64px;height:64px;background:var(--n50);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.75rem}
+.otp-inputs{display:flex;gap:10px;justify-content:center;margin:20px 0}
+.otp-input{width:48px;height:56px;text-align:center;font-family:'Sora',sans-serif;font-size:1.5rem;font-weight:800;border:2px solid var(--border);border-radius:11px;outline:none;transition:all .2s;background:var(--bg)}
+.otp-input:focus{border-color:var(--n600);background:var(--surface);box-shadow:0 0 0 3px rgba(30,58,138,.08)}
+
+/* FORGOT PASSWORD */
+.forgot-link{font-size:.8125rem;color:var(--n600);font-weight:600;cursor:pointer;text-align:right;display:block;margin-top:6px;transition:color .2s}
+.forgot-link:hover{color:var(--n800)}
+
+/* DIVIDER */
+.or-divider{display:flex;align-items:center;gap:12px;margin:16px 0;color:var(--muted);font-size:.75rem}
+.or-divider::before,.or-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* SPINNER */
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .65s linear infinite;display:inline-block}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.6);opacity:.55}}
+
+@media(max-width:800px){body{grid-template-columns:1fr}.brand-panel{display:none}.form-panel{padding:28px 20px}}
+</style>
+</head>
+<body>
+
+<!-- LEFT BRAND PANEL -->
+<div class="brand-panel">
+  <div class="bp-top">
+    <div class="bp-logo">
+      <div class="bp-logo-ic"><svg viewBox="0 0 24 24" fill="none"><path d="M3 12s4-6 9-6 9 6 9 6" stroke="#0B1D45" stroke-width="2.2" stroke-linecap="round"/><path d="M3 17h18" stroke="#0B1D45" stroke-width="2.2" stroke-linecap="round"/><circle cx="7.5" cy="19.5" r="2" fill="#0B1D45"/><circle cx="16.5" cy="19.5" r="2" fill="#0B1D45"/></svg></div>
+      <span class="bp-logo-txt">Raylane <em>Express</em></span>
+    </div>
+    <div class="bp-tag"><span class="bp-dot"></span>Super Admin Portal</div>
+    <h2 class="bp-h">Complete Control<br>of the Platform</h2>
+    <p class="bp-sub">Manage operators, trips, bookings, fleet, financials, and the full Raylane ecosystem. Role-based access with full audit trail.</p>
+
+    <!-- Admin roles preview -->
+    <div class="roles">
+      <div class="role-card">
+        <div class="rc-ic" style="background:rgba(220,38,38,.15)">👑</div>
+        <div><div class="rc-name">Super Admin</div><div class="rc-desc">Full access — all 14 modules, settings, role management</div></div>
+        <span class="rc-badge red">SUPER</span>
+      </div>
+      <div class="role-card">
+        <div class="rc-ic" style="background:rgba(124,58,237,.15)">💰</div>
+        <div><div class="rc-name">Finance</div><div class="rc-desc">Payouts, financials, payment verification only</div></div>
+        <span class="rc-badge purple">FINANCE</span>
+      </div>
+      <div class="role-card">
+        <div class="rc-ic" style="background:rgba(37,99,235,.15)">⚙️</div>
+        <div><div class="rc-name">Operations</div><div class="rc-desc">Trips, operators, alerts, fleet management</div></div>
+        <span class="rc-badge blue">OPS</span>
+      </div>
+      <div class="role-card">
+        <div class="rc-ic" style="background:rgba(255,255,255,.06)">🎧</div>
+        <div><div class="rc-name">Support</div><div class="rc-desc">Bookings, passengers, parcels, basic actions</div></div>
+        <span class="rc-badge gray">SUPPORT</span>
+      </div>
+    </div>
+  </div>
+  <div class="bp-footer">Supabase Auth · RLS enforced on all tables · Audit log on every action</div>
+</div>
+
+<!-- RIGHT FORM PANEL -->
+<div class="form-panel">
+  <div class="form-inner">
+
+    <!-- LOGIN FORM -->
+    <div id="loginForm">
+      <div class="form-eyebrow">Secure Admin Access</div>
+      <h1 class="form-h">Welcome back</h1>
+      <p class="form-sub">Sign in to the Raylane Express admin dashboard.</p>
+
+      <div class="supa-notice">
+        <span class="supa-dot"></span>
+        <span class="supa-txt"><strong>Supabase Auth</strong> — Email + password with 2FA TOTP. Session secured by JWT + RLS.</span>
+      </div>
+
+      <div class="err-banner" id="errBanner">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+        <span id="errText">Invalid email or password</span>
+      </div>
+
+      <div class="fgroup">
+        <label class="flabel">Email Address</label>
+        <input class="finput" id="loginEmail" type="email" placeholder="admin@raylane.com" autocomplete="email" oninput="clearErr()">
+        <span class="ferr-msg">Please enter a valid email</span>
+      </div>
+
+      <div class="fgroup">
+        <label class="flabel">Password</label>
+        <div class="fpassword-wrap">
+          <input class="finput" id="loginPassword" type="password" placeholder="Your secure password" autocomplete="current-password" oninput="clearErr()">
+          <button class="show-pw" type="button" onclick="togglePw('loginPassword',this)">Show</button>
+        </div>
+        <span class="forgot-link" onclick="showForgot()">Forgot password?</span>
+      </div>
+
+      <div class="role-select">
+        <label class="flabel">Your Role</label>
+        <div class="role-opts">
+          <button class="role-opt active" onclick="selRole(this)"><div class="ro-name">👑 Super Admin</div><div class="ro-desc">Full platform access</div></button>
+          <button class="role-opt" onclick="selRole(this)"><div class="ro-name">💰 Finance</div><div class="ro-desc">Payouts & financials</div></button>
+          <button class="role-opt" onclick="selRole(this)"><div class="ro-name">⚙️ Operations</div><div class="ro-desc">Trips & operators</div></button>
+          <button class="role-opt" onclick="selRole(this)"><div class="ro-name">🎧 Support</div><div class="ro-desc">Bookings & passengers</div></button>
+        </div>
+      </div>
+
+      <button class="btn-submit" id="loginBtn" onclick="doLogin()">
+        Sign In to Admin Dashboard
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/></svg>
+      </button>
+
+      <div style="font-size:.6875rem;color:var(--muted);text-align:center">
+        Every login and action is recorded in the immutable audit log.<br>
+        <a href="index.html" style="color:var(--n600);font-weight:600;text-decoration:none">← Back to Raylane Express</a>
+      </div>
+    </div>
+
+    <!-- 2FA SCREEN -->
+    <div id="twoFAScreen" class="twofa-screen">
+      <div class="twofa-ic">🔐</div>
+      <h2 style="font-family:'Sora',sans-serif;font-size:1.375rem;font-weight:800;color:var(--text);margin-bottom:6px">Two-Factor Auth</h2>
+      <p style="font-size:.875rem;color:var(--muted);margin-bottom:0;line-height:1.55">Enter the 6-digit code from your authenticator app (Google Authenticator / Authy).</p>
+      <div class="otp-inputs">
+        <input class="otp-input" maxlength="1" oninput="otpMove(this,0)" id="otp0">
+        <input class="otp-input" maxlength="1" oninput="otpMove(this,1)" id="otp1">
+        <input class="otp-input" maxlength="1" oninput="otpMove(this,2)" id="otp2">
+        <input class="otp-input" maxlength="1" oninput="otpMove(this,3)" id="otp3">
+        <input class="otp-input" maxlength="1" oninput="otpMove(this,4)" id="otp4">
+        <input class="otp-input" maxlength="1" oninput="otpMove(this,5)" id="otp5">
+      </div>
+      <button class="btn-submit" id="otpBtn" onclick="verify2FA()">Verify &amp; Access Dashboard</button>
+      <button onclick="document.getElementById('twoFAScreen').style.display='none';document.getElementById('loginForm').style.display='block'" style="background:none;border:none;color:var(--muted);font-size:.8125rem;cursor:pointer;margin-top:8px">← Back to login</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// Demo credentials notice
+const DEMO = {email:'super@raylane.com',password:'demo1234'};
+
+function clearErr(){
+  document.getElementById('errBanner').classList.remove('show');
+  document.getElementById('loginEmail').classList.remove('err');
+  document.getElementById('loginPassword').classList.remove('err');
+}
+
+function togglePw(id,btn){
+  const inp=document.getElementById(id);
+  if(inp.type==='password'){inp.type='text';btn.textContent='Hide';}
+  else{inp.type='password';btn.textContent='Show';}
+}
+
+function selRole(el){
+  document.querySelectorAll('.role-opt').forEach(o=>o.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function doLogin(){
+  const email=document.getElementById('loginEmail').value.trim();
+  const pass=document.getElementById('loginPassword').value;
+  const btn=document.getElementById('loginBtn');
+  if(!email||!pass){
+    if(!email)document.getElementById('loginEmail').classList.add('err');
+    if(!pass)document.getElementById('loginPassword').classList.add('err');
+    return;
+  }
+  btn.innerHTML='<span class="spinner"></span> Authenticating via Supabase...';
+  btn.disabled=true;
+  // Simulate Supabase Auth: supabase.auth.signInWithPassword({ email, password })
+  setTimeout(()=>{
+    // Demo: any email/password shows 2FA
+    btn.innerHTML='Sign In to Admin Dashboard <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/></svg>';
+    btn.disabled=false;
+    // Show 2FA
+    document.getElementById('loginForm').style.display='none';
+    document.getElementById('twoFAScreen').style.display='block';
+    document.getElementById('otp0').focus();
+  },1600);
+}
+
+function otpMove(el,idx){
+  if(el.value.length===1&&idx<5)document.getElementById('otp'+(idx+1)).focus();
+  if(idx===5)checkOTPComplete();
+}
+
+function checkOTPComplete(){
+  const code=Array.from({length:6},(_,i)=>document.getElementById('otp'+i).value).join('');
+  if(code.length===6)verify2FA();
+}
+
+function verify2FA(){
+  const code=Array.from({length:6},(_,i)=>document.getElementById('otp'+i).value).join('');
+  const btn=document.getElementById('otpBtn');
+  btn.innerHTML='<span class="spinner"></span> Verifying TOTP...';
+  btn.disabled=true;
+  // Simulate TOTP verification + session creation
+  setTimeout(()=>{
+    // In production: supabase.auth.verifyOtp({ email, token: code, type: 'totp' })
+    // Then check admin_users table for role → redirect accordingly
+    window.location.href='admin-pro.html';
+  },1200);
+}
+
+function showForgot(){
+  document.getElementById('errBanner').classList.add('show');
+  document.getElementById('errText').textContent='Password reset: check your email for a reset link (production: Supabase sends reset email)';
+  document.getElementById('errBanner').style.background='#EFF6FF';
+  document.getElementById('errBanner').style.borderColor='#BFDBFE';
+  document.getElementById('errBanner').style.color='#1D4ED8';
+}
+
+// Enter key support
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){
+    if(document.getElementById('loginForm').style.display!=='none')doLogin();
+  }
+});
+</script>
+</body>
+</html>
